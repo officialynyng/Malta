@@ -1,0 +1,1 @@
+worker: python malta_post_bot.py
