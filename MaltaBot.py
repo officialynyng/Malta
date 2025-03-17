@@ -91,10 +91,10 @@ async def edit(interaction: discord.Interaction, destination_channel_id: str, me
 @bot.tree.command(name="help", description="Shows available commands for Malta Bot.")
 async def help_command(interaction: discord.Interaction):
     help_text = (
-        "**Malta Bot Commands:**\n"
-        "/post <message_id> <channel_id> - Post a previously approved message and its images to a target channel.\n"
-        "/edit <channel_id> <message_id> <new_content> - Edit a previously posted message.\n"
-        "/help - Show this help message."
+        "**🏴☩ Malta Bot Commands:**\n\n"
+        "⚗️ /post <message_id> <channel_id> - Post a previously approved message and its images to a target channel.\n\n"
+        "⚗️ /edit <channel_id> <message_id> <new_content> - Edit a previously posted message.\n\n"
+        "⚗️ /help - Show this help message."
     )
     await interaction.response.send_message(help_text, ephemeral=True)
 
