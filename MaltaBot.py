@@ -1,4 +1,5 @@
 import discord
+import io
 from discord.ext import commands
 from discord import app_commands
 import os
@@ -55,7 +56,8 @@ async def post(interaction: discord.Interaction, message_id: str, destination_ch
         for attachment in message.attachments:
             if attachment.content_type and attachment.content_type.startswith("image"):
                 fp = await attachment.read()
-                files.append(discord.File(fp=fp, filename=attachment.filename))
+                files.append(discord.File(fp=io.BytesIO(fp), filename=attachment.filename))
+
 
         sent_message = await destination_channel.send(content=message.content or None, files=files)
         await interaction.response.send_message(f"Message posted to <#{destination_channel_id}>. Message ID: {sent_message.id}", ephemeral=True)
