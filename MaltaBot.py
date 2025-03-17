@@ -3,7 +3,7 @@ from discord.ext import commands
 from discord import app_commands
 import os
 
-TOKEN = os.getenv("DISCORD_TOKEN")
+TOKEN = os.getenv("TOKEN")
 GUILD_ID = int(os.getenv("GUILD_ID"))
 APPROVED_ROLE_NAME = os.getenv("APPROVED_ROLE_NAME")
 INTENTS = discord.Intents.default()
