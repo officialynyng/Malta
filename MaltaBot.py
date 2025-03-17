@@ -1,89 +1,102 @@
-import os
 import discord
 from discord.ext import commands
+from discord import app_commands
+import os
 
-# Load environment variables
-TOKEN = os.getenv('TOKEN')
-APPROVED_IDS = [int(uid.strip()) for uid in os.getenv('APPROVED_IDS', '').split(',')]
+TOKEN = os.getenv("DISCORD_TOKEN")
+GUILD_ID = int(os.getenv("GUILD_ID"))
+APPROVED_ROLE_NAME = os.getenv("APPROVED_ROLE_NAME")
+INTENTS = discord.Intents.default()
+INTENTS.messages = True
+INTENTS.guilds = True
+INTENTS.message_content = True
+INTENTS.members = True
 
-# Discord intents
-intents = discord.Intents.default()
-intents.messages = True
-intents.message_content = True
+class MaltaBot(commands.Bot):
+    def __init__(self):
+        super().__init__(command_prefix="!", intents=INTENTS)
+        self.tree = app_commands.CommandTree(self)
 
-bot = commands.Bot(command_prefix='!', intents=intents)
+    async def setup_hook(self):
+        guild = discord.Object(id=GUILD_ID)
+        self.tree.copy_global_to(guild=guild)
+        await self.tree.sync(guild=guild)
 
-# Store saved messages per user
-saved_messages = {}
+bot = MaltaBot()
 
 @bot.event
 async def on_ready():
-    print(f"✅ Logged in as {bot.user}")
+    print(f'{bot.user} has connected to Discord!')
 
-@bot.command()
-async def save(ctx):
-    """Save a draft message (including attachments) to post later."""
-    if ctx.author.id not in APPROVED_IDS:
-        await ctx.send("❌ You are not authorized to use this bot.")
-        return
-
-    saved_messages[ctx.author.id] = {
-        "content": ctx.message.content.replace("!save", "").strip(),
-        "attachments": ctx.message.attachments
-    }
-
-    await ctx.send("✅ Message saved. Use `!postto <channel_id>` to send it.")
-
-@bot.command()
-async def postto(ctx, channel_id: int):
-    """Post the saved message to a specific channel."""
-    if ctx.author.id not in APPROVED_IDS:
-        await ctx.send("❌ You are not authorized to use this bot.")
-        return
-
-    if ctx.author.id not in saved_messages:
-        await ctx.send("⚠️ You haven't saved a message yet. Use `!save` first.")
-        return
-
-    post = saved_messages[ctx.author.id]
-    channel = bot.get_channel(channel_id)
-
-    if not channel:
-        await ctx.send("❌ Could not find the specified channel.")
+@bot.tree.command(name="post", description="Post a message and its images from a private channel to another channel.")
+@app_commands.describe(message_id="ID of the original message", destination_channel_id="ID of the destination channel")
+async def post(interaction: discord.Interaction, message_id: str, destination_channel_id: str):
+    member = interaction.user
+    approved = any(role.name == APPROVED_ROLE_NAME for role in member.roles)
+    if not approved:
+        await interaction.response.send_message("You are not authorized to use this command.", ephemeral=True)
         return
 
     try:
-        if post["attachments"]:
-            files = [await attachment.to_file() for attachment in post["attachments"]]
-            msg = await channel.send(content=post["content"], files=files)
-        else:
-            msg = await channel.send(content=post["content"])
-
-        await ctx.send(f"✅ Message posted to <#{channel.id}>.\n🆔 Message ID: `{msg.id}`")
-        del saved_messages[ctx.author.id]
-    except discord.Forbidden:
-        await ctx.send("❌ I don't have permission to send messages to that channel.")
+        source_channel = interaction.channel  # command must be used in approval channel
+        message = await source_channel.fetch_message(int(message_id))
+    except discord.NotFound:
+        await interaction.response.send_message("Message not found.", ephemeral=True)
+        return
     except discord.HTTPException as e:
-        await ctx.send(f"❌ Failed to send message: {e}")
-
-@bot.command()
-async def editpost(ctx, message_id: int, *, new_content: str):
-    """Edit a specific message sent by the bot (by message ID)."""
-    if ctx.author.id not in APPROVED_IDS:
-        await ctx.send("❌ You are not authorized to use this bot.")
+        await interaction.response.send_message(f"Failed to fetch message: {e}", ephemeral=True)
         return
 
-    for channel in ctx.guild.text_channels:
-        try:
-            msg = await channel.fetch_message(message_id)
-            if msg.author.id == bot.user.id:
-                await msg.edit(content=new_content)
-                await ctx.send(f"✅ Edited message in <#{channel.id}>.")
-                return
-        except (discord.NotFound, discord.Forbidden, discord.HTTPException):
-            continue  # Try the next channel
+    try:
+        destination_channel = bot.get_channel(int(destination_channel_id))
+        if destination_channel is None:
+            destination_channel = await bot.fetch_channel(int(destination_channel_id))
 
-    await ctx.send("❌ Could not find a bot message with that ID.")
+        files = []
+        for attachment in message.attachments:
+            if attachment.content_type and attachment.content_type.startswith("image"):
+                fp = await attachment.read()
+                files.append(discord.File(fp=fp, filename=attachment.filename))
 
-# Run the bot
+        sent_message = await destination_channel.send(content=message.content or None, files=files)
+        await interaction.response.send_message(f"Message posted to <#{destination_channel_id}>. Message ID: {sent_message.id}", ephemeral=True)
+
+    except Exception as e:
+        await interaction.response.send_message(f"Failed to post message: {e}", ephemeral=True)
+
+@bot.tree.command(name="edit", description="Edit a previously posted message in a specific channel.")
+@app_commands.describe(destination_channel_id="ID of the channel where the message is posted", message_id="ID of the message to edit", new_content="The new message content")
+async def edit(interaction: discord.Interaction, destination_channel_id: str, message_id: str, new_content: str):
+    member = interaction.user
+    approved = any(role.name == APPROVED_ROLE_NAME for role in member.roles)
+    if not approved:
+        await interaction.response.send_message("You are not authorized to use this command.", ephemeral=True)
+        return
+
+    try:
+        channel = bot.get_channel(int(destination_channel_id))
+        if channel is None:
+            channel = await bot.fetch_channel(int(destination_channel_id))
+
+        message = await channel.fetch_message(int(message_id))
+        await message.edit(content=new_content)
+        await interaction.response.send_message("Message updated successfully.", ephemeral=True)
+
+    except discord.NotFound:
+        await interaction.response.send_message("Message not found.", ephemeral=True)
+    except discord.Forbidden:
+        await interaction.response.send_message("I don't have permission to edit that message.", ephemeral=True)
+    except discord.HTTPException as e:
+        await interaction.response.send_message(f"Failed to edit message: {e}", ephemeral=True)
+
+@bot.tree.command(name="help", description="Shows available commands for Malta Bot.")
+async def help_command(interaction: discord.Interaction):
+    help_text = (
+        "**Malta Bot Commands:**\n"
+        "/post <message_id> <channel_id> - Post a previously approved message and its images to a target channel.\n"
+        "/edit <channel_id> <message_id> <new_content> - Edit a previously posted message.\n"
+        "/help - Show this help message."
+    )
+    await interaction.response.send_message(help_text, ephemeral=True)
+
 bot.run(TOKEN)
