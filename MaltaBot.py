@@ -15,7 +15,6 @@ INTENTS.members = True
 class MaltaBot(commands.Bot):
     def __init__(self):
         super().__init__(command_prefix="!", intents=INTENTS)
-        self.tree = app_commands.CommandTree(self)
 
     async def setup_hook(self):
         guild = discord.Object(id=GUILD_ID)
