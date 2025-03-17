@@ -1,1 +1,1 @@
-worker: python malta_post_bot.py
+worker: python MaltaBot.py
