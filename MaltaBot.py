@@ -3,7 +3,7 @@ import discord
 from discord.ext import commands
 
 # Load environment variables
-TOKEN = os.getenv('BOT_TOKEN')
+TOKEN = os.getenv('TOKEN')
 APPROVED_IDS = [int(uid.strip()) for uid in os.getenv('APPROVED_IDS', '').split(',')]
 
 # Discord intents
