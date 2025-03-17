@@ -7,6 +7,7 @@ import os
 TOKEN = os.getenv("TOKEN")
 GUILD_ID = int(os.getenv("GUILD_ID"))
 APPROVED_ROLE_NAME = os.getenv("APPROVED_ROLE_NAME")
+WELCOME_CHANNEL_ID = int(os.getenv("WELCOME_CHANNEL_ID"))  # Set this in your environment variables
 INTENTS = discord.Intents.default()
 INTENTS.messages = True
 INTENTS.guilds = True
@@ -89,6 +90,17 @@ async def edit(interaction: discord.Interaction, destination_channel_id: str, me
         await interaction.response.send_message("I don't have permission to edit that message.", ephemeral=True)
     except discord.HTTPException as e:
         await interaction.response.send_message(f"Failed to edit message: {e}", ephemeral=True)
+
+@bot.event
+async def on_member_join(member):
+    # Compose your welcome message
+    welcome_message = f"{member.mention} has joined the server."
+
+    # Try to send the message to the welcome channel
+    channel = bot.get_channel(WELCOME_CHANNEL_ID)
+    if channel:
+        await channel.send(welcome_message)
+
 
 @bot.tree.command(name="help", description="Shows available commands for Malta Bot.")
 async def help_command(interaction: discord.Interaction):
