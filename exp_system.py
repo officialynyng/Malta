@@ -85,8 +85,8 @@ def get_user_data(user_id):
         if row:
             # Return the last activity timestamp and multiplier
             return {
-                'last_activity': row['last_message_ts'],
-                'multiplier': row['multiplier']
+                'last_activity': row[0],
+                'multiplier': row[1]
             }
         else:
             # Handle the case where the user isn't found in the database
