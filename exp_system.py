@@ -135,6 +135,7 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
                 level=new_level
             )
             conn.execute(update)
+            conn.commit()
 
             if new_level > result.level:
                 await announce_level_up(message.guild, message.author, new_level, level_up_channel_id)
@@ -152,6 +153,7 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
                 heirloom_points=0
             ))
             print(f"Inserting new user {user_id} with EXP: {EXP_PER_TICK * multiplier}, Level: {new_level}")
+            conn.commit()
 
             if new_level > 0:
                 await announce_level_up(message.guild, message.author, new_level, level_up_channel_id)
@@ -277,6 +279,7 @@ class ExpCommands(commands.Cog):
                     retirements=new_retire_count,
                     heirloom_points=new_total_heirlooms
                 ))
+                conn.commit()
 
             await exp_channel.send(
                 f"🎖️ {interaction.user.mention} has retired and earned **{heirloom_gain} heirloom points**!\\n"
@@ -336,7 +339,7 @@ class ExpCommands(commands.Cog):
             results = conn.execute(query).fetchall()
             
             if not results:
-                await exp_channel.send("📉 No players on the leaderboard yet.")
+                await exp_channel.send("No players on the leaderboard yet.")
                 return
 
             leaderboard_text = "**🏆 Leaderboard**\n"
