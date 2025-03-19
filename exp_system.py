@@ -37,7 +37,7 @@ players = db.Table(
 with engine.connect() as conn:
     metadata.create_all(engine)
 
-EXP_COOLDOWN = 600
+EXP_COOLDOWN = 1800
 EXP_PER_TICK = 10
 GOLD_PER_TICK = 5
 LEVEL_CAP = 38
@@ -483,8 +483,34 @@ class ExpCommands(commands.Cog):
             await exp_channel.send(leaderboard_text)
             await interaction.response.send_message("Leaderboard posted in #discord-crpg.", ephemeral=True)
 
+    @app_commands.command(name="cooldown", description="Check how long until your next ⚡ experience & 💰 gold tick.")
+    async def cooldown(self, interaction: discord.Interaction):
+        user_id = str(interaction.user.id)
+        current_ts = time.time()
 
+        with engine.connect() as conn:
+            result = conn.execute(db.select(players).where(players.c.user_id == user_id)).fetchone()
 
+            if result:
+                elapsed_time = current_ts - result.last_message_ts
+                remaining_cooldown = EXP_COOLDOWN - elapsed_time
+
+                if remaining_cooldown > 0:
+                    minutes, seconds = divmod(int(remaining_cooldown), 60)
+                    await interaction.response.send_message(
+                        f"⏳ You have **{minutes}m {seconds}s** left until your next available ⚡ experience & 💰 gold tick.",
+                        ephemeral=True
+                    )
+                else:
+                    await interaction.response.send_message(
+                        "You're ready for your next ⚡ experience & 💰 gold tick.",
+                        ephemeral=True
+                    )
+            else:
+                await interaction.response.send_message(
+                    "You have no EXP record yet. Start participating to earn ⚡ experience & 💰 gold.",
+                    ephemeral=True
+                )
 
 
 
