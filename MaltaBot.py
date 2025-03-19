@@ -34,7 +34,7 @@ async def on_ready():
     print(f'{bot.user} has connected to Discord!')
     ###############################
     #Remove to prevent double sync.
-    #await bot.tree.sync()
+    await bot.tree.sync()
     ###############################
     print("Command tree synced.")
 
