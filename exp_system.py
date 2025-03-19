@@ -366,34 +366,28 @@ class ExpCommands(commands.Cog):
     @app_commands.command(name="profile", description="View another player's profile")
     @app_commands.describe(user="The user whose profile you want to see")
     async def profile(self, interaction: discord.Interaction, user: discord.User):
-        await interaction.response.defer(thinking=False)  # Acknowledge the interaction early
-
         user_id = str(user.id)
-        exp_channel_id = EXP_CHANNEL_ID  # Ensure this is defined with the correct EXP channel
 
         with engine.connect() as conn:
-            query = players.select().where(players.c.user_id == user_id)
-            result = conn.execute(query).fetchone()
-
-            exp_channel = self.bot.get_channel(exp_channel_id)
+            result = conn.execute(players.select().where(players.c.user_id == user_id)).fetchone()
 
             if not result:
-                if exp_channel:
-                    await exp_channel.send(f"{user.display_name} has no stats yet.")
-                else:
-                    print("Failed to get exp_channel")
+                await interaction.response.send_message(f"{user.display_name} has no stats yet.", ephemeral=True)
                 return
 
-            level, exp, gold, retirements, heirloom_points = result[2], result[1], result[3], result[5], result[6]
+            level = result.level
+            exp = result.exp
+            gold = result.gold
+            retirements = result.retirements
+            heirloom_points = result.heirloom_points
 
-            if exp_channel:
-                await exp_channel.send(
-                    f"📜 **{user.display_name}'s Profile**\n"
-                    f"Level: {level}\nEXP: {exp}\nGold: {gold}\n"
-                    f"Generation: {retirements}\nHeirloom Points: {heirloom_points}"
-                )
-            else:
-                print("Failed to get exp_channel")
+            await interaction.response.send_message(
+                f"📜 **{user.display_name}'s Profile**\n"
+                f"Level: {level}\nEXP: {exp}\nGold: {gold}\n"
+                f"Generation: {retirements}\nHeirloom Points: {heirloom_points}",
+                ephemeral=True
+            )
+
 
     @app_commands.command(name="leaderboard", description="Show top 10 players by level, then EXP as a tiebreaker")
     async def leaderboard(self, interaction: discord.Interaction):
