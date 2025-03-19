@@ -136,6 +136,7 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
             )
             conn.execute(update)
             conn.commit()
+        
 
             if new_level > result.level:
                 await announce_level_up(message.guild, message.author, new_level, level_up_channel_id)
@@ -310,7 +311,7 @@ class ExpCommands(commands.Cog):
     @app_commands.command(name="profile", description="View another player's profile")
     @app_commands.describe(user="The user whose profile you want to see")
     async def profile(self, interaction: discord.Interaction, user: discord.User):
-        await interaction.response.defer(thinking=False)
+        await interaction.response.defer(thinking=True)
 
         user_id = str(user.id)
         with engine.connect() as conn:
@@ -332,7 +333,7 @@ class ExpCommands(commands.Cog):
 
     @app_commands.command(name="leaderboard", description="Show top 10 players by level, then EXP as a tiebreaker")
     async def leaderboard(self, interaction: discord.Interaction):
-        await interaction.response.defer(thinking=False)
+        await interaction.response.defer(thinking=True)
 
         with engine.connect() as conn:
             query = players.select().order_by(players.c.level.desc(), players.c.exp.desc()).limit(10)
@@ -342,7 +343,7 @@ class ExpCommands(commands.Cog):
                 await exp_channel.send("No players on the leaderboard yet.")
                 return
 
-            leaderboard_text = "**🏆 Leaderboard**\n"
+            leaderboard_text = "**✠ Leaderboard**\n"
             for i, result in enumerate(results, start=1):
                 user_id, exp, level, gold = result[0], result[1], result[2], result[3]
                 leaderboard_text += f"{i}. <@{user_id}> - Level {level}, EXP: {exp}, Gold: {gold}\n"
