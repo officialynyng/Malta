@@ -74,8 +74,10 @@ def calculate_multiplier(last_activity_time, current_time, current_multiplier):
 def get_user_data(user_id):
     # Fetch user data from the database (last activity and current multiplier)
     with engine.connect() as conn:
-        result = conn.execute(select([players.c.last_message_ts, players.c.multiplier])
-                              .where(players.c.user_id == user_id))
+        result = conn.execute(
+            select(players.c.last_message_ts, players.c.multiplier)
+            .where(players.c.user_id == user_id)
+        )
         
         # Fetch the first row (there should be only one row for the user)
         row = result.fetchone()
