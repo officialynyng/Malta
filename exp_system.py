@@ -260,11 +260,24 @@ class ExpCommands(commands.Cog):
                 print("[DEBUG] Ignored bot message")
                 return
 
+            user_id = str(message.author.id)
+
             print("[DEBUG] Passed checks, handling EXP gain")
             await handle_exp_gain(message, EXP_CHANNEL_ID)
 
+            print("[DEBUG] Updating multiplier")
+            await on_user_comment(user_id, self.bot)
+
+            print("[DEBUG] Checking for multiplier reset")
+            await check_and_reset_multiplier(user_id, self.bot)
+
+            # Optional: give bonus XP/gold for participation
+            print("[DEBUG] Awarding base XP/gold")
+            await award_xp_and_gold(user_id, base_xp=0, base_gold=0, bot=self.bot)
+
         except Exception as e:
             print(f"[ERROR] Exception in on_message: {e}")
+
 ###############################
     @commands.Cog.listener()
     async def on_ready(self):
