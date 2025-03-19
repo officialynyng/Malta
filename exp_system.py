@@ -9,6 +9,9 @@ from sqlalchemy.sql import select
 
 EXP_CHANNEL_ID = int(os.getenv("EXP_CHANNEL_ID"))
 DATABASE_URL = os.getenv("DATABASE_URL")
+# Patch the URL so SQLAlchemy accepts it
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 MAX_MULTIPLIER = 5  # Max multiplier level
 TIME_DELTA = 86400  # 24 hours in seconds (time threshold for activity)
 engine = db.create_engine(DATABASE_URL)
