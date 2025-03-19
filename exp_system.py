@@ -464,7 +464,7 @@ class ExpCommands(commands.Cog):
                 await interaction.response.send_message("Leaderboard posted.", ephemeral=True)
                 return
 
-            leaderboard_text = "**📜 Leaderboard** *(Generation → Level → Gold → EXP)*\n"
+            leaderboard_text = "# 📜 Leaderboard\n"
             for i, result in enumerate(results, start=1):
                 user_id = result.user_id
                 exp = result.exp
