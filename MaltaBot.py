@@ -23,6 +23,8 @@ class MaltaBot(commands.Bot):
         self.tree.copy_global_to(guild=guild)
         await self.tree.sync(guild=guild)
 
+        await self.load_extension("exp_system")  # exp_system.py must be in the same directory
+
 bot = MaltaBot()
 
 @bot.event
@@ -103,9 +105,10 @@ async def on_member_join(member):
 
 @bot.event
 async def on_member_remove(member):
-    channel = discord.utils.get(member.guild.text_channels, name='landing-page')
+    farewell_message = f"{member.name} has left the server."
+    channel = bot.get_channel(WELCOME_CHANNEL_ID)
     if channel:
-        await channel.send(f"{member.name} has left the server.")
+        await channel.send(farewell_message)
 
 
 @bot.tree.command(name="help", description="Shows available commands for Malta Bot.")

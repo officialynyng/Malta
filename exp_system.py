@@ -2,7 +2,6 @@ import discord
 import os
 import time
 import math
-from MaltaBot import bot
 from discord.ext import commands
 from discord import app_commands
 import sqlalchemy as db
@@ -17,11 +16,7 @@ metadata = db.MetaData()
 
 exp_channel = None  # Global placeholder
 
-@bot.event
-async def on_ready():
-    global exp_channel
-    exp_channel = bot.get_channel(EXP_CHANNEL_ID)
-    print(f"[READY] Bot is online. EXP Channel set to: {exp_channel}")
+
 
 players = db.Table(
     "players", metadata,
@@ -90,6 +85,7 @@ def get_user_data(user_id):
         else:
             # Handle the case where the user isn't found in the database
             return None
+        
 
 def update_user_data(user_id, new_multiplier, last_activity_time):
     # Update the player's data in the database with the new multiplier and last activity timestamp
@@ -98,6 +94,7 @@ def update_user_data(user_id, new_multiplier, last_activity_time):
             multiplier=new_multiplier,
             last_message_ts=last_activity_time
         ))
+
 
 async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
     if message.author.bot:
@@ -183,7 +180,7 @@ def award_xp(user_id, base_xp):
 
         # Multiply the XP by the multiplier
         xp_awarded = base_xp * multiplier
-        print(f"Awarded {xp_awarded} XP to user {user_id} with a multiplier of {multiplier}.")
+        print(f"Awarded {xp_awarded} XP to user <@{user_id}> - Multiplier of {multiplier}.")
         
         # Logic to update the XP in the database
         with db.engine.connect() as conn:
@@ -197,9 +194,24 @@ async def announce_level_up(guild: discord.Guild, member: discord.Member, level:
     if channel:
         await exp_channel.send(f"🎆 {member.mention} has reached **Level {level}**.")
 
+
 class ExpCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        global exp_channel
+        exp_channel = self.bot.get_channel(EXP_CHANNEL_ID)
+        print(f"[READY] Bot is online. EXP Channel set to: {exp_channel}")
+
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if message.author.bot:
+            return
+        if message.channel.id != EXP_CHANNEL_ID:
+            return
+        await handle_exp_gain(message, EXP_CHANNEL_ID)
 
     @app_commands.command(name="retire", description="Retire your character between levels 31-38 for heirloom bonuses.")
     async def retire(self, interaction: discord.Interaction):
@@ -213,98 +225,109 @@ class ExpCommands(commands.Cog):
                 await exp_channel.send("You can only retire between levels 31 - 38.")
                 return
 
-        await exp_channel.send(
-            f"🛡️ Are you sure you want to retire? You will reset your level, EXP, and gold.\\n"
-            f"Type your username (`{interaction.user.name}`) to confirm."
-        )
+            await exp_channel.send(
+                f"🛡️ Are you sure you want to retire? You will reset your level, EXP, and gold.\\n"
+                f"Type your username (`{interaction.user.name}`) to confirm."
+            )
 
-        def check(m):
-            return m.author == interaction.user and m.content == interaction.user.name
+            def check(m):
+                return m.author == interaction.user and m.content == interaction.user.name
 
-        try:
-            msg = await self.bot.wait_for("message", timeout=60.0, check=check)
-        except:
-            await exp_channel.send("🏰 Retirement cancelled (timeout).")
-            return
+            try:
+                msg = await self.bot.wait_for("message", timeout=60.0, check=check)
+            except:
+                await exp_channel.send("🏰 Retirement cancelled (timeout).")
+                return
 
-        heirloom_gain = get_heirloom_points(result.level)
-        new_retire_count = result.retirements + 1
-        new_total_heirlooms = result.heirloom_points + heirloom_gain
-        multiplier = get_multiplier(new_retire_count)
+            heirloom_gain = get_heirloom_points(result.level)
+            new_retire_count = result.retirements + 1
+            new_total_heirlooms = result.heirloom_points + heirloom_gain
+            multiplier = get_multiplier(new_retire_count)
 
-        bonus_note = ""
-        if new_retire_count > 16:
-            bonus_note = "⚖️ Multiplier is capped at 1.48x, but you still can earn heirloom point(s)."
+            bonus_note = ""
+            if new_retire_count > 16:
+                bonus_note = "⚖️ Multiplier is capped at 1.48x, but you still can earn heirloom point(s)."
+
+            with engine.connect() as conn:
+                conn.execute(players.update().where(players.c.user_id == user_id).values(
+                    exp=0,
+                    level=0,
+                    retirements=new_retire_count,
+                    heirloom_points=new_total_heirlooms
+                ))
+
+            await exp_channel.send(
+                f"🎖️ {interaction.user.mention} has retired and earned **{heirloom_gain} heirloom points**!\\n"
+                f"Total retirements: `{new_retire_count}` → Multiplier: `{multiplier:.2f}x`\\n"
+                f"All progress reset. Start your journey anew!\\n"
+                f"{bonus_note}"
+            )
+    @app_commands.command(name="stats", description="View your own stats (level, gold, EXP, generation, etc.)")
+    async def stats(self, interaction: discord.Interaction):
+        await interaction.response.defer(thinking=False)  # 👈 prevents timeout
+        user_id = str(interaction.user.id)
+        with engine.connect() as conn:
+            query = players.select().where(players.c.user_id == user_id)
+            result = conn.execute(query).fetchone()
+
+            if not result:
+                await exp_channel.send(f"{interaction.user.mention} has no stats yet.")
+                return
+
+            level, exp, gold, retirements, heirloom_points = result[2], result[1], result[3], result[5], result[6]
+
+            await exp_channel.send(
+                f"📜 **{interaction.user.display_name}'s Stats**\n"
+                f"Level: {level}\nEXP: {exp}\nGold: {gold}\n"
+                f"Generation: {retirements}\nHeirloom Points: {heirloom_points}"
+            )
+
+    @app_commands.command(name="profile", description="View another player's profile")
+    @app_commands.describe(user="The user whose profile you want to see")
+    async def profile(self, interaction: discord.Interaction, user: discord.User):
+        await interaction.response.defer(thinking=False)
+
+        user_id = str(user.id)
+        with engine.connect() as conn:
+            query = players.select().where(players.c.user_id == user_id)
+            result = conn.execute(query).fetchone()
+
+            if not result:
+                await exp_channel.send(f"{user.display_name} has no stats yet.")
+                return
+
+            level, exp, gold, retirements, heirloom_points = result[2], result[1], result[3], result[5], result[6]
+
+            await exp_channel.send(
+                f"📜 **{user.display_name}'s Profile**\n"
+                f"Level: {level}\nEXP: {exp}\nGold: {gold}\n"
+                f"Generation: {retirements}\nHeirloom Points: {heirloom_points}"
+            )
+
+
+    @app_commands.command(name="leaderboard", description="Show top 10 players by level, then EXP as a tiebreaker")
+    async def leaderboard(self, interaction: discord.Interaction):
+        await interaction.response.defer(thinking=False)
 
         with engine.connect() as conn:
-            conn.execute(players.update().where(players.c.user_id == user_id).values(
-                exp=0,
-                level=0,
-                retirements=new_retire_count,
-                heirloom_points=new_total_heirlooms
-            ))
+            query = players.select().order_by(players.c.level.desc(), players.c.exp.desc()).limit(10)
+            results = conn.execute(query).fetchall()
+            
+            if not results:
+                await exp_channel.send("📉 No players on the leaderboard yet.")
+                return
 
-        await exp_channel.send(
-            f"🎖️ {interaction.user.mention} has retired and earned **{heirloom_gain} heirloom points**!\\n"
-            f"Total retirements: `{new_retire_count}` → Multiplier: `{multiplier:.2f}x`\\n"
-            f"All progress reset. Start your journey anew!\\n"
-            f"{bonus_note}"
-        )
+            leaderboard_text = "**🏆 Leaderboard**\n"
+            for i, result in enumerate(results, start=1):
+                user_id, exp, level, gold = result[0], result[1], result[2], result[3]
+                leaderboard_text += f"{i}. <@{user_id}> - Level {level}, EXP: {exp}, Gold: {gold}\n"
+            
+            await exp_channel.send(leaderboard_text)
 
-@bot.tree.command(name="stats", description="View your own stats (level, gold, EXP, retirements, etc.)")
-async def stats(interaction: discord.Interaction):
-    """Fetch and display user's stats"""
-    user_id = str(interaction.user.id)
-    with engine.connect() as conn:
-        query = players.select().where(players.c.user_id == user_id)
-        result = conn.execute(query).fetchone()
-        if not result:
-            await exp_channel.send("No stats found. Start participating to gain EXP!", ephemeral=True)
-            return
-        level, exp, gold, retirements, heirloom_points = result[2], result[1], result[3], result[5], result[6]
-        await exp_channel.send(
-            f"**{interaction.user.display_name}'s Stats**\n"
-            f"Level: {level}\nEXP: {exp}\nGold: {gold}\n"
-            f"Retirements: {retirements}\nHeirloom Points: {heirloom_points}",
-            ephemeral=False
-        )
 
-@bot.tree.command(name="profile", description="View another player's profile")
-@app_commands.describe(user="The user whose profile you want to see")
-async def profile(interaction: discord.Interaction, user: discord.User):
-    """Fetch and display another user's stats"""
-    user_id = str(user.id)
-    with engine.connect() as conn:
-        query = players.select().where(players.c.user_id == user_id)
-        result = conn.execute(query).fetchone()
-        if not result:
-            await exp_channel.send(f"{user.display_name} has no stats yet.", ephemeral=True)
-            return
-        level, exp, gold, retirements, heirloom_points = result[2], result[1], result[3], result[5], result[6]
-        await exp_channel.send(
-            f"**{user.display_name}'s Stats**\n"
-            f"Level: {level}\nEXP: {exp}\nGold: {gold}\n"
-            f"Retirements: {retirements}\nHeirloom Points: {heirloom_points}",
-            ephemeral=False
-        )
 
-@bot.tree.command(name="leaderboard", description="Show top 10 players by level, then EXP as a tiebreaker")
-async def leaderboard(interaction: discord.Interaction):
-    """Fetch and display the leaderboard"""
-    with engine.connect() as conn:
-        query = players.select().order_by(players.c.level.desc(), players.c.exp.desc()).limit(10)
-        results = conn.execute(query).fetchall()
-        
-        if not results:
-            await exp_channel.send("No players on the leaderboard yet.", ephemeral=False)
-            return
 
-        leaderboard_text = "**Leaderboard**\n"
-        for i, result in enumerate(results, start=1):
-            user_id, exp, level, gold = result[0], result[1], result[2], result[3]
-            leaderboard_text += f"{i}. <@{user_id}> - Level {level}, EXP: {exp}, Gold: {gold}\n"
-        
-        await exp_channel.send(leaderboard_text, ephemeral=False)
+    
 
 async def setup(bot):
     await bot.add_cog(ExpCommands(bot))
