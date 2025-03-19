@@ -140,7 +140,8 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
             exp_channel = message.guild.get_channel(EXP_CHANNEL_ID)
             if exp_channel:
                 await exp_channel.send(
-                    f"**{message.author.display_name}** gained ⚡ **{gained_exp} EXP** and 💰 **{gained_gold} gold**."
+                    f"**{message.author.display_name}** gained ⚡ **{gained_exp} EXP** and 💰 **{gained_gold} gold** "
+                    f"with a current multiplier of ❎ **{multiplier:.2f}x**."
                 )
 
             if new_level > result.level:
@@ -165,7 +166,8 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
             exp_channel = message.guild.get_channel(EXP_CHANNEL_ID)
             if exp_channel:
                 await exp_channel.send(
-                    f"**{message.author.display_name}** gained ⚡ **{gained_exp} EXP** and 💰 **{gained_gold} gold**."
+                    f"**{message.author.display_name}** gained ⚡ **{gained_exp} EXP** and 💰 **{gained_gold} gold** "
+                    f"with a current multiplier of ❎ **{multiplier:.2f}x**."
                 )
 
             if new_level > 0:
