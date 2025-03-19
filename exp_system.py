@@ -164,41 +164,39 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
 
 async def on_user_comment(user_id, bot):
     print("[DEBUG] on_user_comment triggered")
-    print(f"[DEBUG] EXP_CHANNEL_ID = {EXP_CHANNEL_ID}")
-    
     current_time = int(time.time())
     user_data = get_user_data(user_id)
 
     if user_data:
-        last_ts = user_data['last_activity']
+        last_activity = user_data['last_activity']
         current_multiplier = user_data['multiplier']
 
-        # Only proceed if it's been at least a day
-        if current_time - last_ts < TIME_DELTA and current_multiplier >= MAX_MULTIPLIER:
-            print(f"[DEBUG] Multiplier already at max or recently updated for user {user_id}")
-            return
+        # Get today's and last activity's dates as YYYY-MM-DD
+        last_activity_date = time.strftime('%Y-%m-%d', time.gmtime(last_activity))
+        current_date = time.strftime('%Y-%m-%d', time.gmtime(current_time))
 
-        new_multiplier = calculate_multiplier(last_ts, current_time, current_multiplier)
+        # Check if multiplier was already updated today
+        if last_activity_date == current_date:
+            print(f"[DEBUG] Multiplier already updated today for user {user_id}.")
+            return  # Already updated today; do nothing.
 
-        # Only update if multiplier actually changed
-        if new_multiplier == current_multiplier:
-            print(f"[DEBUG] Multiplier unchanged for user {user_id}, skipping update.")
-            return
+        # If inactive for over a day, reset multiplier; otherwise increment (max 5)
+        if current_time - last_activity >= TIME_DELTA:
+            new_multiplier = 1  # Reset multiplier due to inactivity
+        else:
+            new_multiplier = min(current_multiplier + 1, MAX_MULTIPLIER)
 
         update_user_data(user_id, new_multiplier, current_time)
 
         exp_channel = bot.get_channel(EXP_CHANNEL_ID)
-        print(f"[DEBUG] exp_channel = {exp_channel}")
         if exp_channel:
             await exp_channel.send(
-                f"🏔️ <@{user_id}>'s multiplier updated to **{new_multiplier:.2f}x** because of daily activity."
+                f"🏔️ <@{user_id}>'s multiplier updated to **{new_multiplier:.2f}x** due to daily posting."
             )
         else:
-            print("Failed to find the EXP channel.")
-
-        print(f"[DEBUG] User {user_id}'s multiplier updated to {new_multiplier}")
+            print("[ERROR] EXP channel not found.")
     else:
-        print(f"User {user_id} not found in database.")
+        print(f"[ERROR] User {user_id} not found in database.")
 
 
 async def check_and_reset_multiplier(user_id, bot):
