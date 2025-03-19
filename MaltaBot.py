@@ -31,7 +31,8 @@ bot = MaltaBot()
 @bot.event
 async def on_ready():
     print(f'{bot.user} has connected to Discord!')
-    await bot.tree.sync()
+    #Remove to prevent double sync.
+    #await bot.tree.sync()
     print("Command tree synced.")
 
 @bot.tree.command(name="post", description="Post a message and its images from a private channel to another channel.")
