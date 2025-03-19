@@ -308,7 +308,7 @@ class ExpCommands(commands.Cog):
         exp_channel = self.bot.get_channel(EXP_CHANNEL_ID)
         print(f"[READY] Bot is online. EXP Channel set to: {exp_channel}")
 
-    @app_commands.command(name="retire", description="Retire your character between levels 31-38 for heirloom bonuses.")
+    @app_commands.command(name="retire", description="⚗️ -  Retire your character between levels 31-38 for heirloom bonuses.")
     async def retire(self, interaction: discord.Interaction):
         await interaction.response.defer(thinking=False)  # Acknowledge the interaction early
 
@@ -374,7 +374,7 @@ class ExpCommands(commands.Cog):
                 )
 
 
-    @app_commands.command(name="stats", description="View your own stats (level, gold, EXP, etc.)")
+    @app_commands.command(name="stats", description="⚗️ -  View your own stats (level, gold, EXP, etc.)")
     async def stats(self, interaction: discord.Interaction):
         user_id = str(interaction.user.id)
 
@@ -401,7 +401,7 @@ class ExpCommands(commands.Cog):
 
 
 
-    @app_commands.command(name="profile", description="View another player's profile")
+    @app_commands.command(name="profile", description="⚗️ -  View another player's profile")
     @app_commands.describe(user="The user whose profile you want to see")
     async def profile(self, interaction: discord.Interaction, user: discord.User):
         user_id = str(user.id)
@@ -427,7 +427,7 @@ class ExpCommands(commands.Cog):
             )
 
 
-    @app_commands.command(name="leaderboard", description="Show top 10 players by generation, level, gold, and EXP.")
+    @app_commands.command(name="leaderboard", description="⚗️ - 📜 Show top 10 players by generation, level, gold, and EXP.")
     async def leaderboard(self, interaction: discord.Interaction):
         global last_leaderboard_timestamp
 
@@ -478,7 +478,7 @@ class ExpCommands(commands.Cog):
             await exp_channel.send(leaderboard_text)
             await interaction.response.send_message("Leaderboard posted in #discord-crpg.", ephemeral=True)
 
-    @app_commands.command(name="cooldown", description="Check how long until your next ⚡ experience & 💰 gold tick.")
+    @app_commands.command(name="cooldown", description="⚗️ - Check how long until your next ⚡ experience & 💰 gold tick.")
     async def cooldown(self, interaction: discord.Interaction):
         user_id = str(interaction.user.id)
         current_ts = time.time()

@@ -32,13 +32,15 @@ bot = MaltaBot()
 @bot.event
 async def on_ready():
     print(f'{bot.user} has connected to Discord!')
+    ###############################
     #Remove to prevent double sync.
-    await bot.tree.sync()
+    #await bot.tree.sync()
+    ###############################
     print("Command tree synced.")
 
-@bot.tree.command(name="post", description="Post a message and its images from a private channel to another channel.")
+@bot.tree.command(name="post", description="🔒 - Post a message and its images from a private channel to another channel.")
 @app_commands.describe(message_id="ID of the original message", destination_channel_id="ID of the destination channel")
-async def post(interaction: discord.Interaction, message_id: str, destination_channel_id: str):
+async def post(interaction: discord.Interaction, message_id: str, destination_channel_id: str):#
     member = interaction.user
     approved = any(role.name == APPROVED_ROLE_NAME for role in member.roles)
     if not approved:
@@ -73,7 +75,7 @@ async def post(interaction: discord.Interaction, message_id: str, destination_ch
     except Exception as e:
         await interaction.response.send_message(f"Failed to post message: {e}", ephemeral=True)
 
-@bot.tree.command(name="edit", description="Edit a previously posted message in a specific channel.")
+@bot.tree.command(name="edit", description="🔒 - Edit a previously posted message in a specific channel.")
 @app_commands.describe(destination_channel_id="ID of the channel where the message is posted", message_id="ID of the message to edit", new_content="The new message content")
 async def edit(interaction: discord.Interaction, destination_channel_id: str, message_id: str, new_content: str):
     member = interaction.user
@@ -98,7 +100,7 @@ async def edit(interaction: discord.Interaction, destination_channel_id: str, me
     except discord.HTTPException as e:
         await interaction.response.send_message(f"Failed to edit message: {e}", ephemeral=True)
 
-@bot.tree.command(name="ping", description="🏓 Check if the bot is online and responsive.")
+@bot.tree.command(name="ping", description="🔒 - 🛜 Check if the bot is online and responsive.")
 async def ping(interaction: discord.Interaction):
     member = interaction.user
     approved = any(role.name == APPROVED_ROLE_NAME for role in member.roles)
@@ -110,7 +112,7 @@ async def ping(interaction: discord.Interaction):
     latency_ms = round(bot.latency * 1000)
     await interaction.response.send_message(f"🛜 Responsive... Latency: `{latency_ms}ms`", ephemeral=True)
 
-@bot.tree.command(name="sync", description="🔄 Sync commands with Discord.")
+@bot.tree.command(name="sync", description="🔒 - 🔄 Sync commands with Discord.")
 async def sync(interaction: discord.Interaction):
     if interaction.user.id != OWNER_ID:
         await interaction.response.send_message("🚫 You are not authorized to use this command.", ephemeral=True)
@@ -119,7 +121,7 @@ async def sync(interaction: discord.Interaction):
     await bot.tree.sync(guild=discord.Object(id=GUILD_ID))
     await interaction.response.send_message("✅ Command tree synced.", ephemeral=True)
 
-@bot.tree.command(name="reload", description="🔄 Reload a bot extension (cog).")
+@bot.tree.command(name="reload", description="🔒 - 🔄 Reload a bot extension (cog).")
 @app_commands.describe(extension="Name of the extension (e.g., exp_system)")
 async def reload(interaction: discord.Interaction, extension: str):
     if interaction.user.id != OWNER_ID:
@@ -151,7 +153,7 @@ async def on_member_remove(member):
         await channel.send(farewell_message)
 
 
-@bot.tree.command(name="help", description="Shows available commands for Malta Bot.")
+@bot.tree.command(name="help", description="🛡️ - Shows available commands for Malta Bot.")
 async def help_command(interaction: discord.Interaction):
     help_text = (
         "# **🏴☩ Malta Bot Commands:**\n\n"
@@ -165,8 +167,8 @@ async def help_command(interaction: discord.Interaction):
         "⚗️ /stats - View your current level, EXP, gold, and retirement progress.\n\n"
         "⚗️ /profile <user> - View another player's profile.\n\n"
         "⚗️ /leaderboard - Show the top 10 players by level and EXP.\n\n"
-        "⚗️ /retire - Retire your character between levels 31-38 for permanent heirloom bonuses."
-        "⚗️ /cooldown - Check how much time remains before you can earn your next experience & gold tick."
+        "⚗️ /retire - Retire your character between levels 31-38 for permanent heirloom bonuses.\n\n"
+        "⚗️ /cooldown - Check how much time remains before you can earn your next experience & gold tick.\n\n"
         "## __TECHNICAL Commands__\n\n"
         "🛡️ /help - Show this help message.\n\n"
         )
