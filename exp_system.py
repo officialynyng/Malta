@@ -109,7 +109,7 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
 
     with engine.connect() as conn:
         result = conn.execute(db.select(players).where(players.c.user_id == user_id)).fetchone()
-        print(f"Updated user data: {updated_result}")
+        print(f"Updated user data: {result}")
 
         if result:
             print(f"User found in DB: {user_id}")  # Debugging line
