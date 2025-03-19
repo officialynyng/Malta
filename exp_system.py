@@ -339,11 +339,12 @@ class ExpCommands(commands.Cog):
                 await exp_channel.send(f"{interaction.user.mention} has no stats yet.")
                 return
 
-            level, exp, gold = result[2], result[1], result[3]
+            level, exp, gold, retirements, heirloom_points = result[2], result[1], result[3], result[5], result[6]
             exp_channel = self.bot.get_channel(exp_channel_id)
             await exp_channel.send(
-                f"📜 **Stats for {interaction.user.display_name}**\n"
-                f"Level: {level}\nEXP: {exp}\nGold: {gold}"
+                f"📜 Stats for **{interaction.user.display_name}'s Profile**\n"
+                f"Level: {level}\nEXP: {exp}\nGold: {gold}\n"
+                f"Generation: {retirements}\nHeirloom Points: {heirloom_points}"
             )
 
     @app_commands.command(name="profile", description="View another player's profile")
