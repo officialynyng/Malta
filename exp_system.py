@@ -103,7 +103,7 @@ def update_user_data(user_id, new_multiplier, last_activity_time):
 
 
 async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
-    print(f"Handling EXP gain for user: {message.author.id}")  # Debugging line
+    print(f"Handling EXP gain for user: {message.author.id}")
     if message.author.bot:
         return
 
@@ -112,11 +112,8 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
 
     with engine.connect() as conn:
         result = conn.execute(db.select(players).where(players.c.user_id == user_id)).fetchone()
-        print(f"Updated user data: {result}")
 
         if result:
-            print(f"User found in DB: {user_id}")  # Debugging line
-            print(f"Last message timestamp: {result.last_message_ts}")
             if current_ts - result.last_message_ts < EXP_COOLDOWN:
                 return
 
@@ -139,28 +136,41 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
             )
             conn.execute(update)
             conn.commit()
-        
+
+            exp_channel = message.guild.get_channel(EXP_CHANNEL_ID)
+            if exp_channel:
+                await exp_channel.send(
+                    f"**{message.author.display_name}** gained ⚡ **{gained_exp} EXP** and 💰 **{gained_gold} gold**."
+                )
 
             if new_level > result.level:
                 await announce_level_up(message.guild, message.author, new_level, level_up_channel_id)
         else:
-            print(f"User not found, inserting into DB: {user_id}")  # Debugging line
             multiplier = get_multiplier(0)
             new_level = calculate_level(EXP_PER_TICK)
+            gained_exp = int(EXP_PER_TICK * multiplier)
+            gained_gold = int(GOLD_PER_TICK * multiplier)
+
             conn.execute(players.insert().values(
                 user_id=user_id,
-                exp=int(EXP_PER_TICK * multiplier),
-                gold=int(GOLD_PER_TICK * multiplier),
+                exp=gained_exp,
+                gold=gained_gold,
                 level=new_level,
                 last_message_ts=current_ts,
                 retirements=0,
                 heirloom_points=0
             ))
-            print(f"Inserting new user {user_id} with EXP: {EXP_PER_TICK * multiplier}, Level: {new_level}")
             conn.commit()
+
+            exp_channel = message.guild.get_channel(EXP_CHANNEL_ID)
+            if exp_channel:
+                await exp_channel.send(
+                    f"**{message.author.display_name}** gained ⚡ **{gained_exp} EXP** and 💰 **{gained_gold} gold**."
+                )
 
             if new_level > 0:
                 await announce_level_up(message.guild, message.author, new_level, level_up_channel_id)
+
 
 async def on_user_comment(user_id, bot):
     print("[DEBUG] on_user_comment triggered")
@@ -253,7 +263,7 @@ async def award_xp_and_gold(user_id, base_xp, base_gold, bot):
 async def announce_level_up(guild: discord.Guild, member: discord.Member, level: int, channel_id: int):
     channel = guild.get_channel(channel_id)
     if channel:
-        await exp_channel.send(f"🎆 {member.mention} has reached **Level {level}**.")
+        await exp_channel.send(f"## 🎆 {member.mention} has reached **Level {level}**.")
 
 
 class ExpCommands(commands.Cog):
