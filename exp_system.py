@@ -109,9 +109,11 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
 
     with engine.connect() as conn:
         result = conn.execute(db.select(players).where(players.c.user_id == user_id)).fetchone()
+        print(f"Updated user data: {updated_result}")
 
         if result:
             print(f"User found in DB: {user_id}")  # Debugging line
+            print(f"Last message timestamp: {result.last_message_ts}")
             if current_ts - result.last_message_ts < EXP_COOLDOWN:
                 return
 
@@ -149,6 +151,8 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
                 retirements=0,
                 heirloom_points=0
             ))
+            print(f"Inserting new user {user_id} with EXP: {EXP_PER_TICK * multiplier}, Level: {new_level}")
+
             if new_level > 0:
                 await announce_level_up(message.guild, message.author, new_level, level_up_channel_id)
 
