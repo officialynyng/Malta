@@ -98,6 +98,18 @@ async def edit(interaction: discord.Interaction, destination_channel_id: str, me
     except discord.HTTPException as e:
         await interaction.response.send_message(f"Failed to edit message: {e}", ephemeral=True)
 
+@bot.tree.command(name="ping", description="🏓 Check if the bot is online and responsive.")
+async def ping(interaction: discord.Interaction):
+    member = interaction.user
+    approved = any(role.name == APPROVED_ROLE_NAME for role in member.roles)
+    
+    if not approved:
+        await interaction.response.send_message("🚫 You are not authorized to use this command.", ephemeral=True)
+        return
+
+    latency_ms = round(bot.latency * 1000)
+    await interaction.response.send_message(f"🛜 Responsive... Latency: `{latency_ms}ms`", ephemeral=True)
+
 @bot.tree.command(name="sync", description="🔄 Sync commands with Discord.")
 async def sync(interaction: discord.Interaction):
     if interaction.user.id != OWNER_ID:
@@ -119,6 +131,7 @@ async def reload(interaction: discord.Interaction, extension: str):
         await interaction.response.send_message(f"🔄 Extension `{extension}` reloaded successfully.", ephemeral=True)
     except Exception as e:
         await interaction.response.send_message(f"⚠️ Failed to reload `{extension}`:\n```{e}```", ephemeral=True)
+
 
 @bot.event
 async def on_member_join(member):
@@ -147,6 +160,7 @@ async def help_command(interaction: discord.Interaction):
         "🔒 /edit <channel_id> <message_id> <new_content> - Edit a previously posted message.\n\n"
         "🔒 `/reload <extension>` - Reload a bot extension (cog).\n\n"
         "🔒 `/sync` - Manually sync slash commands with Discord.\n\n"
+        "🔒 /ping - Check if the bot is online and responsive.\n\n"
         "___ ___ DISCORD CRPG Commands ___ ___\n\n"
         "⚗️ /stats - View your current level, EXP, gold, and retirement progress.\n\n"
         "⚗️ /profile <user> - View another player's profile.\n\n"
@@ -155,7 +169,6 @@ async def help_command(interaction: discord.Interaction):
         "⚗️ /cooldown - Check how much time remains before you can earn your next experience & gold tick."
         "___ ___ TECHNICAL Commands ___ ___\n\n"
         "🛡️ /help - Show this help message.\n\n"
-        "🛡️ /ping - Check if the bot is online and responsive.\n\n"
         )
     await interaction.response.send_message(help_text, ephemeral=True)
 
