@@ -172,21 +172,21 @@ async def on_member_remove(member):
 @bot.tree.command(name="help", description="🛡️ - Shows available commands for Malta Bot.")
 async def help_command(interaction: discord.Interaction):
     help_text = (
-        "# **🏴☩ Malta Bot Commands:**\n\n"
-        "## __PRIVELEDGE COMMANDS__\n\n"
+        "# **🏴☩ Malta Bot:**\n\n"
+        "## __[PRIVELEDGED]__ Commands__\n\n"
         "🔒 /post <message_id> <channel_id> - Post a previously approved message and its images to a target channel. @Divine\n\n"
         "🔒 /edit <channel_id> <message_id> <new_content> - Edit a previously posted message. @Divine\n\n"
         "🔒 /reload <extension> - Reload a bot extension (cog). @ynyng\n\n"
         "🔒 /sync - Manually sync slash commands with Discord. @ynyng\n\n"
         "🔒 /ping - Check if the bot is online and responsive. @ynyng\n\n"
         "🔒 /structure - View the current filestructure of the bot. @ynyng\n\n"
-        "## __DISCORD CRPG Commands__\n\n"
+        "## __[DISCORD CRPG]__ Commands\n\n"
         "⚗️ /stats - View your current level, EXP, gold, and retirement progress.\n\n"
         "⚗️ /profile <user> - View another player's profile.\n\n"
         "⚗️ /leaderboard - Show the top 10 players by level and EXP.\n\n"
         "⚗️ /retire - Retire your character between levels 31-38 for permanent heirloom bonuses.\n\n"
         "⚗️ /cooldown - Check how much time remains before you can earn your next experience & gold tick.\n\n"
-        "## __TECHNICAL Commands__\n\n"
+        "## __[TECHNICAL]__ Commands\n\n"
         "🛡️ /help - Show this help message.\n\n"
         )
     await interaction.response.send_message(help_text, ephemeral=True)
