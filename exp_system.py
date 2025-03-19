@@ -165,15 +165,24 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
 async def on_user_comment(user_id, bot):
     print("[DEBUG] on_user_comment triggered")
     print(f"[DEBUG] EXP_CHANNEL_ID = {EXP_CHANNEL_ID}")
+    
     current_time = int(time.time())
     user_data = get_user_data(user_id)
 
     if user_data:
-        new_multiplier = calculate_multiplier(user_data['last_activity'], current_time, user_data['multiplier'])
+        last_ts = user_data['last_activity']
+        current_multiplier = user_data['multiplier']
 
-        # 🚫 Don't spam updates if multiplier didn't change
-        if new_multiplier == user_data['multiplier']:
-            print(f"[DEBUG] Multiplier unchanged for user {user_id}, skipping post.")
+        # Only proceed if it's been at least a day
+        if current_time - last_ts < TIME_DELTA and current_multiplier >= MAX_MULTIPLIER:
+            print(f"[DEBUG] Multiplier already at max or recently updated for user {user_id}")
+            return
+
+        new_multiplier = calculate_multiplier(last_ts, current_time, current_multiplier)
+
+        # Only update if multiplier actually changed
+        if new_multiplier == current_multiplier:
+            print(f"[DEBUG] Multiplier unchanged for user {user_id}, skipping update.")
             return
 
         update_user_data(user_id, new_multiplier, current_time)
@@ -187,7 +196,7 @@ async def on_user_comment(user_id, bot):
         else:
             print("Failed to find the EXP channel.")
 
-        print(f"User {user_id}'s new multiplier: {new_multiplier}")
+        print(f"[DEBUG] User {user_id}'s multiplier updated to {new_multiplier}")
     else:
         print(f"User {user_id} not found in database.")
 
