@@ -21,10 +21,10 @@ class MaltaBot(commands.Bot):
     async def setup_hook(self):
         print("Loading ExpCommands cog...")
         guild = discord.Object(id=GUILD_ID)
-        self.tree.copy_global_to(guild=guild)
-        await self.tree.sync(guild=guild)
+        await self.tree.sync(guild=guild)  # Sync the commands with the guild directly
         await self.load_extension("exp_system")  # exp_system.py must be in the same directory
         print("ExpCommands cog loaded!")
+
 
 bot = MaltaBot()
 
