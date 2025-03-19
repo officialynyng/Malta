@@ -34,7 +34,7 @@ async def on_ready():
     print(f'{bot.user} has connected to Discord!')
     ###############################
     #Remove to prevent MANUAL sync.
-    #await bot.tree.sync()
+    await bot.tree.sync()
     ###############################
     print("Command tree synced.")
 
@@ -100,6 +100,22 @@ async def edit(interaction: discord.Interaction, destination_channel_id: str, me
     except discord.HTTPException as e:
         await interaction.response.send_message(f"Failed to edit message: {e}", ephemeral=True)
 
+@bot.tree.command(name="structure", description="🔒 - 📁 View the current bot file structure.")
+async def structure(interaction: discord.Interaction):
+    if interaction.user.id != OWNER_ID:
+        await interaction.response.send_message("🚫 You are not authorized to use this command.", ephemeral=True)
+        return
+
+    structure_text = (
+        "📁 **Current Project Structure**\n\n"
+        "├── `MaltaBot.py` *(main bot entry point)*\n"
+        "├── `exp_system.py` *(experience system cog)*\n"
+        "├── `requirements.txt` *(Python dependencies)*\n"
+        "└── `Procfile` *(Heroku process declaration)*"
+    )
+
+    await interaction.response.send_message(structure_text, ephemeral=True)
+
 @bot.tree.command(name="ping", description="🔒 - 🛜 Check if the bot is online and responsive.")
 async def ping(interaction: discord.Interaction):
     member = interaction.user
@@ -163,6 +179,7 @@ async def help_command(interaction: discord.Interaction):
         "🔒 /reload <extension> - Reload a bot extension (cog).\n\n"
         "🔒 /sync - Manually sync slash commands with Discord.\n\n"
         "🔒 /ping - Check if the bot is online and responsive.\n\n"
+        "🔒 /structure - View the current filestructure of the bot.\n\n"
         "## __DISCORD CRPG Commands__\n\n"
         "⚗️ /stats - View your current level, EXP, gold, and retirement progress.\n\n"
         "⚗️ /profile <user> - View another player's profile.\n\n"
