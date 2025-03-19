@@ -165,17 +165,20 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
 async def on_user_comment(user_id, bot):
     print("[DEBUG] on_user_comment triggered")
     print(f"[DEBUG] EXP_CHANNEL_ID = {EXP_CHANNEL_ID}")
-    current_time = int(time.time())  # Current UNIX timestamp
+    current_time = int(time.time())
     user_data = get_user_data(user_id)
 
     if user_data:
-        # Calculate the new multiplier
         new_multiplier = calculate_multiplier(user_data['last_activity'], current_time, user_data['multiplier'])
 
-        # Update the player's last activity time and multiplier in the database
+        # 🚫 Don't spam updates if multiplier didn't change
+        if new_multiplier == user_data['multiplier']:
+            print(f"[DEBUG] Multiplier unchanged for user {user_id}, skipping post.")
+            return
+
         update_user_data(user_id, new_multiplier, current_time)
 
-        exp_channel = bot.get_channel(EXP_CHANNEL_ID)  # Ensure EXP_CHANNEL_ID is defined
+        exp_channel = bot.get_channel(EXP_CHANNEL_ID)
         print(f"[DEBUG] exp_channel = {exp_channel}")
         if exp_channel:
             await exp_channel.send(
@@ -188,26 +191,23 @@ async def on_user_comment(user_id, bot):
     else:
         print(f"User {user_id} not found in database.")
 
-
 async def check_and_reset_multiplier(user_id, bot):
-    current_time = int(time.time())  # Current UNIX timestamp
+    current_time = int(time.time())
     user_data = get_user_data(user_id)
 
     if user_data:
-        # Check if 24 hours have passed since the last activity
-        if current_time - user_data['last_activity'] >= TIME_DELTA:
-            # Reset the multiplier
-            update_user_data(user_id, 0, user_data['last_activity'])
-            exp_channel = bot.get_channel(EXP_CHANNEL_ID)  # Ensure you have defined EXP_CHANNEL_ID globally or passed it
+        time_since_last = current_time - user_data['last_activity']
+        if time_since_last >= TIME_DELTA:
+            # Update both multiplier and last_message_ts
+            update_user_data(user_id, 0, current_time)
+            exp_channel = bot.get_channel(EXP_CHANNEL_ID)
             if exp_channel:
                 await exp_channel.send(
                     f"🌋 <@{user_id}>'s multiplier has been reset due to inactivity."
                 )
             else:
                 print("Failed to find the EXP channel.")
-            print(f"User {user_id}'s multiplier has been reset due to inactivity.")
-
-
+            print(f"[DEBUG] Multiplier reset for {user_id} after {time_since_last} seconds.")
 
 async def award_xp_and_gold(user_id, base_xp, base_gold, bot):
     user_data = get_user_data(user_id)
@@ -310,7 +310,7 @@ class ExpCommands(commands.Cog):
 
             if result.level < 31 or result.level > 38:
                 if exp_channel:
-                    await exp_channel.send("You can only retire between levels 31 - 38.")
+                    await exp_channel.send("You can only retire between levels 31 - 38.", ephemeral=True)
                 return
 
             if exp_channel:
