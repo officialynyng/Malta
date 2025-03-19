@@ -429,7 +429,7 @@ class ExpCommands(commands.Cog):
                 leaderboard_text += f"{i}. <@{user_id}> - Level {level}, EXP: {exp}, Gold: {gold}\n"
 
             await exp_channel.send(leaderboard_text)
-            await interaction.response.send_message("Leaderboard posted in the EXP channel.", ephemeral=False)
+            await interaction.response.send_message("Leaderboard posted in #discord-crpg.", ephemeral=True)
 
 
 
