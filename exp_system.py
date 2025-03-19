@@ -73,7 +73,7 @@ def calculate_multiplier(last_activity_time, current_time, current_multiplier):
 
 def get_user_data(user_id):
     # Fetch user data from the database (last activity and current multiplier)
-    with db.engine.connect() as conn:
+    with engine.connect() as conn:
         result = conn.execute(select([players.c.last_message_ts, players.c.multiplier])
                               .where(players.c.user_id == user_id))
         
@@ -93,7 +93,7 @@ def get_user_data(user_id):
 
 def update_user_data(user_id, new_multiplier, last_activity_time):
     # Update the player's data in the database with the new multiplier and last activity timestamp
-    with db.engine.connect() as conn:
+    with engine.connect() as conn:
         conn.execute(players.update().where(players.c.user_id == user_id).values(
             multiplier=new_multiplier,
             last_message_ts=last_activity_time
@@ -218,7 +218,7 @@ async def award_xp_and_gold(user_id, base_xp, base_gold, bot):
         print(f"Awarded {xp_awarded} XP and {gold_awarded} gold to user <@{user_id}> - Multiplier: {multiplier}")
 
         # Update the XP and gold in the database
-        with db.engine.connect() as conn:
+        with engine.connect() as conn:
             update_query = players.update().where(players.c.user_id == user_id).values(
                 exp=user_data['exp'] + xp_awarded,
                 gold=user_data['gold'] + gold_awarded
