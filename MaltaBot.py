@@ -19,16 +19,20 @@ class MaltaBot(commands.Bot):
         super().__init__(command_prefix="!", intents=INTENTS)
 
     async def setup_hook(self):
+        print("Loading ExpCommands cog...")
         guild = discord.Object(id=GUILD_ID)
         self.tree.copy_global_to(guild=guild)
         await self.tree.sync(guild=guild)
         await self.load_extension("exp_system")  # exp_system.py must be in the same directory
+        print("ExpCommands cog loaded!")
 
 bot = MaltaBot()
 
 @bot.event
 async def on_ready():
     print(f'{bot.user} has connected to Discord!')
+    await bot.tree.sync()
+    print("Command tree synced.")
 
 @bot.tree.command(name="post", description="Post a message and its images from a private channel to another channel.")
 @app_commands.describe(message_id="ID of the original message", destination_channel_id="ID of the destination channel")

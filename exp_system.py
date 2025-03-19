@@ -225,7 +225,7 @@ class ExpCommands(commands.Cog):
 
     @app_commands.command(name="ping", description="Ping the bot to check if it's online.")
     async def ping(self, interaction: discord.Interaction):
-        await interaction.response.send_message("Pong from EXP system!")
+        await interaction.response.send_message("Ping back from EXP system.")
     
 
     @app_commands.command(name="retire", description="Retire your character between levels 31-38 for heirloom bonuses.")
@@ -339,10 +339,7 @@ class ExpCommands(commands.Cog):
             
             await exp_channel.send(leaderboard_text)
 
-
-
-
-
-
 async def setup(bot):
+    print("Loading ExpCommands cog...")
     await bot.add_cog(ExpCommands(bot))
+    print("ExpCommands cog loaded!")
