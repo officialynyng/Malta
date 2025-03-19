@@ -119,14 +119,18 @@ async def on_member_remove(member):
 async def help_command(interaction: discord.Interaction):
     help_text = (
         "**🏴☩ Malta Bot Commands:**\n\n"
-        "⚗️ /post [PRIVELEDGED ACCESS] <message_id> <channel_id> - Post a previously approved message and its images to a target channel.\n\n"
-        "⚗️ /edit [PRIVELEDGED ACCESS] <channel_id> <message_id> <new_content> - Edit a previously posted message.\n\n"
-        "⚗️ /help - Show this help message.\n\n"
+        "___ ___ PRIVELEDGE COMMANDS ___ ___\n\n"
+        "🔒 /post <message_id> <channel_id> - Post a previously approved message and its images to a target channel.\n\n"
+        "🔒 /edit <channel_id> <message_id> <new_content> - Edit a previously posted message.\n\n"
+        "___ ___ DISCORD CRPG Commands ___ ___\n\n"
+        "⚗️ /stats - View your current level, EXP, gold, and retirement progress.\n\n"
+        "⚗️ /profile <user> - View another player's profile.\n\n"
+        "⚗️ /leaderboard - Show the top 10 players by level and EXP.\n\n"
+        "⚗️ /retire - Retire your character between levels 31-38 for permanent heirloom bonuses."
+        "⚗️ /cooldown - Check how much time remains before you can earn your next experience & gold tick."
+        "___ ___ TECHNICAL Commands ___ ___\n\n"
+        "🛡️ /help - Show this help message.\n\n"
         "🛡️ /ping - Check if the bot is online and responsive.\n\n"
-        "🛡️ /stats - View your current level, EXP, gold, and retirement progress.\n\n"
-        "🛡️ /profile <user> - View another player's profile.\n\n"
-        "🛡️ /leaderboard - Show the top 10 players by level and EXP.\n\n"
-        "🛡️ /retire - Retire your character between levels 31-38 for permanent heirloom bonuses."
         )
     await interaction.response.send_message(help_text, ephemeral=True)
 
