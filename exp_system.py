@@ -159,7 +159,7 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
             if new_level > 0:
                 await announce_level_up(message.guild, message.author, new_level, level_up_channel_id)
 
-def on_user_comment(user_id):
+async def on_user_comment(user_id, bot):
     current_time = int(time.time())  # Current UNIX timestamp
     user_data = get_user_data(user_id)
 
@@ -170,11 +170,20 @@ def on_user_comment(user_id):
         # Update the player's last activity time and multiplier in the database
         update_user_data(user_id, new_multiplier, current_time)
 
+        exp_channel = bot.get_channel(EXP_CHANNEL_ID)  # Ensure EXP_CHANNEL_ID is defined
+        if exp_channel:
+            await exp_channel.send(
+                f"🏔️ <@{user_id}>'s multiplier updated to **{new_multiplier:.2f}x** due to recent activity."
+            )
+        else:
+            print("Failed to find the EXP channel.")
+
         print(f"User {user_id}'s new multiplier: {new_multiplier}")
     else:
         print(f"User {user_id} not found in database.")
 
-def check_and_reset_multiplier(user_id):
+
+async def check_and_reset_multiplier(user_id, bot):
     current_time = int(time.time())  # Current UNIX timestamp
     user_data = get_user_data(user_id)
 
@@ -183,23 +192,48 @@ def check_and_reset_multiplier(user_id):
         if current_time - user_data['last_activity'] >= TIME_DELTA:
             # Reset the multiplier
             update_user_data(user_id, 0, user_data['last_activity'])
+            exp_channel = bot.get_channel(EXP_CHANNEL_ID)  # Ensure you have defined EXP_CHANNEL_ID globally or passed it
+            if exp_channel:
+                await exp_channel.send(
+                    f"🌋 <@{user_id}>'s multiplier has been reset due to inactivity."
+                )
+            else:
+                print("Failed to find the EXP channel.")
             print(f"User {user_id}'s multiplier has been reset due to inactivity.")
 
 
-def award_xp(user_id, base_xp):
+
+async def award_xp_and_gold(user_id, base_xp, base_gold, bot):
     user_data = get_user_data(user_id)
     if user_data:
         multiplier = user_data['multiplier']
+        xp_awarded = int(base_xp * multiplier)  # Apply multiplier to base XP
+        gold_awarded = int(base_gold * multiplier)  # Apply multiplier to base gold
 
-        # Multiply the XP by the multiplier
-        xp_awarded = base_xp * multiplier
-        print(f"Awarded {xp_awarded} XP to user <@{user_id}> - Multiplier of {multiplier}.")
-        
-        # Logic to update the XP in the database
+        # Print to console for debugging
+        print(f"Awarded {xp_awarded} XP and {gold_awarded} gold to user <@{user_id}> - Multiplier: {multiplier}")
+
+        # Update the XP and gold in the database
         with db.engine.connect() as conn:
-            conn.execute(players.update().where(players.c.user_id == user_id).values(
-                exp=user_data['exp'] + xp_awarded
-            ))
+            update_query = players.update().where(players.c.user_id == user_id).values(
+                exp=user_data['exp'] + xp_awarded,
+                gold=user_data['gold'] + gold_awarded
+            )
+            conn.execute(update_query)
+            conn.commit()  # Ensure changes are committed to the database
+
+        # Send a message to the designated Discord channel about the XP and gold update
+        exp_channel = bot.get_channel(EXP_CHANNEL_ID)  # Ensure you have defined EXP_CHANNEL_ID globally or passed it
+        if exp_channel:
+            await exp_channel.send(
+                f"<@{user_id}> has been awarded ⚡ {xp_awarded} XP and 💰 {gold_awarded} gold. "
+                f"Total XP is now ⚡ {user_data['exp'] + xp_awarded}, and total gold is 💰 {user_data['gold'] + gold_awarded}. "
+                f"Multiplier applied: ❎ {multiplier}x."
+            )
+        else:
+            print("Failed to connect to Database for User.")
+
+
 
 
 async def announce_level_up(guild: discord.Guild, member: discord.Member, level: int, channel_id: int):
@@ -235,7 +269,7 @@ class ExpCommands(commands.Cog):
 
     @app_commands.command(name="ping", description="Ping the bot to check if it's online.")
     async def ping(self, interaction: discord.Interaction):
-        await interaction.response.send_message("Ping back from EXP system.")
+        await interaction.response.send_message("Ping back from Malta system.")
     
 
     @app_commands.command(name="retire", description="Retire your character between levels 31-38 for heirloom bonuses.")
@@ -273,14 +307,13 @@ class ExpCommands(commands.Cog):
             if new_retire_count > 16:
                 bonus_note = "⚖️ Multiplier is capped at 1.48x, but you still can earn heirloom point(s)."
 
-            with engine.connect() as conn:
-                conn.execute(players.update().where(players.c.user_id == user_id).values(
-                    exp=0,
-                    level=0,
-                    retirements=new_retire_count,
-                    heirloom_points=new_total_heirlooms
-                ))
-                conn.commit()
+            conn.execute(players.update().where(players.c.user_id == user_id).values(
+                exp=0,
+                level=0,
+                retirements=new_retire_count,
+                heirloom_points=new_total_heirlooms
+            ))
+            conn.commit()
 
             await exp_channel.send(
                 f"🎖️ {interaction.user.mention} has retired and earned **{heirloom_gain} heirloom points**!\\n"
@@ -288,58 +321,69 @@ class ExpCommands(commands.Cog):
                 f"All progress reset. Start your journey anew!\\n"
                 f"{bonus_note}"
             )
-    @app_commands.command(name="stats", description="View your own stats (level, gold, EXP, generation, etc.)")
+
+        # End the command without sending any message in the command-invoking channel
+        await interaction.response.defer()
+
+    @app_commands.command(name="stats", description="View your own stats (level, gold, EXP, etc.)")
     async def stats(self, interaction: discord.Interaction):
-        await interaction.response.defer(thinking=False)  # 👈 prevents timeout
         user_id = str(interaction.user.id)
+        exp_channel_id = EXP_CHANNEL_ID
+
         with engine.connect() as conn:
             query = players.select().where(players.c.user_id == user_id)
             result = conn.execute(query).fetchone()
 
             if not result:
+                exp_channel = self.bot.get_channel(exp_channel_id)
                 await exp_channel.send(f"{interaction.user.mention} has no stats yet.")
                 return
 
-            level, exp, gold, retirements, heirloom_points = result[2], result[1], result[3], result[5], result[6]
-
+            level, exp, gold = result['level'], result['exp'], result['gold']
+            exp_channel = self.bot.get_channel(exp_channel_id)
             await exp_channel.send(
-                f"📜 **{interaction.user.display_name}'s Stats**\n"
-                f"Level: {level}\nEXP: {exp}\nGold: {gold}\n"
-                f"Generation: {retirements}\nHeirloom Points: {heirloom_points}"
+                f"📜 **Stats for {interaction.user.display_name}**\n"
+                f"Level: {level}\nEXP: {exp}\nGold: {gold}"
             )
 
     @app_commands.command(name="profile", description="View another player's profile")
     @app_commands.describe(user="The user whose profile you want to see")
     async def profile(self, interaction: discord.Interaction, user: discord.User):
-        await interaction.response.defer(thinking=True)
-
         user_id = str(user.id)
+        exp_channel_id = EXP_CHANNEL_ID  # Make sure this is defined with the right channel ID for "discord-crpg"
+
         with engine.connect() as conn:
             query = players.select().where(players.c.user_id == user_id)
             result = conn.execute(query).fetchone()
 
             if not result:
+                exp_channel = self.bot.get_channel(exp_channel_id)
                 await exp_channel.send(f"{user.display_name} has no stats yet.")
                 return
 
             level, exp, gold, retirements, heirloom_points = result[2], result[1], result[3], result[5], result[6]
-
+            exp_channel = self.bot.get_channel(exp_channel_id)
             await exp_channel.send(
                 f"📜 **{user.display_name}'s Profile**\n"
                 f"Level: {level}\nEXP: {exp}\nGold: {gold}\n"
                 f"Generation: {retirements}\nHeirloom Points: {heirloom_points}"
             )
 
+        # Notify the command was executed successfully and where the results can be viewed
+        await interaction.response.defer()
+
+
 
     @app_commands.command(name="leaderboard", description="Show top 10 players by level, then EXP as a tiebreaker")
     async def leaderboard(self, interaction: discord.Interaction):
-        await interaction.response.defer(thinking=True)
+        exp_channel_id = EXP_CHANNEL_ID  # Ensure this is defined with the correct channel ID for "discord-crpg"
 
         with engine.connect() as conn:
             query = players.select().order_by(players.c.level.desc(), players.c.exp.desc()).limit(10)
             results = conn.execute(query).fetchall()
-            
+
             if not results:
+                exp_channel = self.bot.get_channel(exp_channel_id)
                 await exp_channel.send("No players on the leaderboard yet.")
                 return
 
@@ -347,8 +391,13 @@ class ExpCommands(commands.Cog):
             for i, result in enumerate(results, start=1):
                 user_id, exp, level, gold = result[0], result[1], result[2], result[3]
                 leaderboard_text += f"{i}. <@{user_id}> - Level {level}, EXP: {exp}, Gold: {gold}\n"
-            
+
+            exp_channel = self.bot.get_channel(exp_channel_id)
             await exp_channel.send(leaderboard_text)
+
+        # Notify the command was executed successfully and where the results can be viewed
+        await interaction.response.defer()
+
 
 async def setup(bot):
     print("Loading ExpCommands cog...")
