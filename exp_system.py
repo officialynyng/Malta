@@ -301,12 +301,15 @@ class ExpCommands(commands.Cog):
             print(f"[ERROR] Exception in on_message: {e}")
 
 
-###############################
     @commands.Cog.listener()
     async def on_ready(self):
         global exp_channel
         exp_channel = self.bot.get_channel(EXP_CHANNEL_ID)
         print(f"[READY] Bot is online. EXP Channel set to: {exp_channel}")
+
+class CRPGGroup(app_commands.Group):
+    def __init__(self):
+        super().__init__(name="crpg", description="CRPG system commands.")
 
     @app_commands.command(name="retire", description="⚗️ -  Retire your character between levels 31-38 for heirloom bonuses.")
     async def retire(self, interaction: discord.Interaction):
@@ -493,7 +496,7 @@ class ExpCommands(commands.Cog):
                 if remaining_cooldown > 0:
                     minutes, seconds = divmod(int(remaining_cooldown), 60)
                     await interaction.response.send_message(
-                        f"⏳ You have **{minutes}m {seconds}s** left until your next available ⚡ experience & 💰 gold tick.",
+                        f"⏳ You have **{minutes}minutes & {seconds}seconds** left until your next available ⚡ experience & 💰 gold tick.",
                         ephemeral=True
                     )
                 else:
@@ -512,4 +515,6 @@ class ExpCommands(commands.Cog):
 async def setup(bot):
     print("Loading ExpCommands cog...")
     await bot.add_cog(ExpCommands(bot))
-    print("ExpCommands cog loaded!")
+    crpg_group = CRPGGroup()
+    bot.tree.add_command(crpg_group)
+    print("ExpCommands cog and CRPGGroup commands loaded!")

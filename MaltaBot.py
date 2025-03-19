@@ -172,8 +172,8 @@ async def on_member_remove(member):
 @bot.tree.command(name="help", description="🛡️ - Shows available commands for Malta Bot.")
 async def help_command(interaction: discord.Interaction):
     help_text = (
-        "# **🏴☩ Malta Bot:**\n\n"
-        "## __[PRIVELEDGED]__ Commands__\n\n"
+        "# **🏴☩ Malta Bot**\n\n"
+        "## __[PRIVELEDGED]__ Commands\n\n"
         "🔒 /post <message_id> <channel_id> - Post a previously approved message and its images to a target channel. @Divine\n\n"
         "🔒 /edit <channel_id> <message_id> <new_content> - Edit a previously posted message. @Divine\n\n"
         "🔒 /reload <extension> - Reload a bot extension (cog). @ynyng\n\n"
