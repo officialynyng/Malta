@@ -98,6 +98,15 @@ async def edit(interaction: discord.Interaction, destination_channel_id: str, me
     except discord.HTTPException as e:
         await interaction.response.send_message(f"Failed to edit message: {e}", ephemeral=True)
 
+@bot.tree.command(name="sync", description="🔄 Sync commands with Discord.")
+async def sync(interaction: discord.Interaction):
+    if interaction.user.id != OWNER_ID:
+        await interaction.response.send_message("🚫 You are not authorized to use this command.", ephemeral=True)
+        return
+
+    await bot.tree.sync(guild=discord.Object(id=GUILD_ID))
+    await interaction.response.send_message("✅ Command tree synced.", ephemeral=True)
+
 @bot.tree.command(name="reload", description="🔄 Reload a bot extension (cog).")
 @app_commands.describe(extension="Name of the extension (e.g., exp_system)")
 async def reload(interaction: discord.Interaction, extension: str):
@@ -136,6 +145,8 @@ async def help_command(interaction: discord.Interaction):
         "___ ___ PRIVELEDGE COMMANDS ___ ___\n\n"
         "🔒 /post <message_id> <channel_id> - Post a previously approved message and its images to a target channel.\n\n"
         "🔒 /edit <channel_id> <message_id> <new_content> - Edit a previously posted message.\n\n"
+        "🔒 `/reload <extension>` - Reload a bot extension (cog).\n\n"
+        "🔒 `/sync` - Manually sync slash commands with Discord.\n\n"
         "___ ___ DISCORD CRPG Commands ___ ___\n\n"
         "⚗️ /stats - View your current level, EXP, gold, and retirement progress.\n\n"
         "⚗️ /profile <user> - View another player's profile.\n\n"
