@@ -260,10 +260,6 @@ class ExpCommands(commands.Cog):
                 print("[DEBUG] Ignored bot message")
                 return
 
-            if message.channel.id != EXP_CHANNEL_ID:
-                print(f"[DEBUG] Wrong channel: {message.channel.id} ≠ {EXP_CHANNEL_ID}")
-                return
-
             print("[DEBUG] Passed checks, handling EXP gain")
             await handle_exp_gain(message, EXP_CHANNEL_ID)
 
