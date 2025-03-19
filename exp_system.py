@@ -309,7 +309,13 @@ class ExpCommands(commands.Cog):
 
 class CRPGGroup(app_commands.Group):
     def __init__(self):
-        super().__init__(name="crpg", description="CRPG system commands.")
+        self.bot = bot
+
+    async def setup(self):
+        # This method will be called when the cog is loaded
+        crpg_group = CRPGGroup()
+        self.bot.tree.add_command(crpg_group)
+        print("CRPG commands added.")
 
     @app_commands.command(name="retire", description="⚗️ -  Retire your character between levels 31-38 for heirloom bonuses.")
     async def retire(self, interaction: discord.Interaction):
@@ -515,6 +521,5 @@ class CRPGGroup(app_commands.Group):
 async def setup(bot):
     print("Loading ExpCommands cog...")
     await bot.add_cog(ExpCommands(bot))
-    crpg_group = CRPGGroup()
-    bot.tree.add_command(crpg_group)
+    await bot.add_cog(CRPGCommands(bot))
     print("ExpCommands cog and CRPGGroup commands loaded!")
