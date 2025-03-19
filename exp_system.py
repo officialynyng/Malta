@@ -201,7 +201,22 @@ async def announce_level_up(guild: discord.Guild, member: discord.Member, level:
 class ExpCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+##############################
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        print(f"[DEBUG] Message received in #{message.channel.name} by {message.author} (channel ID: {message.channel.id})")
 
+        if message.author.bot:
+            print("[DEBUG] Ignored bot message")
+            return
+
+        if message.channel.id != EXP_CHANNEL_ID:
+            print(f"[DEBUG] Wrong channel: {message.channel.id} ≠ {EXP_CHANNEL_ID}")
+            return
+
+        print("[DEBUG] Passed checks, handling EXP gain")
+        await handle_exp_gain(message, EXP_CHANNEL_ID)
+###############################
     @commands.Cog.listener()
     async def on_ready(self):
         global exp_channel
