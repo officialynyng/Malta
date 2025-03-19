@@ -8,6 +8,7 @@ import sqlalchemy as db
 from sqlalchemy.sql import select
 
 EXP_CHANNEL_ID = int(os.getenv("EXP_CHANNEL_ID"))
+print(f"[DEBUG] EXP_CHANNEL_ID loaded as: {EXP_CHANNEL_ID}")
 DATABASE_URL = os.getenv("DATABASE_URL")
 # Patch the URL so SQLAlchemy accepts it
 if DATABASE_URL.startswith("postgres://"):
@@ -160,6 +161,8 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
                 await announce_level_up(message.guild, message.author, new_level, level_up_channel_id)
 
 async def on_user_comment(user_id, bot):
+    print("[DEBUG] on_user_comment triggered")
+    print(f"[DEBUG] EXP_CHANNEL_ID = {EXP_CHANNEL_ID}")
     current_time = int(time.time())  # Current UNIX timestamp
     user_data = get_user_data(user_id)
 
@@ -171,6 +174,7 @@ async def on_user_comment(user_id, bot):
         update_user_data(user_id, new_multiplier, current_time)
 
         exp_channel = bot.get_channel(EXP_CHANNEL_ID)  # Ensure EXP_CHANNEL_ID is defined
+        print(f"[DEBUG] exp_channel = {exp_channel}")
         if exp_channel:
             await exp_channel.send(
                 f"🏔️ <@{user_id}>'s multiplier updated to **{new_multiplier:.2f}x** due to recent activity."
@@ -336,7 +340,7 @@ class ExpCommands(commands.Cog):
 
             if exp_channel:
                 await exp_channel.send(
-                    f"🎖️ {interaction.user.mention} has retired and earned **{heirloom_gain} heirloom points**!\n"
+                    f"🎖️ {interaction.user.mention} has retired and earned 🪙 **{heirloom_gain} heirloom point(s)**!\n"
                     f"Total retirements: `{new_retire_count}` → Multiplier: `{multiplier:.2f}x`\n"
                     f"All progress reset. Start your journey anew!\n"
                     f"{bonus_note}"
@@ -363,8 +367,8 @@ class ExpCommands(commands.Cog):
 
             await interaction.response.send_message(
                 f"📜 Stats for **{interaction.user.display_name}'s Profile**\n"
-                f"Level: {level}\nEXP: {exp}\nGold: {gold}\n"
-                f"Generation: {retirements}\nHeirloom Points: {heirloom_points}",
+                f"🧬 Level: {level}\n⚡ EXP: {exp}\n💰 Gold: {gold}\n"
+                f"🌱 Generation: {retirements}\n🪙 Heirloom Points: {heirloom_points}",
                 ephemeral=True
             )
 
@@ -390,13 +394,13 @@ class ExpCommands(commands.Cog):
 
             await interaction.response.send_message(
                 f"📜 **{user.display_name}'s Profile**\n"
-                f"Level: {level}\nEXP: {exp}\nGold: {gold}\n"
-                f"Generation: {retirements}\nHeirloom Points: {heirloom_points}",
+                f"🧬 Level: {level}\n⚡ EXP: {exp}\n💰 Gold: {gold}\n"
+                f"🌱 Generation: {retirements}\n🪙 Heirloom Points: {heirloom_points}",
                 ephemeral=True
             )
 
 
-    @app_commands.command(name="leaderboard", description="Show top 10 players by level, then EXP as a tiebreaker")
+    @app_commands.command(name="leaderboard", description="Show top 10 players by generation, level, gold, and EXP.")
     async def leaderboard(self, interaction: discord.Interaction):
         global last_leaderboard_timestamp
 
@@ -411,16 +415,21 @@ class ExpCommands(commands.Cog):
             )
             return
 
-        last_leaderboard_timestamp = now  # Update cooldown timestamp
+        last_leaderboard_timestamp = now
 
         exp_channel = self.bot.get_channel(EXP_CHANNEL_ID)
 
         if not exp_channel:
-            await interaction.response.send_message("Please perform this action in #discord-crpg.", ephemeral=False)
+            await interaction.response.send_message("Please perform this action in #discord-crpg.", ephemeral=True)
             return
 
         with engine.connect() as conn:
-            query = players.select().order_by(players.c.level.desc(), players.c.exp.desc()).limit(10)
+            query = players.select().order_by(
+                players.c.retirements.desc(),
+                players.c.level.desc(),
+                players.c.gold.desc(),
+                players.c.exp.desc()
+            ).limit(10)
             results = conn.execute(query).fetchall()
 
             if not results:
@@ -428,13 +437,20 @@ class ExpCommands(commands.Cog):
                 await interaction.response.send_message("Leaderboard posted.", ephemeral=True)
                 return
 
-            leaderboard_text = "**📜 Leaderboard**\n"
+            leaderboard_text = "**📜 Leaderboard** *(Generation → Level → Gold → EXP)*\n"
             for i, result in enumerate(results, start=1):
-                user_id, exp, level, gold = result[0], result[1], result[2], result[3]
-                leaderboard_text += f"{i}. <@{user_id}> - Level {level}, EXP: {exp}, Gold: {gold}\n"
+                user_id = result.user_id
+                exp = result.exp
+                level = result.level
+                gold = result.gold
+                retirements = result.retirements
+                leaderboard_text += (
+                    f"{i}. <@{user_id}> - 🌱 Generation {retirements}, 🧬 Level {level}, 💰 {gold} gold, ⚡ {exp} EXP\n"
+                )
 
             await exp_channel.send(leaderboard_text)
             await interaction.response.send_message("Leaderboard posted in #discord-crpg.", ephemeral=True)
+
 
 
 
