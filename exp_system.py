@@ -200,6 +200,7 @@ async def on_user_comment(user_id, bot):
     else:
         print(f"User {user_id} not found in database.")
 
+
 async def check_and_reset_multiplier(user_id, bot):
     current_time = int(time.time())
     user_data = get_user_data(user_id)
@@ -273,21 +274,20 @@ class ExpCommands(commands.Cog):
 
             user_id = str(message.author.id)
 
-            print("[DEBUG] Passed checks, handling EXP gain")
+            # Handle EXP + Leveling
             await handle_exp_gain(message, EXP_CHANNEL_ID)
 
-            print("[DEBUG] Updating multiplier")
+            # 🔒 Multiplier logic - Only update once per 24h (handled internally)
             await on_user_comment(user_id, self.bot)
 
-            print("[DEBUG] Checking for multiplier reset")
-            await check_and_reset_multiplier(user_id, self.bot)
+            # ❌ REMOVE: check_and_reset_multiplier() — that's already baked into on_user_comment now
 
-            # Optional: give bonus XP/gold for participation
-            print("[DEBUG] Awarding base XP/gold")
-            await award_xp_and_gold(user_id, base_xp=0, base_gold=0, bot=self.bot)
+            # 🔄 Optional passive gain
+            # await award_xp_and_gold(user_id, base_xp=0, base_gold=0, bot=self.bot)
 
         except Exception as e:
             print(f"[ERROR] Exception in on_message: {e}")
+
 
 ###############################
     @commands.Cog.listener()
