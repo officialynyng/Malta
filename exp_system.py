@@ -191,7 +191,7 @@ async def on_user_comment(user_id, bot):
         print(f"[DEBUG] exp_channel = {exp_channel}")
         if exp_channel:
             await exp_channel.send(
-                f"🏔️ <@{user_id}>'s multiplier updated to **{new_multiplier:.2f}x** due to recent activity."
+                f"🏔️ <@{user_id}>'s multiplier updated to **{new_multiplier:.2f}x** because of daily activity."
             )
         else:
             print("Failed to find the EXP channel.")
