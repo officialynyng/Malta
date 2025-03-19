@@ -7,6 +7,7 @@ import os
 TOKEN = os.getenv("TOKEN")
 GUILD_ID = int(os.getenv("GUILD_ID"))
 APPROVED_ROLE_NAME = os.getenv("APPROVED_ROLE_NAME")
+OWNER_ID = YOUR_DISCORD_ID_HERE
 WELCOME_CHANNEL_ID = int(os.getenv("WELCOME_CHANNEL_ID"))  # Set this in your environment variables
 INTENTS = discord.Intents.default()
 INTENTS.messages = True
@@ -96,6 +97,19 @@ async def edit(interaction: discord.Interaction, destination_channel_id: str, me
         await interaction.response.send_message("I don't have permission to edit that message.", ephemeral=True)
     except discord.HTTPException as e:
         await interaction.response.send_message(f"Failed to edit message: {e}", ephemeral=True)
+
+@bot.tree.command(name="reload", description="🔄 Reload a bot extension (cog).")
+@app_commands.describe(extension="Name of the extension (e.g., exp_system)")
+async def reload(interaction: discord.Interaction, extension: str):
+    if interaction.user.id != OWNER_ID:
+        await interaction.response.send_message("🚫 You are not authorized to use this command.", ephemeral=True)
+        return
+
+    try:
+        await bot.reload_extension(extension)
+        await interaction.response.send_message(f"🔄 Extension `{extension}` reloaded successfully.", ephemeral=True)
+    except Exception as e:
+        await interaction.response.send_message(f"⚠️ Failed to reload `{extension}`:\n```{e}```", ephemeral=True)
 
 @bot.event
 async def on_member_join(member):
