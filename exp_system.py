@@ -339,7 +339,7 @@ class ExpCommands(commands.Cog):
                 await exp_channel.send(f"{interaction.user.mention} has no stats yet.")
                 return
 
-            level, exp, gold = result['level'], result['exp'], result['gold']
+            level, exp, gold = result[2], result[1], result[3]
             exp_channel = self.bot.get_channel(exp_channel_id)
             await exp_channel.send(
                 f"📜 **Stats for {interaction.user.display_name}**\n"
@@ -387,7 +387,7 @@ class ExpCommands(commands.Cog):
                 await exp_channel.send("No players on the leaderboard yet.")
                 return
 
-            leaderboard_text = "**✠ Leaderboard**\n"
+            leaderboard_text = "**📜 Leaderboard**\n"
             for i, result in enumerate(results, start=1):
                 user_id, exp, level, gold = result[0], result[1], result[2], result[3]
                 leaderboard_text += f"{i}. <@{user_id}> - Level {level}, EXP: {exp}, Gold: {gold}\n"
