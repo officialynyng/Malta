@@ -105,7 +105,7 @@ async def on_member_join(member):
 async def on_member_remove(member):
     channel = discord.utils.get(member.guild.text_channels, name='landing-page')
     if channel:
-        await channel.send(f"👋 {member.name} has left the server.")
+        await channel.send(f"{member.name} has left the server.")
 
 
 @bot.tree.command(name="help", description="Shows available commands for Malta Bot.")
