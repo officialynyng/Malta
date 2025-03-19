@@ -248,18 +248,23 @@ class ExpCommands(commands.Cog):
 ##############################
     @commands.Cog.listener()
     async def on_message(self, message):
-        print(f"[DEBUG] Message received in #{message.channel.name} by {message.author} (channel ID: {message.channel.id})")
+        try:
+            channel_name = getattr(message.channel, 'name', 'DM or unknown')
+            print(f"[DEBUG] Message received in #{channel_name} by {message.author} (channel ID: {message.channel.id})")
 
-        if message.author.bot:
-            print("[DEBUG] Ignored bot message")
-            return
+            if message.author.bot:
+                print("[DEBUG] Ignored bot message")
+                return
 
-        if message.channel.id != EXP_CHANNEL_ID:
-            print(f"[DEBUG] Wrong channel: {message.channel.id} ≠ {EXP_CHANNEL_ID}")
-            return
+            if message.channel.id != EXP_CHANNEL_ID:
+                print(f"[DEBUG] Wrong channel: {message.channel.id} ≠ {EXP_CHANNEL_ID}")
+                return
 
-        print("[DEBUG] Passed checks, handling EXP gain")
-        await handle_exp_gain(message, EXP_CHANNEL_ID)
+            print("[DEBUG] Passed checks, handling EXP gain")
+            await handle_exp_gain(message, EXP_CHANNEL_ID)
+
+        except Exception as e:
+            print(f"[ERROR] Exception in on_message: {e}")
 ###############################
     @commands.Cog.listener()
     async def on_ready(self):
