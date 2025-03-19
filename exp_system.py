@@ -223,13 +223,10 @@ class ExpCommands(commands.Cog):
         exp_channel = self.bot.get_channel(EXP_CHANNEL_ID)
         print(f"[READY] Bot is online. EXP Channel set to: {exp_channel}")
 
-    @commands.Cog.listener()
-    async def on_message(self, message):
-        if message.author.bot:
-            return
-        if message.channel.id != EXP_CHANNEL_ID:
-            return
-        await handle_exp_gain(message, EXP_CHANNEL_ID)
+    @app_commands.command(name="ping", description="Ping the bot to check if it's online.")
+    async def ping(self, interaction: discord.Interaction):
+        await interaction.response.send_message("Pong from EXP system!")
+    
 
     @app_commands.command(name="retire", description="Retire your character between levels 31-38 for heirloom bonuses.")
     async def retire(self, interaction: discord.Interaction):
@@ -345,7 +342,7 @@ class ExpCommands(commands.Cog):
 
 
 
-    
+
 
 async def setup(bot):
     await bot.add_cog(ExpCommands(bot))

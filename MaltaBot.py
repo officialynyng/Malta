@@ -22,7 +22,6 @@ class MaltaBot(commands.Bot):
         guild = discord.Object(id=GUILD_ID)
         self.tree.copy_global_to(guild=guild)
         await self.tree.sync(guild=guild)
-
         await self.load_extension("exp_system")  # exp_system.py must be in the same directory
 
 bot = MaltaBot()
