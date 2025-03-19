@@ -100,6 +100,7 @@ def update_user_data(user_id, new_multiplier, last_activity_time):
 
 
 async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
+    print(f"Handling EXP gain for user: {message.author.id}")  # Debugging line
     if message.author.bot:
         return
 
@@ -110,6 +111,7 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
         result = conn.execute(db.select(players).where(players.c.user_id == user_id)).fetchone()
 
         if result:
+            print(f"User found in DB: {user_id}")  # Debugging line
             if current_ts - result.last_message_ts < EXP_COOLDOWN:
                 return
 
@@ -135,6 +137,7 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
             if new_level > result.level:
                 await announce_level_up(message.guild, message.author, new_level, level_up_channel_id)
         else:
+            print(f"User not found, inserting into DB: {user_id}")  # Debugging line
             multiplier = get_multiplier(0)
             new_level = calculate_level(EXP_PER_TICK)
             conn.execute(players.insert().values(
