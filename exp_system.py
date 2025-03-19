@@ -18,7 +18,7 @@ engine = db.create_engine(DATABASE_URL)
 metadata = db.MetaData()
 
 exp_channel = None  # Global placeholder
-
+last_leaderboard_timestamp = 0
 
 
 players = db.Table(
@@ -340,27 +340,29 @@ class ExpCommands(commands.Cog):
 
     @app_commands.command(name="stats", description="View your own stats (level, gold, EXP, etc.)")
     async def stats(self, interaction: discord.Interaction):
-        await interaction.response.defer(thinking=False)  # Properly acknowledge the interaction
-
         user_id = str(interaction.user.id)
-        exp_channel_id = EXP_CHANNEL_ID
 
         with engine.connect() as conn:
             query = players.select().where(players.c.user_id == user_id)
             result = conn.execute(query).fetchone()
 
             if not result:
-                exp_channel = self.bot.get_channel(exp_channel_id)
-                await exp_channel.send(f"{interaction.user.mention} has no stats yet.")
+                await interaction.response.send_message("You have no stats yet.", ephemeral=True)
                 return
 
-            level, exp, gold, retirements, heirloom_points = result[2], result[1], result[3], result[5], result[6]
-            exp_channel = self.bot.get_channel(exp_channel_id)
-            await exp_channel.send(
+            level = result.level
+            exp = result.exp
+            gold = result.gold
+            retirements = result.retirements
+            heirloom_points = result.heirloom_points
+
+            await interaction.response.send_message(
                 f"📜 Stats for **{interaction.user.display_name}'s Profile**\n"
                 f"Level: {level}\nEXP: {exp}\nGold: {gold}\n"
-                f"Generation: {retirements}\nHeirloom Points: {heirloom_points}"
+                f"Generation: {retirements}\nHeirloom Points: {heirloom_points}",
+                ephemeral=True
             )
+
 
 
     @app_commands.command(name="profile", description="View another player's profile")
@@ -391,20 +393,34 @@ class ExpCommands(commands.Cog):
 
     @app_commands.command(name="leaderboard", description="Show top 10 players by level, then EXP as a tiebreaker")
     async def leaderboard(self, interaction: discord.Interaction):
-        await interaction.response.defer(thinking=False)  # Acknowledge the interaction early
+        global last_leaderboard_timestamp
 
-        exp_channel_id = EXP_CHANNEL_ID
-        exp_channel = self.bot.get_channel(exp_channel_id)
+        now = time.time()
+        cooldown_seconds = 600  # 10 minutes
+
+        if now - last_leaderboard_timestamp < cooldown_seconds:
+            remaining = int(cooldown_seconds - (now - last_leaderboard_timestamp))
+            await interaction.response.send_message(
+                f"⏳ Leaderboard is on cooldown. Try again in {remaining} seconds.",
+                ephemeral=True
+            )
+            return
+
+        last_leaderboard_timestamp = now  # Update cooldown timestamp
+
+        exp_channel = self.bot.get_channel(EXP_CHANNEL_ID)
+
+        if not exp_channel:
+            await interaction.response.send_message("Please perform this action in #discord-crpg.", ephemeral=False)
+            return
 
         with engine.connect() as conn:
             query = players.select().order_by(players.c.level.desc(), players.c.exp.desc()).limit(10)
             results = conn.execute(query).fetchall()
 
             if not results:
-                if exp_channel:
-                    await exp_channel.send("No players on the leaderboard yet.")
-                else:
-                    print("EXP channel not found.")
+                await exp_channel.send("No players on the leaderboard yet.")
+                await interaction.response.send_message("Leaderboard posted.", ephemeral=True)
                 return
 
             leaderboard_text = "**📜 Leaderboard**\n"
@@ -412,10 +428,10 @@ class ExpCommands(commands.Cog):
                 user_id, exp, level, gold = result[0], result[1], result[2], result[3]
                 leaderboard_text += f"{i}. <@{user_id}> - Level {level}, EXP: {exp}, Gold: {gold}\n"
 
-            if exp_channel:
-                await exp_channel.send(leaderboard_text)
-            else:
-                print("EXP channel not found.")
+            await exp_channel.send(leaderboard_text)
+            await interaction.response.send_message("Leaderboard posted in the EXP channel.", ephemeral=False)
+
+
 
 
 
