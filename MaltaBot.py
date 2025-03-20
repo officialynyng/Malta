@@ -43,6 +43,7 @@ async def on_ready():
 class AdminGroup(app_commands.Group):
     def __init__(self, bot):
         super().__init__(name='admin', description='Administration commands')
+        self.bot = bot
 
     @app_commands.command(name="post", description="🔒 - 📋 Post a message and its images from a private channel to another channel.")
     @app_commands.describe(message_id="ID of the original message", destination_channel_id="ID of the destination channel")
