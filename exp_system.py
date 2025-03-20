@@ -187,10 +187,19 @@ async def on_user_comment(user_id, bot):
         print(f"[DEBUG] Last activity: {last_activity}, Daily Multiplier before update: {current_daily_multiplier}")
 
         # Calculate new daily multiplier based on activity
-        if current_time - last_activity >= TIME_DELTA:
-            new_daily_multiplier = 1  # Reset daily multiplier due to inactivity
+        time_diff = current_time - last_activity
+
+        # Only proceed if at least 24 hours have passed
+        if time_diff < TIME_DELTA:
+            print(f"[DEBUG] Skipping daily multiplier update for {user_id} — only {time_diff} seconds since last activity.")
+            return
+
+        # Otherwise, it's a new day: reset or increment the multiplier
+        if time_diff >= TIME_DELTA * 2:
+            new_daily_multiplier = 1  # Reset due to missed day(s)
         else:
             new_daily_multiplier = min(current_daily_multiplier + 1, MAX_MULTIPLIER)
+
 
         # Update database with the new daily multiplier and the current timestamp
         update_user_data(user_id, user_data['retirement_multiplier'], new_daily_multiplier, current_time)
@@ -199,7 +208,7 @@ async def on_user_comment(user_id, bot):
         exp_channel = bot.get_channel(EXP_CHANNEL_ID)
         if exp_channel:
             await exp_channel.send(
-                f"🏔️ <@{user_id}>'s daily multiplier updated to **{new_daily_multiplier}x** due to daily posting."
+                f"🏔️ <{user_id}>'s daily multiplier updated to **{new_daily_multiplier}x** due to daily posting."
             )
         else:
             print("[ERROR] EXP channel not found.")
