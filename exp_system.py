@@ -495,7 +495,7 @@ class CRPGGroup(app_commands.Group):
                 if remaining_cooldown > 0:
                     minutes, seconds = divmod(int(remaining_cooldown), 60)
                     await interaction.response.send_message(
-                        f"⏳ You have **{minutes}minutes & {seconds}seconds** left until your next available ⚡ experience & 💰 gold tick.",
+                        f"⏳ You have **{minutes} minutes & {seconds} seconds** left until your next available ⚡ experience & 💰 gold tick.",
                         ephemeral=True
                     )
                 else:
