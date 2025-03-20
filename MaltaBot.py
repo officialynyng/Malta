@@ -44,7 +44,7 @@ class AdminGroup(app_commands.Group):
     def __init__(self, bot):
         super().__init__(name='admin', description='Administration commands')
 
-    @app_commands.command(name="post", description="🔒 - Post a message and its images from a private channel to another channel.")
+    @app_commands.command(name="post", description="🔒 - 📋 Post a message and its images from a private channel to another channel.")
     @app_commands.describe(message_id="ID of the original message", destination_channel_id="ID of the destination channel")
     async def post(self, interaction: discord.Interaction, message_id: str, destination_channel_id: str):#
         member = interaction.user
@@ -81,7 +81,7 @@ class AdminGroup(app_commands.Group):
         except Exception as e:
             await interaction.response.send_message(f"Failed to post message: {e}", ephemeral=True)
 
-    @app_commands.command(name="edit", description="🔒 - Edit a previously posted message in a specific channel.")
+    @app_commands.command(name="edit", description="🔒 - 🖊️ Edit a previously posted message in a specific channel.")
     @app_commands.describe(destination_channel_id="ID of the channel where the message is posted", message_id="ID of the message to edit", new_content="The new message content")
     async def edit(self, interaction: discord.Interaction, destination_channel_id: str, message_id: str, new_content: str):
         member = interaction.user

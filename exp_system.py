@@ -313,7 +313,6 @@ class CRPGGroup(app_commands.Group):
 
     @app_commands.command(name="retire", description="⚗️ -  Retire your character between levels 31-38 for heirloom bonuses.")
     async def retire(self, interaction: discord.Interaction):
-        await interaction.response.defer(thinking=False)  # Acknowledge the interaction early
 
         user_id = str(interaction.user.id)
         exp_channel = self.bot.get_channel(EXP_CHANNEL_ID)  # Ensure EXP_CHANNEL_ID is defined
