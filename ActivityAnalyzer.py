@@ -24,6 +24,7 @@ class ActivityToExpProcessor(commands.Cog):
     @tasks.loop(seconds=60) ##<-- Set to 900 For Production
     async def process_recent_activity(self):
         print("[DEBUG] ActivityAnalyzer task loop triggered.")
+        print(f"[DEBUG] GUILD_ID being used: {self.guild_id}")
         malta_guild = self.bot.get_guild(self.guild_id)
         if not malta_guild:
             print("[DEBUG] Malta guild not found. Skipping.")
