@@ -530,7 +530,7 @@ class CRPGGroup(app_commands.Group):
 
         last_activity = user_data['last_activity']
         daily_multiplier = user_data['daily_multiplier']  # Using the daily multiplier
-        retirement_multiplier = user_data['multiplier']  # Using the retirement multiplier
+        retirement_multiplier = user_data['retirement_multiplier']  # Using the retirement multiplier
         time_since_last_activity = current_time - last_activity
 
         if time_since_last_activity < TIME_DELTA:
