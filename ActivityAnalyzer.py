@@ -13,9 +13,10 @@ class ActivityToExpProcessor(commands.Cog):
         self.engine = db.create_engine(self.fix_db_url(os.getenv("DATABASE_URL")))
         self.metadata = db.MetaData()
         self.recent_activity = db.Table("recent_activity", self.metadata, autoload_with=self.engine)
-
         self.cooldown_seconds = 60  ##<-- Set to 900 For Production
         self.guild_id = int(os.getenv("GUILD_ID"))
+    async def cog_load(self):  # ✅ NEW: safer than starting loop in __init__
+        print("[DEBUG] ActivityToExpProcessor cog fully loaded. Starting task loop...")
         self.process_recent_activity.start()
 
     def fix_db_url(self, url):
