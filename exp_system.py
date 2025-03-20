@@ -71,28 +71,25 @@ def calculate_multiplier(last_activity_time, current_time, current_daily_multipl
     return current_daily_multiplier
 
 def get_user_data(user_id):
-    # Fetch user data from the database (last activity and current multiplier)
+    # Assuming 'engine' is already imported and defined elsewhere in your module
     with engine.connect() as conn:
-        result = conn.execute(
-            select([
-                players.c.last_message_ts,
-                players.c.multiplier,  # Retirement multiplier
-                players.c.daily_multiplier  # Daily activity multiplier
-            ]).where(players.c.user_id == user_id)
-        )
-        
-        # Fetch the first row (there should be only one row for the user)
+        # Correctly using select() in SQLAlchemy 1.4+
+        stmt = select([
+            players.c.last_message_ts,  # last activity timestamp
+            players.c.multiplier,       # retirement multiplier
+            players.c.daily_multiplier  # daily activity multiplier
+        ]).where(players.c.user_id == user_id)
+
+        result = conn.execute(stmt)
         row = result.fetchone()
 
         if row:
-            # Return the last activity timestamp and multiplier
             return {
                 'last_activity': row[0],
                 'retirement_multiplier': row[1],
                 'daily_multiplier': row[2]
             }
         else:
-            # Handle the case where the user isn't found in the database
             return None
         
 
