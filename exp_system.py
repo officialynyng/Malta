@@ -267,7 +267,7 @@ async def award_xp_and_gold(user_id, base_xp, base_gold, bot):
             await exp_channel.send(
                 f"<@{user_id}> has been awarded ⚡ {xp_awarded} XP and 💰 {gold_awarded} gold. "
                 f"Total XP is now ⚡ {user_data['exp'] + xp_awarded}, and total gold is 💰 {user_data['gold'] + gold_awarded}. "
-                f"Daily Multiplier applied: 🏔️ {daily_multiplier}x, Generational Multiplier applied: 🌌 {retirement_multiplier}x."
+                f"Daily Multiplier applied: 🏔️ {daily_multiplier}x, Generational Multiplier applied: 🌌 {retirement_multiplier:.2f}x."
             )
         else:
             print("Failed to connect to Database for User.")
@@ -538,16 +538,15 @@ class CRPGGroup(app_commands.Group):
             hours, remainder = divmod(time_until_update, 3600)
             minutes, seconds = divmod(remainder, 60)
             await interaction.response.send_message(
-                f"# MULTIPLIERS\n"
                 f"## Daily: 🏔️ **{daily_multiplier}x**\n"
-                f"## Generational: 🌌 **{retirement_multiplier}x**\n"
+                f"## Generational: 🌌 **{retirement_multiplier + 1:.2f}x**"
                 f"Your next daily multiplier update is in __{int(hours)}__ hours, __{int(minutes)}__ minutes, and __{int(seconds)}__ seconds. ", ephemeral=True)
         else:
             # If more than a day has passed since the last activity, the multiplier can be updated immediately
             await interaction.response.send_message(
-                "## Your daily multiplier update is available now!\n"
-                f"# Current Daily: 🏔️ **{daily_multiplier}x**\n"
-                f"# Current Generational: 🌌 **{retirement_multiplier}x**", ephemeral=True)
+                f"## Current Daily: 🏔️ **{daily_multiplier}x**\n"
+                f"## Current Generational: 🌌 **{retirement_multiplier + 1:.2f}x**"
+                f"Your daily multiplier update is available now.\n", ephemeral=True)
 
 
 async def process_user_activity(bot, user_id):
