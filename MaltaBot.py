@@ -22,11 +22,11 @@ class MaltaBot(commands.Bot):
     async def setup_hook(self):
         print("Loading ExpCommands cog...")
         guild = discord.Object(id=GUILD_ID)
-        admin_group = AdminGroup()
+        admin_group = AdminGroup(self)
         self.tree.add_command(admin_group)
-        await self.tree.sync(guild=guild)  # Sync the commands with the guild directly
         await self.load_extension("exp_system")  # exp_system.py must be in the same directory
-        print("ExpCommands cog loaded!")
+        await self.tree.sync(guild=guild)  # Sync the commands with the guild directly
+        print("ExpCommands cog and AdminGroup loaded!")
 
 
 bot = MaltaBot()
@@ -41,12 +41,12 @@ async def on_ready():
     print("Command tree synced.")
 
 class AdminGroup(app_commands.Group):
-    def __init__(self):
+    def __init__(self, bot):
         super().__init__(name='admin', description='Administration commands')
 
-    @bot.tree.command(name="post", description="🔒 - Post a message and its images from a private channel to another channel.")
+    @app_commands.command(name="post", description="🔒 - Post a message and its images from a private channel to another channel.")
     @app_commands.describe(message_id="ID of the original message", destination_channel_id="ID of the destination channel")
-    async def post(interaction: discord.Interaction, message_id: str, destination_channel_id: str):#
+    async def post(self, interaction: discord.Interaction, message_id: str, destination_channel_id: str):#
         member = interaction.user
         approved = any(role.name == APPROVED_ROLE_NAME for role in member.roles)
         if not approved:
@@ -64,9 +64,9 @@ class AdminGroup(app_commands.Group):
             return
 
         try:
-            destination_channel = bot.get_channel(int(destination_channel_id))
+            destination_channel = self.bot.get_channel(int(destination_channel_id))
             if destination_channel is None:
-                destination_channel = await bot.fetch_channel(int(destination_channel_id))
+                destination_channel = await self.bot.fetch_channel(int(destination_channel_id))
 
             files = []
             for attachment in message.attachments:
@@ -81,9 +81,9 @@ class AdminGroup(app_commands.Group):
         except Exception as e:
             await interaction.response.send_message(f"Failed to post message: {e}", ephemeral=True)
 
-    @bot.tree.command(name="edit", description="🔒 - Edit a previously posted message in a specific channel.")
+    @app_commands.command(name="edit", description="🔒 - Edit a previously posted message in a specific channel.")
     @app_commands.describe(destination_channel_id="ID of the channel where the message is posted", message_id="ID of the message to edit", new_content="The new message content")
-    async def edit(interaction: discord.Interaction, destination_channel_id: str, message_id: str, new_content: str):
+    async def edit(self, interaction: discord.Interaction, destination_channel_id: str, message_id: str, new_content: str):
         member = interaction.user
         approved = any(role.name == APPROVED_ROLE_NAME for role in member.roles)
         if not approved:
@@ -91,9 +91,9 @@ class AdminGroup(app_commands.Group):
             return
 
         try:
-            channel = bot.get_channel(int(destination_channel_id))
+            channel = self.bot.get_channel(int(destination_channel_id))
             if channel is None:
-                channel = await bot.fetch_channel(int(destination_channel_id))
+                channel = await self.bot.fetch_channel(int(destination_channel_id))
 
             message = await channel.fetch_message(int(message_id))
             await message.edit(content=new_content)
@@ -106,8 +106,8 @@ class AdminGroup(app_commands.Group):
         except discord.HTTPException as e:
             await interaction.response.send_message(f"Failed to edit message: {e}", ephemeral=True)
 
-    @bot.tree.command(name="structure", description="🔒 - 📁 View the current bot file structure.")
-    async def structure(interaction: discord.Interaction):
+    @app_commands.command(name="structure", description="🔒 - 📁 View the current bot file structure.")
+    async def structure(self, interaction: discord.Interaction):
         if interaction.user.id != OWNER_ID:
             await interaction.response.send_message("🚫 You are not authorized to use this command.", ephemeral=True)
             return
@@ -122,8 +122,8 @@ class AdminGroup(app_commands.Group):
 
         await interaction.response.send_message(structure_text, ephemeral=True)
 
-    @bot.tree.command(name="ping", description="🔒 - 🛜 Check if the bot is online and responsive.")
-    async def ping(interaction: discord.Interaction):
+    @app_commands.command(name="ping", description="🔒 - 🛜 Check if the bot is online and responsive.")
+    async def ping(self, interaction: discord.Interaction):
         member = interaction.user
         approved = any(role.name == APPROVED_ROLE_NAME for role in member.roles)
         
@@ -131,27 +131,27 @@ class AdminGroup(app_commands.Group):
             await interaction.response.send_message("🚫 You are not authorized to use this command.", ephemeral=True)
             return
 
-        latency_ms = round(bot.latency * 1000)
+        latency_ms = round(self.bot.latency * 1000)
         await interaction.response.send_message(f"🛜 Responsive... Latency: `{latency_ms}ms`", ephemeral=True)
 
-    @bot.tree.command(name="sync", description="🔒 - 🔄 Sync commands with Discord.")
-    async def sync(interaction: discord.Interaction):
+    @app_commands.command(name="sync", description="🔒 - 🔄 Sync commands with Discord.")
+    async def sync(self, interaction: discord.Interaction):
         if interaction.user.id != OWNER_ID:
             await interaction.response.send_message("🚫 You are not authorized to use this command.", ephemeral=True)
             return
 
-        await bot.tree.sync(guild=discord.Object(id=GUILD_ID))
+        await self.bot.tree.sync(guild=discord.Object(id=GUILD_ID))
         await interaction.response.send_message("✅ Command tree synced.", ephemeral=True)
 
-    @bot.tree.command(name="reload", description="🔒 - 🔄 Reload a bot extension (cog).")
+    @app_commands.command(name="reload", description="🔒 - 🔄 Reload a bot extension (cog).")
     @app_commands.describe(extension="Name of the extension (e.g., exp_system)")
-    async def reload(interaction: discord.Interaction, extension: str):
+    async def reload(self, interaction: discord.Interaction, extension: str):
         if interaction.user.id != OWNER_ID:
             await interaction.response.send_message("🚫 You are not authorized to use this command.", ephemeral=True)
             return
 
         try:
-            await bot.reload_extension(extension)
+            await self.bot.reload_extension(extension)
             await interaction.response.send_message(f"🔄 Extension `{extension}` reloaded successfully.", ephemeral=True)
         except Exception as e:
             await interaction.response.send_message(f"⚠️ Failed to reload `{extension}`:\n```{e}```", ephemeral=True)
