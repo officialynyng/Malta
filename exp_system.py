@@ -512,7 +512,7 @@ class CRPGGroup(app_commands.Group):
                     "You have no EXP record yet. Start participating to earn ⚡ experience & 💰 gold.",
                     ephemeral=True
                 )
-                
+
     @app_commands.command(name="next_multiplier", description="⚗️ - Check when your next multiplier update is available.")
     async def next_multiplier(self, interaction: discord.Interaction):
         user_id = str(interaction.user.id)
@@ -524,21 +524,21 @@ class CRPGGroup(app_commands.Group):
             return
 
         last_activity = user_data['last_activity']
-        last_activity_date = time.strftime('%Y-%m-%d', time.gmtime(last_activity))
-        current_date = time.strftime('%Y-%m-%d', time.gmtime(current_time))
+        current_multiplier = user_data['multiplier']
+        time_since_last_activity = current_time - last_activity
 
-        if last_activity_date == current_date:
-            await interaction.response.send_message("Your multiplier has been updated today. It will be available again tomorrow.", ephemeral=True)
+        if time_since_last_activity < TIME_DELTA:
+            time_until_update = TIME_DELTA - time_since_last_activity
+            hours, remainder = divmod(time_until_update, 3600)
+            minutes, seconds = divmod(remainder, 60)
+            await interaction.response.send_message(
+                f"Your next multiplier update is in {int(hours)} hours, {int(minutes)} minutes, and {int(seconds)} seconds. "
+                f"Current multiplier: 🏔️ **{current_multiplier}x**.", ephemeral=True)
         else:
-            next_update = last_activity + TIME_DELTA
-            time_until_update = max(0, next_update - current_time)
-            if time_until_update > 0:
-                hours, remainder = divmod(time_until_update, 3600)
-                minutes, seconds = divmod(remainder, 60)
-                await interaction.response.send_message(
-                    f"Your next multiplier update is in {int(hours)} hours, {int(minutes)} minutes, and {int(seconds)} seconds.", ephemeral=True)
-            else:
-                await interaction.response.send_message("Your multiplier update is available now!", ephemeral=True)
+            # If more than a day has passed since the last activity, the multiplier can be updated immediately
+            await interaction.response.send_message(
+                "Your multiplier update is available now! Current multiplier: 🏔️ **{current_multiplier}x**.", ephemeral=True)
+
 
 
 async def process_user_activity(bot, user_id):
