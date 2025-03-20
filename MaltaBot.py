@@ -35,6 +35,19 @@ class MaltaBot(commands.Bot):
 bot = MaltaBot()
 
 @bot.event
+async def on_message(message):
+    if message.guild is None and not message.author.bot:  # Check if the message is a DM and not from a bot
+        debug_info = (f"Received DM from {message.author} (ID: {message.author.id}): "
+                      f"{message.content}")
+        print(debug_info)  # Log the information to console for debugging
+
+        # Optionally, send a response back to the user with the debug info
+        await message.channel.send(f"Debug: {debug_info}")
+
+    # Process commands if any
+    await bot.process_commands(message)
+
+@bot.event
 async def on_ready():
     print(f'{bot.user} has connected to Discord!')
     ###############################
