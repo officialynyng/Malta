@@ -320,36 +320,35 @@ class CRPGGroup(app_commands.Group):
 
         with engine.connect() as conn:
             result = conn.execute(db.select(players).where(players.c.user_id == user_id)).fetchone()
+
             if not result:
-                if exp_channel:
-                    await exp_channel.send("You have no EXP record yet.")
-                else:
-                    print("EXP channel not found.")
+                await interaction.response.send_message(
+                    "⚠️ You have no EXP record yet. Start participating to gain experience.",
+                    ephemeral=True
+                )
                 return
 
             if result.level < 31 or result.level > 38:
-                if exp_channel:
-                    await exp_channel.send("You can only retire between levels 31 - 38.", ephemeral=True)
+                await interaction.response.send_message(
+                    "⚠️ You can only retire between levels 31 - 38.", ephemeral=True
+                )
                 return
 
-            if exp_channel:
-                await exp_channel.send(
-                    f"🛡️ Are you sure you want to retire? You will reset your level, EXP, and gold.\n"
-                    f"Type your username (`{interaction.user.name}`) to confirm."
-                )
-            else:
-                print("EXP channel not found.")
-                return
+            await interaction.response.send_message(
+                f"🛡️ Are you sure you want to retire? You will reset your level, EXP, and gold.\n"
+                f"Type your username (`{interaction.user.name}`) to confirm.",
+                ephemeral=True
+            )
 
             def check(m):
                 return m.author == interaction.user and m.content == interaction.user.name
 
             try:
                 msg = await self.bot.wait_for("message", timeout=60.0, check=check)
-            except:
-                if exp_channel:
-                    await exp_channel.send("🏰 Retirement cancelled (timeout).")
+            except asyncio.TimeoutError:
+                await interaction.followup.send("🏰 Retirement cancelled (timeout).", ephemeral=True)
                 return
+
 
             heirloom_gain = get_heirloom_points(result.level)
             new_retire_count = result.retirements + 1
