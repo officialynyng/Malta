@@ -32,7 +32,8 @@ players = db.Table(
     db.Column("retirements", db.Integer, nullable=False, default=0),
     db.Column("heirloom_points", db.Integer, nullable=False, default=0),
     db.Column("multiplier", db.Integer, nullable=False, default=0),  # Add the multiplier column
-    db.Column("daily_multiplier", db.Integer, nullable=False, default=1)
+    db.Column("daily_multiplier", db.Integer, nullable=False, default=1),
+    db.Column("last_multiplier_update", db.Float, nullable=False, default=0.0)
 )
 
 with engine.connect() as conn:
@@ -183,32 +184,33 @@ async def on_user_comment(user_id, bot):
 
     if user_data:
         last_activity = user_data['last_activity']
+        last_multiplier_update = user_data.get('last_multiplier_update', 0)
         current_daily_multiplier = user_data['daily_multiplier']
-        print(f"[DEBUG] Last activity: {last_activity}, Daily Multiplier before update: {current_daily_multiplier}")
 
-        # Calculate new daily multiplier based on activity
-        time_diff = current_time - last_activity
+        print(f"[DEBUG] Last activity: {last_activity}, Last multiplier update: {last_multiplier_update}")
+        print(f"[DEBUG] Daily Multiplier before update: {current_daily_multiplier}")
 
-        # Only proceed if at least 24 hours have passed
-        if time_diff < TIME_DELTA:
-            print(f"[DEBUG] Skipping daily multiplier update for {user_id} — only {time_diff} seconds since last activity.")
+        # Always update last activity timestamp
+        update_user_data(user_id, user_data['retirement_multiplier'], current_daily_multiplier, current_time, last_multiplier_update)
+
+        # Don't update multiplier more than once per 24h
+        if current_time - last_multiplier_update < TIME_DELTA:
+            print(f"[DEBUG] Skipping multiplier update — already updated in the last 24h.")
             return
 
-        # Otherwise, it's a new day: reset or increment the multiplier
-        if time_diff >= TIME_DELTA * 2:
-            new_daily_multiplier = 1  # Reset due to missed day(s)
+        # If inactive for 48+ hours, reset
+        if current_time - last_activity >= TIME_DELTA * 2:
+            new_daily_multiplier = 1
         else:
             new_daily_multiplier = min(current_daily_multiplier + 1, MAX_MULTIPLIER)
 
+        # Save new multiplier + timestamp
+        update_user_data(user_id, user_data['retirement_multiplier'], new_daily_multiplier, current_time, current_time)
 
-        # Update database with the new daily multiplier and the current timestamp
-        update_user_data(user_id, user_data['retirement_multiplier'], new_daily_multiplier, current_time)
-
-        # Fetch the channel once and use it for sending messages
         exp_channel = bot.get_channel(EXP_CHANNEL_ID)
         if exp_channel:
             await exp_channel.send(
-                f"🏔️ <{user_id}>'s daily multiplier updated to **{new_daily_multiplier}x** due to daily posting."
+                f"🏔️ <@{user_id}>'s daily multiplier updated to **{new_daily_multiplier}x** due to daily posting."
             )
         else:
             print("[ERROR] EXP channel not found.")
@@ -221,19 +223,19 @@ async def check_and_reset_multiplier(user_id, bot):
 
     if user_data:
         time_since_last = current_time - user_data['last_activity']
-        if time_since_last >= TIME_DELTA:
-            # Only reset the daily_multiplier and update the last_message_ts
-            update_user_data(user_id, user_data['retirement_multiplier'], 1, current_time)
+
+        if time_since_last >= TIME_DELTA * 2:
+            # Reset daily multiplier & last_multiplier_update
+            update_user_data(user_id, user_data['retirement_multiplier'], 1, current_time, current_time)
             exp_channel = bot.get_channel(EXP_CHANNEL_ID)
             if exp_channel:
                 await exp_channel.send(
-                    f"🌋 <@{user_id}>'s daily multiplier has been reset to 1x due to inactivity."
+                    f"🌋 <@{user_id}>'s daily multiplier has been reset to **1x** due to inactivity."
                 )
-            else:
-                print("Failed to find the EXP channel.")
-            print(f"[DEBUG] Daily multiplier reset for {user_id} after {time_since_last} seconds.")
+            print(f"[DEBUG] Reset daily multiplier for {user_id} due to inactivity ({time_since_last} seconds).")
     else:
         print(f"[ERROR] User {user_id} not found in database.")
+
 
 async def award_xp_and_gold(user_id, base_xp, base_gold, bot):
     user_data = get_user_data(user_id)
@@ -541,7 +543,7 @@ class CRPGGroup(app_commands.Group):
                 f"""## Daily: 🏔️ **{daily_multiplier}x**
             ## Generational: 🌌 **{retirement_multiplier + 1:.2f}x**
 
-         Your next daily multiplier update is in __{int(hours)}__ hours, __{int(minutes)}__ minutes, and __{int(seconds)}__ seconds.""",
+            Your next daily multiplier update is in __{int(hours)}__ hours, __{int(minutes)}__ minutes, and __{int(seconds)}__ seconds.""",
                 ephemeral=True
             )
         else:
@@ -550,7 +552,7 @@ class CRPGGroup(app_commands.Group):
                 f"""## Current Daily: 🏔️ **{daily_multiplier}x**
             ## Current Generational: 🌌 **{retirement_multiplier + 1:.2f}x**
 
-        Your daily multiplier update is available now. ephemeral=True)"""
+            Your daily multiplier update is available now. ephemeral=True)"""
             )
 
 
