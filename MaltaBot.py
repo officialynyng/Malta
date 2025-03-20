@@ -24,6 +24,8 @@ class MaltaBot(commands.Bot):
         guild = discord.Object(id=GUILD_ID)
         admin_group = AdminGroup(self)
         self.tree.add_command(admin_group)
+        for guild in self.guilds:
+            print(f"[DEBUG] Connected to guild: {guild.name} (ID: {guild.id})")
         await self.load_extension("exp_system") #COG# Exp System
         await self.load_extension("ActivityAnalyzer") #COG# Activity Analyzer
         await self.tree.sync(guild=guild)  # Sync the commands with the guild directly
