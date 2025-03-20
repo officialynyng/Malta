@@ -21,7 +21,7 @@ metadata = db.MetaData()
 exp_channel = None  # Global placeholder
 last_leaderboard_timestamp = 0
 
-
+#
 players = db.Table(
     "players", metadata,
     db.Column("user_id", db.String, primary_key=True),
