@@ -541,7 +541,7 @@ class CRPGGroup(app_commands.Group):
                 f"""## Daily: 🏔️ **{daily_multiplier}x**
             ## Generational: 🌌 **{retirement_multiplier + 1:.2f}x**
 
-            Your next daily multiplier update is in __{int(hours)}__ hours, __{int(minutes)}__ minutes, and __{int(seconds)}__ seconds.""",
+         Your next daily multiplier update is in __{int(hours)}__ hours, __{int(minutes)}__ minutes, and __{int(seconds)}__ seconds.""",
                 ephemeral=True
             )
         else:
@@ -550,7 +550,7 @@ class CRPGGroup(app_commands.Group):
                 f"""## Current Daily: 🏔️ **{daily_multiplier}x**
             ## Current Generational: 🌌 **{retirement_multiplier + 1:.2f}x**
 
-            Your daily multiplier update is available now. ephemeral=True)"""
+        Your daily multiplier update is available now. ephemeral=True)"""
             )
 
 
