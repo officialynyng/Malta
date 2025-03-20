@@ -4,7 +4,6 @@ import discord
 from discord.ext import tasks, commands
 import sqlalchemy as db
 from sqlalchemy.sql import select
-
 from exp_system import process_user_activity  # assumes function exists in exp_system.py
 
 class ActivityToExpProcessor(commands.Cog):
@@ -14,14 +13,14 @@ class ActivityToExpProcessor(commands.Cog):
         self.metadata = db.MetaData()
         self.recent_activity = db.Table("recent_activity", self.metadata, autoload_with=self.engine)
 
-        self.cooldown_seconds = 900  # 15 min
-        self.guild_id = int(os.getenv("MALTA_GUILD_ID"))
+        self.cooldown_seconds = 60  ##TESTING SET TO 900 WHEN DONE
+        self.guild_id = int(os.getenv("GUILD_ID"))
         self.process_recent_activity.start()
 
     def fix_db_url(self, url):
         return url.replace("postgres://", "postgresql://", 1) if url.startswith("postgres://") else url
 
-    @tasks.loop(seconds=60)
+    @tasks.loop(seconds=60) ##TESTING SET TO 900 WHEN DONE
     async def process_recent_activity(self):
         malta_guild = self.bot.get_guild(self.guild_id)
         if not malta_guild:
@@ -39,11 +38,12 @@ class ActivityToExpProcessor(commands.Cog):
                     conn.execute(self.recent_activity.delete().where(self.recent_activity.c.user_id == user_id))
                     continue
 
-                # ✅ Pass user to exp_system for normal processing
-                await process_user_activity(user_id, self.bot, conn)
+                # ✅ Corrected call to match your wrapper function exactly
+                await process_user_activity(self.bot, user_id)
 
                 # Cleanup: processed
                 conn.execute(self.recent_activity.delete().where(self.recent_activity.c.user_id == user_id))
+
 
 async def setup(bot):
     await bot.add_cog(ActivityToExpProcessor(bot))

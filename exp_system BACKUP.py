@@ -509,26 +509,6 @@ class CRPGGroup(app_commands.Group):
                     ephemeral=True
                 )
 
-async def process_user_activity(bot, user_id):
-    guild = bot.get_guild(int(os.getenv("GUILD_ID")))
-    member = guild.get_member(int(user_id))
-
-    if member is None or member.bot:
-        print(f"[DEBUG] Member {user_id} invalid or bot. Skipping.")
-        return
-
-    # Creating a minimal fake message object for existing compatibility
-    class FakeMessage:
-        def __init__(self, author, guild):
-            self.author = author
-            self.guild = guild
-
-    fake_message = FakeMessage(author=member, guild=guild)
-
-    # Directly invoke existing complete logic
-    await handle_exp_gain(fake_message, EXP_CHANNEL_ID)
-    await on_user_comment(user_id, bot)
-    await check_and_reset_multiplier(user_id, bot)
 
 
 async def setup(bot):
