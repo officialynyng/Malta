@@ -485,7 +485,7 @@ class CRPGGroup(app_commands.Group):
                 gold = result.gold
                 retirements = result.retirements
                 leaderboard_text += (
-                    f"{i}. <@{user_id}> - 🌱 Generation {retirements}, 🧬 Level {level}, 💰 {gold} gold, ⚡ {exp} EXP\n"
+                    f"{i}. <{user_id}> - 🌱 Generation {retirements}, 🧬 Level {level}, 💰 {gold} gold, ⚡ {exp} EXP\n"
                 )
 
             await exp_channel.send(leaderboard_text)
