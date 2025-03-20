@@ -538,15 +538,17 @@ class CRPGGroup(app_commands.Group):
             hours, remainder = divmod(time_until_update, 3600)
             minutes, seconds = divmod(remainder, 60)
             await interaction.response.send_message(
-                f"Your next daily multiplier update is in {int(hours)} hours, {int(minutes)} minutes, and {int(seconds)} seconds. "
-                f"Current daily multiplier: 🏔️ **{daily_multiplier}x**. "
-                f"Generational multiplier: 🌌 **{retirement_multiplier}x**.", ephemeral=True)
+                f"# MULTIPLIERS"
+                f"## Daily: 🏔️ **{daily_multiplier}x**"
+                f"## Generational: 🌌 **{retirement_multiplier}x**", ephemeral=True
+                f"Your next daily multiplier update is in __{int(hours)}__ hours, __{int(minutes)}__ minutes, and __{int(seconds)}__ seconds. "
+                )
         else:
             # If more than a day has passed since the last activity, the multiplier can be updated immediately
             await interaction.response.send_message(
-                "Your daily multiplier update is available now! "
-                f"Current daily multiplier: 🏔️ **{daily_multiplier}x**. "
-                f"Generational multiplier: 🌌 **{retirement_multiplier}x**.", ephemeral=True)
+                "## Your daily multiplier update is available now! "
+                f"# Current Daily: 🏔️ **{daily_multiplier}x**"
+                f"# Current Generational:: 🌌 **{retirement_multiplier}x**", ephemeral=True)
 
 
 async def process_user_activity(bot, user_id):
