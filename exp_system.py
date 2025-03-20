@@ -143,7 +143,7 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
             if exp_channel:
                 await exp_channel.send(
                     f"**{message.author.display_name}** gained ⚡ **{gained_exp} EXP** and 💰 **{gained_gold} gold** "
-                    f"with a current multiplier of 🏔️ **{multiplier:.2f}x**."
+                    f"with a current daily multiplier of 🏔️ **{multiplier:.2f}x**."
                 )
 
             if new_level > result.level:
@@ -169,7 +169,7 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
             if exp_channel:
                 await exp_channel.send(
                     f"**{message.author.display_name}** gained ⚡ **{gained_exp} EXP** and 💰 **{gained_gold} gold** "
-                    f"with a current multiplier of 🏔️ **{multiplier:.2f}x**."
+                    f"with a current daily multiplier of 🏔️ **{multiplier:.2f}x**."
                 )
 
             if new_level > 0:
@@ -267,7 +267,7 @@ async def award_xp_and_gold(user_id, base_xp, base_gold, bot):
             await exp_channel.send(
                 f"<@{user_id}> has been awarded ⚡ {xp_awarded} XP and 💰 {gold_awarded} gold. "
                 f"Total XP is now ⚡ {user_data['exp'] + xp_awarded}, and total gold is 💰 {user_data['gold'] + gold_awarded}. "
-                f"Daily Multiplier applied: 🏔️ {daily_multiplier}x, Generational Multiplier applied: 🌌 {retirement_multiplier:.2f}x."
+                f"Daily Multiplier applied: 🏔️ {daily_multiplier}x, Generational Multiplier applied: 🌌 {retirement_multiplier + 1:.2f}x."
             )
         else:
             print("Failed to connect to Database for User.")
@@ -539,13 +539,13 @@ class CRPGGroup(app_commands.Group):
             minutes, seconds = divmod(remainder, 60)
             await interaction.response.send_message(
                 f"## Daily: 🏔️ **{daily_multiplier}x**\n"
-                f"## Generational: 🌌 **{retirement_multiplier + 1:.2f}x**"
+                f"## Generational: 🌌 **{retirement_multiplier + 1:.2f}x**\n"
                 f"Your next daily multiplier update is in __{int(hours)}__ hours, __{int(minutes)}__ minutes, and __{int(seconds)}__ seconds. ", ephemeral=True)
         else:
             # If more than a day has passed since the last activity, the multiplier can be updated immediately
             await interaction.response.send_message(
                 f"## Current Daily: 🏔️ **{daily_multiplier}x**\n"
-                f"## Current Generational: 🌌 **{retirement_multiplier + 1:.2f}x**"
+                f"## Current Generational: 🌌 **{retirement_multiplier + 1:.2f}x**\n"
                 f"Your daily multiplier update is available now.\n", ephemeral=True)
 
 
