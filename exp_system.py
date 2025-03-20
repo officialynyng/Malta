@@ -513,7 +513,7 @@ class CRPGGroup(app_commands.Group):
                     ephemeral=True
                 )
 
-    @app_commands.command(name="next_multiplier", description="⚗️ - Check when your next multiplier update is available.")
+    @app_commands.command(name="multiplier status", description="⚗️ - Check when your next multiplier update is available.")
     async def next_multiplier(self, interaction: discord.Interaction):
         user_id = str(interaction.user.id)
         current_time = int(time.time())
