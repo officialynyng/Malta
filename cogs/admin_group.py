@@ -164,7 +164,7 @@ class AdminGroup(app_commands.Group):
 
         latency_ms = round(self.bot.latency * 1000)
         
-        print(f"🛜 [DEBUG] Ping command used by {member.display_name} | Latency: {latency_ms}ms")
+        print(f"[DEBUG]🛜 Ping command used by {member.display_name} | Latency: {latency_ms}ms")
 
         await interaction.response.send_message(f"🛜 Responsive... Latency: `{latency_ms}ms`", ephemeral=True)
 
@@ -179,7 +179,7 @@ class AdminGroup(app_commands.Group):
         await self.bot.tree.sync(guild=discord.Object(id=GUILD_ID))
         
         # Debug statement with emoji
-        print(f"🔄 [DEBUG] Commands synced by {interaction.user.display_name}")
+        print(f"[DEBUG]🔄 Commands synced by {interaction.user.display_name}")
 
         await interaction.response.send_message("✅ Command tree synced.", ephemeral=True)
 
@@ -194,10 +194,10 @@ class AdminGroup(app_commands.Group):
         try:
             await self.bot.reload_extension(extension)
             # Debug statement with emoji
-            print(f"🔄 [DEBUG] Extension `{extension}` reloaded by {interaction.user.display_name}")
+            print(f"[DEBUG]🔄  Extension `{extension}` reloaded by {interaction.user.display_name}")
             await interaction.response.send_message(f"🔄 Extension `{extension}` reloaded successfully.", ephemeral=True)
         except Exception as e:
-            print(f"⚠️ [DEBUG] Failed to reload `{extension}` by {interaction.user.display_name}: {e}")
+            print(f"[DEBUG]⚠️  Failed to reload `{extension}` by {interaction.user.display_name}: {e}")
             await interaction.response.send_message(f"⚠️ Failed to reload `{extension}`:\n```{e}```", ephemeral=True)
 
 
@@ -208,7 +208,7 @@ class AdminGroup(app_commands.Group):
             return
 
         # Debug statement with emoji
-        print(f"⏪ [DEBUG] Restart command issued by {interaction.user.display_name}")
+        print(f"[DEBUG]⏪ Restart command issued by {interaction.user.display_name}")
 
         await interaction.response.send_message("🔄 Restarting the bot...", ephemeral=True)
 
@@ -222,7 +222,7 @@ class AdminGroup(app_commands.Group):
     @app_commands.command(name="crpg_multi_check", description="🔒 - 🌀 Force a multiplier check for all users.")
     async def check_all_multipliers(self, interaction: discord.Interaction):
         # Debug: Log the interaction user and command initiation
-        print(f"[DEBUG] 🌀 Forcing multiplier check: {interaction.user.id}")
+        print(f"[DEBUG]🌀 Forcing multiplier check: {interaction.user.id}")
 
         if interaction.user.id != OWNER_ID:
             await interaction.response.send_message("🚫 You do not have permission to use this command.", ephemeral=True)
@@ -258,7 +258,7 @@ class AdminGroup(app_commands.Group):
 
         result_text = "\n".join(results)
         # Debug: Log final result text
-        print(f"[DEBUG] 🌀 Final result text for multiplier check: {result_text}")
+        print(f"[DEBUG]🌀 Final result text for multiplier check: {result_text}")
 
         await interaction.followup.send(
             content=f"✖️ Multiplier check run for **{len(user_ids)} users**:\n\n{result_text}",
@@ -295,17 +295,17 @@ class AdminGroup(app_commands.Group):
             return
 
         # Debug: Starting the adjustment process
-        print(f"🔧 [DEBUG] Starting multiplier adjustment by {interaction.user.display_name}, Value: {value}, All: {all}")
+        print(f"[DEBUG]🔧 Starting multiplier adjustment by {interaction.user.display_name}, Value: {value}, All: {all}")
 
         await interaction.response.defer(ephemeral=True)
 
         user_ids = []
         if all:
             user_ids = get_all_user_ids()
-            print(f"🔧 [DEBUG] Applying to all users, total: {len(user_ids)}")  # Debug: Total users affected
+            print(f"[DEBUG]🔧 Applying to all users, total: {len(user_ids)}")  # Debug: Total users affected
         elif users:
             user_ids = [str(users.id)]
-            print(f"🔧 [DEBUG] Applying to specific user ID: {users.id}")  # Debug: Specific user affected
+            print(f"[DEBUG]🔧 Applying to specific user ID: {users.id}")  # Debug: Specific user affected
 
         updates = []
         for user_id in user_ids:
@@ -335,7 +335,7 @@ class AdminGroup(app_commands.Group):
         await interaction.followup.send(f"Daily multiplier adjustment:\n{summary}", ephemeral=True)
 
         # Debug: Summary of changes
-        print(f"🔧 [DEBUG] Multiplier adjustments completed:\n{summary}")
+        print(f"[DEBUG]🔧 Multiplier adjustments completed:\n{summary}")
 
 async def setup(bot):
     admin_group = AdminGroup(bot)
