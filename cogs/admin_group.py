@@ -4,9 +4,8 @@ import os
 import asyncio
 import sys
 import time
-import typing
-from typing import (List, Optional,)
-from discord import (app_commands, User, Interaction,)
+from typing import (Optional,)
+from discord import (app_commands,)
 from cogs.exp_engine import (on_user_comment,)
 from cogs.exp_utils import (get_all_user_ids, get_user_data, update_user_data,)
 from cogs.admin_config import (APPROVED_ROLE_NAME, OWNER_ID, GUILD_ID)
@@ -182,17 +181,17 @@ class AdminGroup(app_commands.Group):
 
     @app_commands.command(name="crpg_adjust_daily_multiplier", description="🔒 - 🔧🏔️ Manually adjust daily multipliers.")
     @app_commands.describe(
-        users="Select one or more users to update (mention them)",
-        action="Choose the action to perform (increase, decrease, or set)",
-        value="Used if action is 'set' (the value you want to set)",
-        all="Apply to all users? (true/false)"
+        users="Select one or more users to update",
+        action="increase, decrease, or set the daily multiplier",
+        value="Used if action is 'set'",
+        all="Apply to all users?"
     )
     async def adjust_daily_multiplier(
         self,
         interaction: discord.Interaction,
-        users: Optional[typing.List[discord.User]] = None,
+        users: Optional[list[discord.User]] = None,  # Use 'list' instead of 'List'
         action: str = "increase",
-        value: Optional[int] = None,
+        value: int = None,
         all: bool = False
     ):
         # Check for permission
