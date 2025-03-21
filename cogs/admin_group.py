@@ -3,7 +3,7 @@ import io
 
 from discord.ext import commands
 from discord import app_commands
-from MaltaBot import (APPROVED_ROLE_NAME, OWNER_ID, GUILD_ID)
+from cogs.admin_config import (APPROVED_ROLE_NAME, OWNER_ID, GUILD_ID)
 
 class AdminGroup(app_commands.Group):
     def __init__(self, bot):

@@ -1,15 +1,12 @@
 import discord
-import io
-from discord.ext import commands
-from discord import app_commands
-from cogs.exp_voice import setup as setup_voice_exp
 import os
+from discord.ext import commands
+from cogs.exp_voice import setup as setup_voice_exp
+from cogs.admin_config import (
+    GUILD_ID, WELCOME_CHANNEL_ID
+)
 
 TOKEN = os.getenv("TOKEN")
-GUILD_ID = int(os.getenv("GUILD_ID"))
-APPROVED_ROLE_NAME = os.getenv("APPROVED_ROLE_NAME")
-OWNER_ID = int(os.getenv("OWNER_ID"))
-WELCOME_CHANNEL_ID = int(os.getenv("WELCOME_CHANNEL_ID"))  # Set this in your environment variables
 INTENTS = discord.Intents.default()
 INTENTS.messages = True
 INTENTS.guilds = True
