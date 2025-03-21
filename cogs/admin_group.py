@@ -149,17 +149,18 @@ class AdminGroup(app_commands.Group):
 
     @app_commands.command(name="multi_check", description="Force a multiplier check for all users.")
     async def check_all_multipliers(self, interaction: discord.Interaction):
-        await interaction.response.defer(thinking=True)
+        if interaction.user.id != OWNER_ID:
+            await interaction.response.defer(thinking=True)
 
-        user_ids = get_all_user_ids()  # Fetch all from DB
-        triggered = 0
+            user_ids = get_all_user_ids()  # Fetch all from DB
+            triggered = 0
 
-        for user_id in user_ids:
-            await on_user_comment(user_id, self.bot)
-            triggered += 1
-            await asyncio.sleep(0.1)  # Small delay to avoid rate limits
+            for user_id in user_ids:
+                await on_user_comment(user_id, self.bot)
+                triggered += 1
+                await asyncio.sleep(0.1)  # Small delay to avoid rate limits
 
-        await interaction.followup.send(f"✅ Multiplier check run for **{triggered} users**.")
+            await interaction.followup.send(f"✅ Multiplier check run for **{triggered} users**.")
 
 async def setup(bot):
     admin_group = AdminGroup(bot)
