@@ -38,7 +38,6 @@ def calculate_multiplier(last_activity_time, current_time, current_daily_multipl
 
 def get_user_data(user_id):
     with engine.connect() as conn:
-        # Correct usage for SQLAlchemy 1.4+
         stmt = select(
             players.c.last_message_ts,
             players.c.multiplier,
@@ -50,12 +49,13 @@ def get_user_data(user_id):
 
         if row:
             return {
-                'last_activity': row[0],
-                'retirement_multiplier': row[1],
+                'last_message_ts': row[0],
+                'multiplier': row[1],
                 'daily_multiplier': row[2]
             }
         else:
             return None
+
         
 def update_user_data(user_id, new_retirement_multiplier, new_daily_multiplier, last_activity_time, last_multiplier_update):
     print(f"[DEBUG] update_user_data called with user_id={user_id}, new_retirement_multiplier={new_retirement_multiplier}, new_daily_multiplier={new_daily_multiplier}, last_activity_time={last_activity_time}, last_multiplier_update={last_multiplier_update}")
