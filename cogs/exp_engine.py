@@ -97,30 +97,29 @@ async def on_user_comment(user_id, bot):
     print("[DEBUG] on_user_comment triggered")
     current_time = int(time.time())
     user_data = get_user_data(user_id)
-    gen_multiplier = user_data['multiplier']
 
     if user_data:
-        last_activity = user_data['last_message_ts']
+        last_message_ts = user_data['last_message_ts']  # Use 'last_message_ts' here
         last_multiplier_update = user_data.get('last_multiplier_update', 0)
         current_daily_multiplier = user_data['daily_multiplier']
 
-        print(f"[DEBUG] Last activity: {last_activity}, Last multiplier update: {last_multiplier_update}")
+        print(f"[DEBUG] Last activity: {last_message_ts}, Last multiplier update: {last_multiplier_update}")
         print(f"[DEBUG] Daily Multiplier before update: {current_daily_multiplier}")
 
         # Always update last activity timestamp
-        update_user_data(user_id, gen_multiplier, current_daily_multiplier, current_time, last_multiplier_update)
+        update_user_data(user_id, user_data['multiplier'], current_daily_multiplier, current_time, last_multiplier_update)
 
         # Don't update multiplier more than once per 24h
         if current_time - last_multiplier_update < TIME_DELTA:
             print(f"[DEBUG] Skipping multiplier update — already updated in the last 24h.")
             return
-        
-         # Determine new multiplier state based on activity
-        if current_time - last_activity >= TIME_DELTA:
+
+        # Determine new multiplier state based on activity
+        if current_time - last_message_ts >= TIME_DELTA:  # Compare to 'last_message_ts' now
             # Inactive for 24+ hours — reset multiplier
             new_daily_multiplier = 1
             print(f"[DEBUG] Inactive for 24+ hours — resetting multiplier.")
-        elif last_activity > last_multiplier_update:
+        elif last_message_ts > last_multiplier_update:
             # Active since last multiplier update — increase multiplier
             new_daily_multiplier = min(current_daily_multiplier + 1, MAX_MULTIPLIER)
             print(f"[DEBUG] Active since last multiplier update — increasing multiplier.")
@@ -129,19 +128,20 @@ async def on_user_comment(user_id, bot):
             new_daily_multiplier = current_daily_multiplier
             print(f"[DEBUG] No new activity since last update — multiplier unchanged.")
 
-        # Save new multiplier + timestamp only if it changed
-    if new_daily_multiplier != current_daily_multiplier:
-        update_user_data(user_id, user_data['multiplier'], new_daily_multiplier, current_time, current_time)
+        # Update the multiplier in the database
+        if new_daily_multiplier != current_daily_multiplier:
+            update_user_data(user_id, user_data['multiplier'], new_daily_multiplier, current_time, current_time)
 
-        exp_channel = bot.get_channel(EXP_CHANNEL_ID)
-        if exp_channel:
-            await exp_channel.send(
-                f"🏔️ <{user_id}>'s daily multiplier updated to **{new_daily_multiplier}x** due to daily posting."
-            )
+            # Send update message to the designated EXP channel
+            exp_channel = bot.get_channel(EXP_CHANNEL_ID)
+            if exp_channel:
+                await exp_channel.send(
+                    f"🏔️ <@{user_id}>'s daily multiplier updated to **{new_daily_multiplier}x** due to daily posting."
+                )
+            else:
+                print("[ERROR] EXP channel not found.")
         else:
-            print("[ERROR] EXP channel not found.")
-    else:
-        print(f"[DEBUG] Multiplier unchanged for {user_id}, no update message sent.")
+            print(f"[DEBUG] Multiplier unchanged for {user_id}, no update message sent.")
 
 
 async def check_and_reset_multiplier(user_id, bot):
