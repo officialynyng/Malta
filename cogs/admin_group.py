@@ -337,6 +337,44 @@ class AdminGroup(app_commands.Group):
         # Debug: Summary of changes
         print(f"[DEBUG]🔧 Multiplier adjustments completed:\n{summary}")
 
+    @app_commands.command(name="crpg_trigger_activity_check", description="🔒 - 🧪 Manually run the recent ActivityAnalyzer check.")
+    async def trigger_activity_check(self, interaction: discord.Interaction):
+        if interaction.user.id != OWNER_ID:
+            await interaction.response.send_message("🚫 You do not have permission to use this command.", ephemeral=True)
+            return
+
+        try:
+            from cogs.ActivityAnalyzer import ActivityToExpProcessor
+            cog = self.bot.get_cog("ActivityToExpProcessor")
+            if cog:
+                await cog.process_recent_activity()
+                await interaction.response.send_message("✅ Activity check triggered manually.", ephemeral=True)
+            else:
+                await interaction.response.send_message("⚠️ ActivityAnalyzer cog not found.", ephemeral=True)
+        except Exception as e:
+            print(f"[ERROR] Failed to run manual activity check: {e}")
+            await interaction.response.send_message(f"❌ Failed to run manual activity check:\n```{e}```", ephemeral=True)
+
+    @app_commands.command(name="crpg_trigger_voice_check", description="🔒 - 🧪 Manually trigger VoiceExpCog check.")
+    async def trigger_voice_check(self, interaction: discord.Interaction):
+        if interaction.user.id != OWNER_ID:
+            await interaction.response.send_message("🚫 You do not have permission to use this command.", ephemeral=True)
+            return
+
+        try:
+            from cogs.exp_voice import VoiceExpCog
+            cog = self.bot.get_cog("VoiceExpCog")
+            if cog:
+                await cog.check_voice_activity()
+                await interaction.response.send_message("✅ Voice activity check triggered manually.", ephemeral=True)
+            else:
+                await interaction.response.send_message("⚠️ VoiceExpCog not found.", ephemeral=True)
+        except Exception as e:
+            print(f"[ERROR] Failed to run manual voice check: {e}")
+            await interaction.response.send_message(f"❌ Failed to run voice activity check:\n```{e}```", ephemeral=True)
+
+
+
 async def setup(bot):
     admin_group = AdminGroup(bot)
     bot.tree.add_command(admin_group)
