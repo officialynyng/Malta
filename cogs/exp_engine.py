@@ -20,6 +20,7 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
 
     user_id = str(message.author.id)
     current_ts = time.time()
+    username = str(message.author.display_name)
 
     with engine.connect() as conn:
         result = conn.execute(db.select(players).where(players.c.user_id == user_id)).fetchone()
@@ -27,7 +28,7 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
         if result:
             cooldown_remaining = current_ts - result.last_message_ts
             if cooldown_remaining < EXP_COOLDOWN:
-                print(f"[DEBUG] EXP cooldown active for user {user_id}: {EXP_COOLDOWN - cooldown_remaining:.2f} seconds remaining.")
+                print(f"[DEBUG] EXP cooldown active for {username}, {user_id}: {EXP_COOLDOWN - cooldown_remaining:.2f} seconds remaining.")
                 return
 
             multiplier = get_multiplier(result.retirements)
