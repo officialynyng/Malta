@@ -250,7 +250,7 @@ class CRPGGroup(app_commands.Group):
             await interaction.response.send_message("You have no EXP record yet. Start participating to gain experience.", ephemeral=True)
             return
 
-        last_activity = user_data['last_activity']
+        last_activity = user_data['last_message_ts']
         daily_multiplier = user_data['daily_multiplier']  # Using the daily multiplier
         retirement_multiplier = user_data['retirement_multiplier']  # Using the retirement multiplier
         time_since_last_activity = current_time - last_activity
