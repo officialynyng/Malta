@@ -459,8 +459,9 @@ class CRPGGroup(app_commands.Group):
 
         exp_channel = self.bot.get_channel(EXP_CHANNEL_ID)
 
+        # Ensure exp_channel is correctly assigned
         if not exp_channel:
-            await interaction.response.send_message("Please perform this action in #discord-crpg.", ephemeral=True)
+            await interaction.response.send_message("Error: Leaderboard channel not found.", ephemeral=True)
             return
 
         with engine.connect() as conn:
@@ -473,24 +474,26 @@ class CRPGGroup(app_commands.Group):
             results = conn.execute(query).fetchall()
 
             if not results:
-                await interaction.followup.send("No players on the leaderboard yet.", ephemeral=True)
-                return
+                await exp_channel.send("No players on the leaderboard yet.")
+            else:
+                leaderboard_text = "# 📜 Leaderboard\n"
+                for i, result in enumerate(results, start=1):
+                    user_id = result.user_id
+                    user = await self.bot.fetch_user(user_id)  # Fetch User object to get display_name
+                    name = user.display_name  # Use display_name to avoid tagging
+                    exp = result.exp
+                    level = result.level
+                    gold = result.gold
+                    retirements = result.retirements
+                    leaderboard_text += (
+                        f"{i}. {name} - 🌱 Generation {retirements}, 🌌 Level {level}, 💰 {gold} gold, ⚡ {exp} EXP\n"
+                    )
 
-            leaderboard_text = "# 📜 Leaderboard\n"
-            for i, result in enumerate(results, start=1):
-                user_id = result.user_id
-                user = await self.bot.fetch_user(user_id)  # Fetch User object to get display_name
-                name = user.display_name  # Use display_name to avoid tagging
-                exp = result.exp
-                level = result.level
-                gold = result.gold
-                retirements = result.retirements
-                leaderboard_text += (
-                    f"{i}. {name} - 🌱 Generation {retirements}, 🌌 Level {level}, 💰 {gold} gold, ⚡ {exp} EXP\n"
-                )
+                await exp_channel.send(leaderboard_text)
 
-        await interaction.response.send_message("Processing leaderboard...", ephemeral=True)
-        await interaction.followup.send(leaderboard_text)
+        # Respond to the user to confirm the leaderboard has been posted
+        await interaction.response.send_message("Leaderboard has been updated in the designated channel.", ephemeral=True)
+
 
 
     @app_commands.command(name="cooldown", description="⚗️ - Check how long until your next ⚡ experience & 💰 gold tick.")
