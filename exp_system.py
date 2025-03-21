@@ -473,8 +473,7 @@ class CRPGGroup(app_commands.Group):
             results = conn.execute(query).fetchall()
 
             if not results:
-                await exp_channel.send("No players on the leaderboard yet.")
-                await interaction.response.send_message("Leaderboard posted.", ephemeral=True)
+                await interaction.followup.send("No players on the leaderboard yet.", ephemeral=True)
                 return
 
             leaderboard_text = "# 📜 Leaderboard\n"
@@ -490,12 +489,9 @@ class CRPGGroup(app_commands.Group):
                     f"{i}. {name} - 🌱 Generation {retirements}, 🌌 Level {level}, 💰 {gold} gold, ⚡ {exp} EXP\n"
                 )
 
-            await exp_channel.send(leaderboard_text)
-            await interaction.response.send_message("Leaderboard posted in #discord-crpg.", ephemeral=True)
+        await interaction.response.send_message("Processing leaderboard...", ephemeral=True)
+        await interaction.followup.send(leaderboard_text)
 
-
-            await exp_channel.send(leaderboard_text)
-            await interaction.response.send_message("Leaderboard posted in #discord-crpg.", ephemeral=True)
 
     @app_commands.command(name="cooldown", description="⚗️ - Check how long until your next ⚡ experience & 💰 gold tick.")
     async def cooldown(self, interaction: discord.Interaction):
