@@ -175,6 +175,77 @@ class AdminGroup(app_commands.Group):
             ephemeral=True
         )
 
+    @app_commands.command(name="adjust_daily_multiplier", description="🔒 - 🔧🏔️ Manually adjust daily multipliers.")
+    @app_commands.describe(
+        users="Select one or more users to update",
+        action="increase, decrease, or set the daily multiplier",
+        value="Used if action is 'set'",
+        all="Apply to all users?"
+    )
+    async def adjust_daily_multiplier(
+        self,
+        interaction: discord.Interaction,
+        users: list[discord.User] = None,
+        action: str = "increase",
+        value: int = None,
+        all: bool = False
+    ):
+        if interaction.user.id != OWNER_ID:
+            await interaction.response.send_message("🚫 You do not have permission to use this command.", ephemeral=True)
+            return
+
+        valid_actions = ["increase", "decrease", "set"]
+        if action not in valid_actions:
+            await interaction.response.send_message(f"❌ Invalid action. Use: {', '.join(valid_actions)}", ephemeral=True)
+            return
+
+        if action == "set" and value is None:
+            await interaction.response.send_message("❌ You must provide a value when using 'set'.", ephemeral=True)
+            return
+
+        await interaction.response.defer(ephemeral=True)
+
+        user_ids = []
+
+        if all:
+            user_ids = get_all_user_ids()
+        elif users:
+            user_ids = [str(u.id) for u in users]
+        else:
+            await interaction.followup.send("❌ You must specify at least one user or use `all: true`.", ephemeral=True)
+            return
+
+        updates = []
+        for user_id in user_ids:
+            user_data = get_user_data(user_id)
+            if not user_data:
+                updates.append(f"⚠️ <@{user_id}> — not found in DB.")
+                continue
+
+            current = user_data['daily_multiplier']
+            new = current
+
+            if action == "increase":
+                new = min(current + 1, 10)
+            elif action == "decrease":
+                new = max(current - 1, 1)
+            elif action == "set":
+                new = max(1, min(value, 10))
+
+            update_user_data(
+                user_id,
+                user_data['multiplier'],
+                new,
+                time.time(),  # last_activity
+                last_multiplier_update=time.time()
+            )
+
+            updates.append(f"✖️ <@{user_id}> — 🏔️ {current}x ➜ {new}x")
+
+        summary = "\n".join(updates)
+        await interaction.followup.send(f"Daily multiplier adjustment:\n{summary}", ephemeral=True)
+
+
 
 async def setup(bot):
     admin_group = AdminGroup(bot)
