@@ -123,7 +123,7 @@ async def on_user_comment(user_id, bot):
 
         # Save new multiplier + timestamp only if it changed
     if new_daily_multiplier != current_daily_multiplier:
-        update_user_data(user_id, user_data['retirement_multiplier'], new_daily_multiplier, current_time, current_time)
+        update_user_data(user_id, user_data['multiplier'], new_daily_multiplier, current_time, current_time)
 
         exp_channel = bot.get_channel(EXP_CHANNEL_ID)
         if exp_channel:
