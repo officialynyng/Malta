@@ -175,7 +175,7 @@ class AdminGroup(app_commands.Group):
             ephemeral=True
         )
 
-    @app_commands.command(name="adjust_daily_multiplier", description="🔒 - 🔧🏔️ Manually adjust daily multipliers.")
+    @app_commands.command(name="crpg_adjust_daily_multiplier", description="🔒 - 🔧🏔️ Manually adjust daily multipliers.")
     @app_commands.describe(
         users="Select one or more users to update",
         action="increase, decrease, or set the daily multiplier",
