@@ -1,3 +1,4 @@
+import asyncio
 import os
 from discord.ext import commands
 
@@ -12,12 +13,16 @@ from cogs.exp_engine import (
 class VoiceExpCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.voice_activity_check_task = self.bot.loop.create_task(self.check_voice_activity())
-        print("[DEBUG] VoiceExpCog initialized and background task started.")
+        if not hasattr(self, 'voice_activity_check_task'):  # Prevent multiple tasks
+            self.voice_activity_check_task = self.bot.loop.create_task(self.check_voice_activity())
+            print("[DEBUG] VoiceExpCog initialized and background task started.")
+        else:
+            print("[DEBUG] Background task already running.")
 
     def cog_unload(self):
-        self.voice_activity_check_task.cancel()  # Proper cleanup on cog unload
-        print("[DEBUG] VoiceExpCog unloaded and background task canceled.")
+        if hasattr(self, 'voice_activity_check_task'):
+            self.voice_activity_check_task.cancel()  # Proper cleanup on cog unload
+            print("[DEBUG] VoiceExpCog unloaded and background task canceled.")
 
     async def check_voice_activity(self):
         """Task to check for users in voice channels every 15 minutes and process their activity."""
@@ -32,7 +37,7 @@ class VoiceExpCog(commands.Cog):
                         if not member.bot:
                             print(f"[DEBUG] Processing member: {member.display_name} (ID: {member.id}) in voice channel.")
                             await self.process_user_activity(self.bot, member.id)
-            
+            await asyncio.sleep(900)  # Sleep for 15 minutes
 
     async def process_user_activity(self, bot, user_id):
         """Process activity for a user, assuming voice channel presence."""
