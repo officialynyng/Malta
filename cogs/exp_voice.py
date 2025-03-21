@@ -1,4 +1,3 @@
-import asyncio
 import os
 from discord.ext import commands
 
@@ -33,7 +32,7 @@ class VoiceExpCog(commands.Cog):
                         if not member.bot:
                             print(f"[DEBUG] Processing member: {member.display_name} (ID: {member.id}) in voice channel.")
                             await self.process_user_activity(self.bot, member.id)
-            await asyncio.sleep(900)  # Sleep for 15 minutes
+            
 
     async def process_user_activity(self, bot, user_id):
         """Process activity for a user, assuming voice channel presence."""
