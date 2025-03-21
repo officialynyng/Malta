@@ -1,5 +1,3 @@
-        
-import time
 import sqlalchemy as db
 from sqlalchemy import select
 from discord.ext import commands

@@ -5,6 +5,7 @@ from cogs.exp_voice import setup as setup_voice_exp
 from cogs.admin_config import (
     GUILD_ID, WELCOME_CHANNEL_ID
 )
+from cogs.exp_background import start_multiplier_cleanup
 
 TOKEN = os.getenv("TOKEN")
 INTENTS = discord.Intents.default()
@@ -29,6 +30,8 @@ class MaltaBot(commands.Bot):
         await self.load_extension("cogs.ActivityAnalyzer")
 
         await setup_voice_exp(self)
+
+        self.loop.create_task(start_multiplier_cleanup(self)) 
         
         from cogs.exp_background import setup_crpg
         await setup_crpg(self)

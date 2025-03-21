@@ -4,7 +4,8 @@ import os
 import time
 from discord import app_commands
 from discord.ext import commands
-from cogs.exp_commands import ExpCommands
+from cogs.exp_utils import get_all_user_ids
+from cogs.exp_engine import check_and_reset_multiplier
 
 from cogs.exp_config import (
     EXP_CHANNEL_ID, TIME_DELTA,
@@ -23,6 +24,16 @@ from cogs.exp_engine import (
 class ExpBackground(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+async def start_multiplier_cleanup(bot):
+    await bot.wait_until_ready()
+    print("[🌀] Multiplier reset loop started.")
+    while not bot.is_closed():
+        user_ids = get_all_user_ids()
+        for user_id in user_ids:
+            await check_and_reset_multiplier(user_id, bot)
+            await asyncio.sleep(1)  # prevents spam
+        await asyncio.sleep(3600)  # run every hour
 
 
 exp_channel = None
