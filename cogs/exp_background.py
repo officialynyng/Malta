@@ -219,16 +219,12 @@ class CRPGGroup(app_commands.Group):
 
                     leaderboard_text += (
                         f"**{i}. {name}**\n"
-                        f"🌱 Generation: {retirements}\n"
-                        f"🌌 Level: {level}\n"
-                        f"💰 Gold: {gold}\n"
-                        f"⚡ EXP: {exp}\n"
+                        f"🌱 Gen: {retirements} | 🌌 Lvl: {level} | 💰 Gold: {gold} | ⚡ EXP: {exp}\n"
                     )
 
+                # Send the formatted leaderboard message
                 await exp_channel.send(leaderboard_text)
 
-        # Respond to the user to confirm the leaderboard has been posted
-        await interaction.response.send_message("Leaderboard has been updated in the designated channel.", ephemeral=True)
 
 
 
