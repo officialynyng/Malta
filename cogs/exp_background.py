@@ -27,7 +27,7 @@ class ExpBackground(commands.Cog):
 
 async def start_multiplier_cleanup(bot):
     await bot.wait_until_ready()
-    print("[🌀] Multiplier reset loop started.")
+    print("[🌀] Routine Multiplier reset loop started.")
 
     while not bot.is_closed():
         user_ids = get_all_user_ids()
@@ -42,7 +42,7 @@ async def start_multiplier_cleanup(bot):
                 print(f"[✅] Processed {user_id} in {after - before:.2f}s")
             await asyncio.sleep(0.25)  # space out checks
 
-        print(f"[🌀🏁🌀] Multiplier check cycle complete. {len(user_ids)} users checked.")
+        print(f"[🌀🏁🌀]Routine Multiplier check cycle complete. {len(user_ids)} users checked.")
         await asyncio.sleep(3600)  # wait 1 hour before next run
 
 
