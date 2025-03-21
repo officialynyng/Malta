@@ -300,7 +300,6 @@ async def process_user_activity(bot, user_id):
 
 async def setup_crpg(bot):
     print("Loading ExpCommands cog...")
-    await bot.add_cog(ExpCommands(bot))
     crpg_group = CRPGGroup(bot)
     bot.tree.add_command(crpg_group)
     print("ExpCommands cog and CRPGGroup commands loaded!")
