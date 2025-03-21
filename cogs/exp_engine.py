@@ -34,13 +34,15 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
             else:
                 print(f"[DEBUG] No cooldown active, proceeding with EXP and gold calculation for {username} ({user_id}).")
             # Continue with EXP and gold calculation...
-
-
-            multiplier = get_multiplier(result.retirements)
-            gained_exp = int(EXP_PER_TICK * multiplier)
-            gained_gold = int(GOLD_PER_TICK * multiplier)
+            daily = result.daily_multiplier
+            retire = get_multiplier(result.retirements)
+            combined_multiplier = daily * retire
+            # Calculate rewards
+            gained_exp = int(EXP_PER_TICK * combined_multiplier)
+            gained_gold = int(GOLD_PER_TICK * combined_multiplier)
             total_exp = result.exp + gained_exp
             new_level = calculate_level(total_exp)
+            print(f"[DEBUG] Multiplier applied: {result.daily_multiplier} (daily) × {get_multiplier(result.retirements):.2f} (retirement) = {combined_multiplier:.2f}")
 
             if result.level >= LEVEL_CAP:
                 total_exp = result.exp
@@ -57,10 +59,10 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
             conn.commit()
 
             exp_channel = message.guild.get_channel(EXP_CHANNEL_ID)
-            if exp_channel:
-                await exp_channel.send(
-                    f"**{message.author.display_name}** gained ⚡ **{gained_exp} EXP** and 💰 **{gained_gold} gold** "
-                    f"with a current daily multiplier of 🏔️ **{multiplier:.2f}x**."
+            await exp_channel.send(
+                f"**{message.author.display_name}** gained ⚡ **{gained_exp} EXP** and 💰 **{gained_gold} gold**\n"
+                f"🏔️ Daily Multiplier: **{daily:.2f}x**\n"
+                f"🧬 Generational Multiplier: **{retire:.2f}x**\n"
                 )
 
             if new_level > result.level:
