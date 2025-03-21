@@ -94,6 +94,7 @@ async def help_command(interaction: discord.Interaction):
         "🔒 /admin ping - Check if the bot is online and responsive.\n\n"
         "🔒 /admin structure - View the current filestructure of the bot.\n\n"
         "🔒 /admin restart - Restart the bot.\n\n"
+        "🔒 `/admin crpg_multi_check` — Force a multiplier check for all users.\n\n"
         "## __[CRPG]__ Commands\n\n"
         "⚗️ /crpg stats - View your current level, EXP, gold, and retirement progress.\n\n"
         "⚗️ /crpg profile <user> - View another player's profile.\n\n"
