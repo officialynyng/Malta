@@ -4,7 +4,7 @@ import os
 import asyncio
 import sys
 import time
-from typing import (Optional,)
+from typing import (Optional, List)
 from discord import (app_commands,)
 from cogs.exp_engine import (on_user_comment,)
 from cogs.exp_utils import (get_all_user_ids, get_user_data, update_user_data,)
@@ -189,7 +189,7 @@ class AdminGroup(app_commands.Group):
     async def adjust_daily_multiplier(
         self,
         interaction: discord.Interaction,
-        users: Optional[list[discord.User]] = None,  # Use 'list' instead of 'List'
+        users: Optional[List[discord.User]] = None,
         action: str = "increase",
         value: int = None,
         all: bool = False
