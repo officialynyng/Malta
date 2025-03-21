@@ -37,7 +37,7 @@ class VoiceExpCog(commands.Cog):
                         if not member.bot:
                             print(f"[DEBUG] Processing member: {member.display_name} (ID: {member.id}) in voice channel: {vc.name} (ID: {vc.id})")
                             await self.process_user_activity(self.bot, member.id)
-            await asyncio.sleep(900)  # Sleep for 15 minutes
+            await asyncio.sleep(300)  # Sleep for 5 minutes
 
     async def process_user_activity(self, bot, user_id):
         """Process activity for a user, assuming voice channel presence."""
