@@ -3,8 +3,8 @@ import io
 import os
 import asyncio
 import sys
-from typing import List
-from discord import app_commands
+from typing import (List, Optional,)
+from discord import (app_commands, User, Interaction,)
 from cogs.exp_engine import (on_user_comment,)
 from cogs.exp_utils import (get_all_user_ids, get_user_data)
 from cogs.admin_config import (APPROVED_ROLE_NAME, OWNER_ID, GUILD_ID)
@@ -178,17 +178,17 @@ class AdminGroup(app_commands.Group):
 
     @app_commands.command(name="crpg_adjust_daily_multiplier", description="🔒 - 🔧🏔️ Manually adjust daily multipliers.")
     @app_commands.describe(
-        users="Select one or more users to update",
+        user="Select a user to update",
         action="increase, decrease, or set the daily multiplier",
         value="Used if action is 'set'",
-        all="Apply to all users?"
+        all="Apply to all users instead of one?"
     )
     async def adjust_daily_multiplier(
         self,
-        interaction: discord.Interaction,
-        users: List[discord.User] = None,  # ✅ fixed here
+        interaction: Interaction,
+        user: Optional[User] = None,
         action: str = "increase",
-        value: int = None,
+        value: Optional[int] = None,
         all: bool = False
     ):
         if interaction.user.id != OWNER_ID:
@@ -210,10 +210,10 @@ class AdminGroup(app_commands.Group):
 
         if all:
             user_ids = get_all_user_ids()
-        elif users:
-            user_ids = [str(u.id) for u in users]
+        elif user:
+            user_ids = [str(user.id)]
         else:
-            await interaction.followup.send("❌ You must specify at least one user or use `all: true`.", ephemeral=True)
+            await interaction.followup.send("❌ You must specify a user or set `all: true`.", ephemeral=True)
             return
 
         updates = []
@@ -237,7 +237,7 @@ class AdminGroup(app_commands.Group):
                 user_id,
                 user_data['multiplier'],
                 new,
-                time.time(),  # last_activity
+                time.time(),
                 last_multiplier_update=time.time()
             )
 
@@ -245,6 +245,7 @@ class AdminGroup(app_commands.Group):
 
         summary = "\n".join(updates)
         await interaction.followup.send(f"Daily multiplier adjustment:\n{summary}", ephemeral=True)
+
 
 
 
