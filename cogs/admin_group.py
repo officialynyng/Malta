@@ -148,7 +148,7 @@ class AdminGroup(app_commands.Group):
         # Exit the current process (which will trigger a restart in environments like Heroku)
         os.execv(sys.executable, ['python'] + sys.argv)
 
-    @app_commands.command(name="crpg_multi_check", description="Force a multiplier check for all users.")
+    @app_commands.command(name="crpg_multi_check", description="🔒 - 🏔️ Force a multiplier check for all users.")
     async def check_all_multipliers(self, interaction: discord.Interaction):
         if interaction.user.id != OWNER_ID:
             await interaction.response.defer(thinking=True)
