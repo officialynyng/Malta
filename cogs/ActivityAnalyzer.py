@@ -39,18 +39,17 @@ class ActivityToExpProcessor(commands.Cog):
                 member = malta_guild.get_member(int(user_id))
                 if not member:
                     print(f"[DEBUG] User ID {user_id} not found in guild. Removing from activity table.")
-                    conn.execute(delete(self.recent_activity).where(self.recent_activity.c.user_id == user_id))
                     continue
 
-                try:
-                    # Including Discord name in debug output
-                    user_info = f"{member.name}#{member.discriminator}"
-                    print(f"[DEBUG] Processing activity for {user_info} (ID: {user_id}).")
-                    await process_user_activity(self.bot, user_id)
-                    print(f"[DEBUG] Successfully processed and cleaning up {user_info} from recent_activity.")
-                    conn.execute(delete(self.recent_activity).where(self.recent_activity.c.user_id == user_id))
-                except Exception as e:
-                    print(f"[ERROR] Failed to process activity for {user_info} (ID: {user_id}): {e}")
+                # Process each entry here
+                # Assuming `process_user_activity` or similar function handles the actual processing
+                await process_user_activity(self.bot, user_id)
+
+            # Delete all processed entries after successful processing
+            delete_stmt = self.recent_activity.delete()
+            conn.execute(delete_stmt)
+            print("[DEBUG] All recent activity entries have been deleted.")
+
 
 async def setup(bot):
     await bot.add_cog(ActivityToExpProcessor(bot))
