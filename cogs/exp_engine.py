@@ -8,6 +8,8 @@ from cogs.exp_utils import (
     get_multiplier, get_user_data, calculate_level, update_user_data, 
 )
 
+notified_users = set()
+
 class ExpEngine(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -68,31 +70,40 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
             if new_level > result.level:
                 await announce_level_up(message.guild, message.author, new_level, level_up_channel_id)
         else:
-            multiplier = get_multiplier(0)
-            new_level = calculate_level(EXP_PER_TICK)
-            gained_exp = int(EXP_PER_TICK * multiplier)
-            gained_gold = int(GOLD_PER_TICK * multiplier)
+            daily = 1.0  # Default daily multiplier for new users
+            retire = get_multiplier(0)
+            combined_multiplier = daily * retire
+
+            gained_exp = int(EXP_PER_TICK * combined_multiplier)
+            gained_gold = int(GOLD_PER_TICK * combined_multiplier)
+            total_exp = gained_exp
+            new_level = calculate_level(total_exp)
 
             conn.execute(players.insert().values(
                 user_id=user_id,
-                exp=gained_exp,
+                exp=total_exp,
                 gold=gained_gold,
                 level=new_level,
                 last_message_ts=current_ts,
                 retirements=0,
-                heirloom_points=0
+                heirloom_points=0,
+                multiplier=0.0,
+                daily_multiplier=daily,
+                last_multiplier_update=current_ts
             ))
             conn.commit()
 
             exp_channel = message.guild.get_channel(EXP_CHANNEL_ID)
             if exp_channel:
                 await exp_channel.send(
-                    f"**{message.author.display_name}** gained ⚡ **{gained_exp} EXP** and 💰 **{gained_gold} gold** "
-                    f"with a current daily multiplier of 🏔️ **{multiplier:.2f}x**."
+                    f"**{message.author.display_name}** gained ⚡ **{gained_exp} EXP** and 💰 **{gained_gold} gold**\n"
+                    f"🏔️ Daily Multiplier: **{daily:.2f}x**\n"
+                    f"🧬 Generational Multiplier: **{retire:.2f}x**"
                 )
 
             if new_level > 0:
                 await announce_level_up(message.guild, message.author, new_level, level_up_channel_id)
+
 
 
 async def on_user_comment(user_id, bot):
@@ -160,19 +171,31 @@ async def check_and_reset_multiplier(user_id, bot):
     print(f"[DEBUG] Retrieved user data for {user_id}: {user_data}")
 
     if user_data:
-        time_since_last = current_time - user_data['last_message_ts']
+        time_since_last = current_time - user_data['last_multiplier_update']
 
         if time_since_last >= TIME_DELTA * 2:
+            if user_id in notified_users:
+                print(f"[DEBUG] Reset notice already sent for {user_id}, skipping message.")
+                return
+
             # Reset daily multiplier & last_multiplier_update
             update_user_data(user_id, user_data['retirement_multiplier'], 1, current_time, current_time)
+            notified_users.add(user_id)
+
             exp_channel = bot.get_channel(EXP_CHANNEL_ID)
             if exp_channel:
                 await exp_channel.send(
-                    f"🌋 <{user_id}>'s daily multiplier has been reset to **1x** due to inactivity."
+                    f"🌋 <@{user_id}>'s daily multiplier has been reset to **1x** due to inactivity."
                 )
             print(f"[DEBUG] Reset daily multiplier for {user_id} due to inactivity ({time_since_last} seconds).")
+
+        else:
+            if user_id in notified_users:
+                notified_users.remove(user_id)  # user became active again, clear flag
+
     else:
         print(f"[ERROR] User {user_id} not found in database.")
+
 
 
 async def award_xp_and_gold(user_id, base_xp, base_gold, bot):

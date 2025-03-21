@@ -186,21 +186,18 @@ class AdminGroup(app_commands.Group):
     async def adjust_daily_multiplier(
         self,
         interaction: discord.Interaction,
-        users: Optional[discord.User] = None,  # Single user or None
+        users: Optional[discord.User] = None,
         value: int = None,
         all: bool = False
     ):
-        # Check for permission
         if interaction.user.id != OWNER_ID:
             await interaction.response.send_message("🚫 You do not have permission to use this command.", ephemeral=True)
             return
 
-        # Validate 'set' action by ensuring value is provided
         if value is None:
             await interaction.response.send_message("❌ You must provide a value when using 'set'.", ephemeral=True)
             return
 
-        # Ensure only one of 'users' or 'all' is used
         if users and all:
             await interaction.response.send_message("❌ You cannot specify both a user and `all: true`. Please choose one.", ephemeral=True)
             return
@@ -208,15 +205,13 @@ class AdminGroup(app_commands.Group):
             await interaction.response.send_message("❌ You must specify either a user or use `all: true`.", ephemeral=True)
             return
 
-        # Defer response while processing
         await interaction.response.defer(ephemeral=True)
 
         user_ids = []
-
         if all:
-            user_ids = get_all_user_ids()  # Get all users if 'all' is true
+            user_ids = get_all_user_ids()
         elif users:
-            user_ids = [str(users.id)]  # Use the single user ID if a user is mentioned
+            user_ids = [str(users.id)]
 
         updates = []
         for user_id in user_ids:
@@ -226,21 +221,22 @@ class AdminGroup(app_commands.Group):
                 continue
 
             current = user_data['daily_multiplier']
-            new = max(1, min(value, 5))  # Ensure the value is between 1 and 5
+            new = max(1, min(value, 5))
 
-            # Update the user's data
+            # Do NOT update last_multiplier_update
             update_user_data(
                 user_id,
                 user_data['multiplier'],
                 new,
-                time.time(),  # Last activity timestamp
-                last_multiplier_update=time.time()  # Last multiplier update timestamp
+                user_data['last_message_ts'],  # preserve existing last activity
+                last_multiplier_update=None    # indicate no update
             )
 
             updates.append(f"✖️ <@{user_id}> — 🏔️ {current}x ➜ {new}x")
 
         summary = "\n".join(updates)
         await interaction.followup.send(f"Daily multiplier adjustment:\n{summary}", ephemeral=True)
+
 
 
 
