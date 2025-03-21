@@ -171,32 +171,52 @@ class AdminGroup(app_commands.Group):
         # Exit the current process (which will trigger a restart in environments like Heroku)
         os.execv(sys.executable, ['python'] + sys.argv)
 
-    @app_commands.command(name="crpg_multi_check", description="🔒 - 🏔️ Force a multiplier check for all users.")
+    @app_commands.command(name="crpg_multi_check", description="🔒 - 🌀 Force a multiplier check for all users.")
     async def check_all_multipliers(self, interaction: discord.Interaction):
+        # Debug: Log the interaction user and command initiation
+        print(f"[DEBUG] 🌀 Forcing multiplier check: {interaction.user.id}")
+
         if interaction.user.id != OWNER_ID:
             await interaction.response.send_message("🚫 You do not have permission to use this command.", ephemeral=True)
             return
 
+        # Proceed with command execution
         await interaction.response.defer(thinking=True, ephemeral=True)
 
+        # Fetch all user IDs
         user_ids = get_all_user_ids()
+        print(f"[DEBUG] Total users fetched: {len(user_ids)}")  # Debug: Log total number of users
+
         results = []
 
         for user_id in user_ids:
+            # Debug: Log user ID being processed
+            print(f"[DEBUG] Processing user ID: {user_id}")
             await on_user_comment(user_id, self.bot)
 
-            # Get their updated multiplier from DB
+            # Fetch updated multiplier from database
             user_data = get_user_data(user_id)
+            if not user_data:
+                print(f"[ERROR] No user data found for user ID: {user_id}")  # Debug: Error if no data found
+                continue
+
             display = f"<@{user_id}> — 🏔️ Daily: {user_data['daily_multiplier']}x"
             results.append(display)
+
+            # Debug: Log successful processing of user data
+            print(f"[DEBUG] Updated multiplier for user ID {user_id}: {user_data['daily_multiplier']}x")
 
             await asyncio.sleep(0.1)  # prevent rate limits
 
         result_text = "\n".join(results)
+        # Debug: Log final result text
+        print(f"[DEBUG] 🌀 Final result text for multiplier check: {result_text}")
+
         await interaction.followup.send(
             content=f"✖️ Multiplier check run for **{len(user_ids)} users**:\n\n{result_text}",
             ephemeral=True
         )
+
 
     @app_commands.command(name="crpg_adjust_daily_multiplier", description="🔒 - 🔧🏔️ Manually adjust daily multipliers.")
     @app_commands.describe(
