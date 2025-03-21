@@ -269,7 +269,7 @@ async def award_xp_and_gold(user_id, base_xp, base_gold, bot):
             await exp_channel.send(
                 f"<@{user_id}> has been awarded ⚡ {xp_awarded} XP and 💰 {gold_awarded} gold. "
                 f"Total XP is now ⚡ {user_data['exp'] + xp_awarded}, and total gold is 💰 {user_data['gold'] + gold_awarded}. "
-                f"Daily Multiplier applied: 🏔️ {daily_multiplier}x, Generational Multiplier applied: 🌌 {retirement_multiplier + 1:.2f}x."
+                f"Daily Multiplier applied: 🏔️ {daily_multiplier}x, Generational Multiplier applied: 🧬 {retirement_multiplier + 1:.2f}x."
             )
         else:
             print("Failed to connect to Database for User.")
@@ -407,7 +407,7 @@ class CRPGGroup(app_commands.Group):
 
             await interaction.response.send_message(
                 f"📜 Stats for **{interaction.user.display_name}'s Profile**\n"
-                f"🧬 Level: {level}\n⚡ EXP: {exp}\n💰 Gold: {gold}\n"
+                f"🌌 Level: {level}\n⚡ EXP: {exp}\n💰 Gold: {gold}\n"
                 f"🌱 Generation: {retirements}\n🪙 Heirloom Points: {heirloom_points}",
                 ephemeral=True
             )
@@ -434,7 +434,7 @@ class CRPGGroup(app_commands.Group):
 
             await interaction.response.send_message(
                 f"📜 **{user.display_name}'s Profile**\n"
-                f"🧬 Level: {level}\n⚡ EXP: {exp}\n💰 Gold: {gold}\n"
+                f"🌌 Level: {level}\n⚡ EXP: {exp}\n💰 Gold: {gold}\n"
                 f"🌱 Generation: {retirements}\n🪙 Heirloom Points: {heirloom_points}",
                 ephemeral=True
             )
@@ -480,13 +480,19 @@ class CRPGGroup(app_commands.Group):
             leaderboard_text = "# 📜 Leaderboard\n"
             for i, result in enumerate(results, start=1):
                 user_id = result.user_id
+                user = await self.bot.fetch_user(user_id)  # Fetch User object to get display_name
+                name = user.display_name  # Use display_name to avoid tagging
                 exp = result.exp
                 level = result.level
                 gold = result.gold
                 retirements = result.retirements
                 leaderboard_text += (
-                    f"{i}. <@{user_id}> - 🌱 Generation {retirements}, 🧬 Level {level}, 💰 {gold} gold, ⚡ {exp} EXP\n"
+                    f"{i}. {name} - 🌱 Generation {retirements}, 🌌 Level {level}, 💰 {gold} gold, ⚡ {exp} EXP\n"
                 )
+
+            await exp_channel.send(leaderboard_text)
+            await interaction.response.send_message("Leaderboard posted in #discord-crpg.", ephemeral=True)
+
 
             await exp_channel.send(leaderboard_text)
             await interaction.response.send_message("Leaderboard posted in #discord-crpg.", ephemeral=True)
@@ -541,7 +547,7 @@ class CRPGGroup(app_commands.Group):
             minutes, seconds = divmod(remainder, 60)
             await interaction.response.send_message(
                 f"""## Daily: 🏔️ **{daily_multiplier}x**
-            ## Generational: 🌌 **{retirement_multiplier + 1:.2f}x**
+            ## Generational: 🧬 **{retirement_multiplier + 1:.2f}x**
 
             Your next daily multiplier update is in __{int(hours)}__ hours, __{int(minutes)}__ minutes, and __{int(seconds)}__ seconds.""",
                 ephemeral=True
@@ -550,7 +556,7 @@ class CRPGGroup(app_commands.Group):
             # If more than a day has passed since the last activity, the multiplier can be updated immediately
             await interaction.response.send_message(
                 f"""## Current Daily: 🏔️ **{daily_multiplier}x**
-            ## Current Generational: 🌌 **{retirement_multiplier + 1:.2f}x**
+            ## Current Generational: 🧬 **{retirement_multiplier + 1:.2f}x**
 
             Your daily multiplier update is available now. ephemeral=True)"""
             )
