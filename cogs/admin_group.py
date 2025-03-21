@@ -219,7 +219,7 @@ class AdminGroup(app_commands.Group):
         os.execv(sys.executable, ['python'] + sys.argv)
 
 
-    @app_commands.command(name="crpg_multi_check", description="🔒 - 🌀 Force a multiplier check for all users.")
+    @app_commands.command(name="crpg_multi_check", description="🔒 - 🧪🌀 Force a multiplier check for all users.")
     async def check_all_multipliers(self, interaction: discord.Interaction):
         # Debug: Log the interaction user and command initiation
         print(f"[DEBUG]🌀 Forcing multiplier check: {interaction.user.id}")
@@ -266,7 +266,7 @@ class AdminGroup(app_commands.Group):
         )
 
 
-    @app_commands.command(name="crpg_adjust_daily_multiplier", description="🔒 - 🔧🏔️ Manually adjust daily multipliers.")
+    @app_commands.command(name="crpg_adjust_daily_multiplier", description="🔒 - 🧪🏔️ Manually adjust daily multipliers.")
     @app_commands.describe(
         users="Mention one user to update (optional)",
         value="The value to set the daily multiplier to",
