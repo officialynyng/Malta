@@ -20,6 +20,7 @@ class MaltaBot(commands.Bot):
     async def setup_hook(self):
         print("Loading cogs...")
         guild = discord.Object(id=GUILD_ID)
+        await self.load_extension("cogs.admin_config")
         await self.load_extension("cogs.admin_group")
         await self.load_extension("cogs.exp_utils")
         await self.load_extension("cogs.exp_engine")

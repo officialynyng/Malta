@@ -1,4 +1,5 @@
 import discord
+from discord.ext import commands
 import time
 from cogs.exp_config import (
     db, players, exp_channel, engine, EXP_COOLDOWN, EXP_PER_TICK, GOLD_PER_TICK, LEVEL_CAP, EXP_CHANNEL_ID, TIME_DELTA, MAX_MULTIPLIER,
@@ -6,6 +7,11 @@ from cogs.exp_config import (
 from cogs.exp_utils import (
     get_multiplier, get_user_data, calculate_level, update_user_data, 
 )
+
+class ExpEngine(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
 
 async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
     print(f"Handling EXP gain for user: {message.author.id}")
@@ -185,3 +191,6 @@ async def announce_level_up(guild: discord.Guild, member: discord.Member, level:
     channel = guild.get_channel(channel_id)
     if channel:
         await exp_channel.send(f"## 🎆 {member.mention} has reached **Level {level}**.")
+
+async def setup(bot):
+    await bot.add_cog(ExpEngine(bot))

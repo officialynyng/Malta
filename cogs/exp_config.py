@@ -1,6 +1,11 @@
 import os
 import sqlalchemy as db
 from sqlalchemy.sql import select
+from discord.ext import commands
+
+class ExpConfig(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
 
 EXP_CHANNEL_ID = int(os.getenv("EXP_CHANNEL_ID"))
 print(f"[DEBUG] EXP_CHANNEL_ID loaded as: {EXP_CHANNEL_ID}")
@@ -40,3 +45,5 @@ players = db.Table(
 with engine.connect() as conn:
     metadata.create_all(engine)
 
+async def setup(bot):
+    await bot.add_cog(ExpConfig(bot))

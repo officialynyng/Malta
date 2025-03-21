@@ -3,6 +3,7 @@ import discord
 import os
 import time
 from discord import app_commands
+from discord.ext import commands
 from exp_commands import ExpCommands
 
 from cogs.exp_config import (
@@ -18,6 +19,11 @@ from cogs.exp_utils import (
 from cogs.exp_engine import (
     handle_exp_gain, on_user_comment, check_and_reset_multiplier,
 )
+
+class ExpBackground(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
 
 exp_channel = None
 last_leaderboard_timestamp = 0
@@ -298,3 +304,6 @@ async def setup_crpg(bot):
     crpg_group = CRPGGroup(bot)
     bot.tree.add_command(crpg_group)
     print("ExpCommands cog and CRPGGroup commands loaded!")
+
+async def setup(bot):
+    await bot.add_cog(ExpBackground(bot))
