@@ -4,6 +4,7 @@ import os
 import asyncio
 import sys
 import time
+import typing
 from typing import (List, Optional,)
 from discord import (app_commands, User, Interaction,)
 from cogs.exp_engine import (on_user_comment,)
