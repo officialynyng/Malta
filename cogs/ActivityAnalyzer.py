@@ -50,5 +50,5 @@ class ActivityToExpProcessor(commands.Cog):
                 except Exception as e:
                     print(f"[ERROR] Failed to process activity for user {user_id}: {e}")
 
-    async def setup(bot):
+async def setup(bot):
         await bot.add_cog(ActivityToExpProcessor(bot))
