@@ -1,6 +1,7 @@
 import discord
 import os
 import time
+import asyncio
 import math
 from discord.ext import commands
 from discord import app_commands
@@ -284,7 +285,7 @@ async def announce_level_up(guild: discord.Guild, member: discord.Member, level:
 class ExpCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-##############################
+        
     @commands.Cog.listener()
     async def on_message(self, message):
         try:
@@ -303,11 +304,6 @@ class ExpCommands(commands.Cog):
             # 🔒 Multiplier logic - Only update once per 24h (handled internally)
             await on_user_comment(user_id, self.bot)
 
-            # ❌ REMOVE: check_and_reset_multiplier() — that's already baked into on_user_comment now
-
-            # 🔄 Optional passive gain
-            # await award_xp_and_gold(user_id, base_xp=0, base_gold=0, bot=self.bot)
-
         except Exception as e:
             print(f"[ERROR] Exception in on_message: {e}")
 
@@ -317,6 +313,11 @@ class ExpCommands(commands.Cog):
         global exp_channel
         exp_channel = self.bot.get_channel(EXP_CHANNEL_ID)
         print(f"[READY] Bot is online. EXP Channel set to: {exp_channel}")
+
+
+async def setup(bot):
+    await bot.add_cog(ExpCommands(bot))
+
 
 class CRPGGroup(app_commands.Group):
     def __init__(self, bot):
@@ -498,7 +499,6 @@ class CRPGGroup(app_commands.Group):
 
         # Respond to the user to confirm the leaderboard has been posted
         await interaction.response.send_message("Leaderboard has been updated in the designated channel.", ephemeral=True)
-
 
 
 

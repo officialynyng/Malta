@@ -2,6 +2,7 @@ import discord
 import io
 from discord.ext import commands
 from discord import app_commands
+from voice_exp import setup as setup_voice_exp
 import os
 
 TOKEN = os.getenv("TOKEN")
@@ -24,12 +25,16 @@ class MaltaBot(commands.Bot):
         guild = discord.Object(id=GUILD_ID)
         admin_group = AdminGroup(self)
         self.tree.add_command(admin_group)
+
+        await self.load_extension("exp_system")  # Load existing cogs
+        await self.load_extension("ActivityAnalyzer")
+        await setup_voice_exp(self)  # Load the new voice experience cog
+        
         for guild in self.guilds:
             print(f"[DEBUG] Connected to guild: {guild.name} (ID: {guild.id})")
-        await self.load_extension("exp_system") #COG# Exp System
-        await self.load_extension("ActivityAnalyzer") #COG# Activity Analyzer
         await self.tree.sync(guild=guild)  # Sync the commands with the guild directly
-        print("COGS LOADED")
+        print("Cogs loaded")
+
 
 
 bot = MaltaBot()
