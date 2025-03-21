@@ -476,23 +476,31 @@ class CRPGGroup(app_commands.Group):
             if not results:
                 await exp_channel.send("No players on the leaderboard yet.")
             else:
-                leaderboard_text = "# 📜 Leaderboard\n"
+                # Header for the leaderboard using monospaced font for alignment
+                leaderboard_text = "```# 📜 Leaderboard\n"
+                leaderboard_text += f"{'Rank':<5}{'Name':<20}{'Gen':<5}{'Level':<6}{'Gold':<10}{'EXP':<10}\n"
+
+                # Format each player's data
                 for i, result in enumerate(results, start=1):
                     user_id = result.user_id
-                    user = await self.bot.fetch_user(user_id)  # Fetch User object to get display_name
-                    name = user.display_name  # Use display_name to avoid tagging
+                    user = await self.bot.fetch_user(user_id)
+                    name = user.display_name
+                    if len(name) > 18:
+                        name = name[:15] + '...'  # Truncate longer names
                     exp = result.exp
                     level = result.level
                     gold = result.gold
                     retirements = result.retirements
-                    leaderboard_text += (
-                        f"{i}. {name} - 🌱 Generation {retirements}, 🌌 Level {level}, 💰 {gold} gold, ⚡ {exp} EXP\n"
-                    )
+
+                    leaderboard_text += f"{i:<5}{name:<20}{retirements:<5}{level:<6}{gold:<10}{exp:<10}\n"
+
+                leaderboard_text += "```"
 
                 await exp_channel.send(leaderboard_text)
 
         # Respond to the user to confirm the leaderboard has been posted
         await interaction.response.send_message("Leaderboard has been updated in the designated channel.", ephemeral=True)
+
 
 
 
