@@ -1,7 +1,9 @@
 import discord
 import io
+import os
+import asyncio
+import sys
 
-from discord.ext import commands
 from discord import app_commands
 from cogs.admin_config import (APPROVED_ROLE_NAME, OWNER_ID, GUILD_ID)
 
@@ -84,15 +86,16 @@ class AdminGroup(app_commands.Group):
             "├── `requirements.txt` *(Python dependencies)*\n"
             "├── `Procfile` *(Heroku process declaration)*\n"
             "└── `cogs/` *(modular bot components)*\n"
-            "    ├── `exp_config.py` *(constants, DB engine, and schema)*\n"
-            "    ├── `exp_utils.py` *(leveling formulas, calculations)*\n"
-            "    ├── `exp_engine.py` *(EXP handling, multiplier logic)*\n"
-            "    ├── `exp_commands.py` *(Discord commands and event listeners)*\n"
+            "    ├── `ActivityAnalyzer.py` *(voice EXP tracking and analysis)*"
+            "    ├── `admin_config.py` *(variables for Heroku)*\n"
+            "    ├── `admin_group.py` *(Admin Group)*\n"
             "    ├── `exp_background.py` *(CRPG group + background setup)*\n"
-            "    ├── `exp_voice.py` *(CRPG Voice Recognition + Reward)*\n"
-            "    └── `ActivityAnalyzer.py` *(voice EXP tracking and analysis)*"
+            "    ├── `exp_commands.py` *(Discord commands and event listeners)*\n"
+            "    ├── `exp_config.py` *(constants, DB engine, and schema)*\n"
+            "    ├── `exp_engine.py` *(EXP handling, multiplier logic)*\n"
+            "    ├── `exp_utils.py` *(leveling formulas, calculations)*\n"
+            "    └── `exp_voice.py` *(CRPG Voice Recognition + Reward)*\n"
         )
-
 
         await interaction.response.send_message(structure_text, ephemeral=True)
 
@@ -129,6 +132,20 @@ class AdminGroup(app_commands.Group):
             await interaction.response.send_message(f"🔄 Extension `{extension}` reloaded successfully.", ephemeral=True)
         except Exception as e:
             await interaction.response.send_message(f"⚠️ Failed to reload `{extension}`:\n```{e}```", ephemeral=True)
+
+    @app_commands.command(name="restart", description="🔒 - ⏪ Restart the bot.")
+    async def restart(self, interaction: discord.Interaction):
+        if interaction.user.id != OWNER_ID:
+            await interaction.response.send_message("🚫 You are not authorized to use this command.", ephemeral=True)
+            return
+
+        await interaction.response.send_message("🔄 Restarting the bot...", ephemeral=True)
+
+        # A small delay to allow the message to be sent
+        await asyncio.sleep(2)
+
+        # Exit the current process (which will trigger a restart in environments like Heroku)
+        os.execv(sys.executable, ['python'] + sys.argv)
 
 async def setup(bot):
     admin_group = AdminGroup(bot)
