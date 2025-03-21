@@ -1,6 +1,14 @@
 import asyncio
-from exp_system import handle_exp_gain, on_user_comment, check_and_reset_multiplier, EXP_CHANNEL_ID
+import os
 from discord.ext import commands
+
+from exp_config import (
+    EXP_CHANNEL_ID,
+)
+
+from exp_engine import (
+    handle_exp_gain, on_user_comment, check_and_reset_multiplier, 
+)
 
 class VoiceExpCog(commands.Cog):
     def __init__(self, bot):

@@ -3,8 +3,8 @@ import time
 import discord
 from discord.ext import tasks, commands
 import sqlalchemy as db
-from sqlalchemy.sql import select
-from exp_system import process_user_activity  # assumes function exists in exp_system.py
+from sqlalchemy import select
+from exp_background import process_user_activity  # assumes function exists in exp_system.py
 
 class ActivityToExpProcessor(commands.Cog):
     def __init__(self, bot):

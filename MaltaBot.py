@@ -2,7 +2,7 @@ import discord
 import io
 from discord.ext import commands
 from discord import app_commands
-from voice_exp import setup as setup_voice_exp
+from cogs.exp_voice import setup as setup_voice_exp
 import os
 
 TOKEN = os.getenv("TOKEN")
@@ -23,17 +23,22 @@ class MaltaBot(commands.Bot):
     async def setup_hook(self):
         print("Loading cogs...")
         guild = discord.Object(id=GUILD_ID)
-        admin_group = AdminGroup(self)
-        self.tree.add_command(admin_group)
+        await self.load_extension("cogs.admin_group")
+        await self.load_extension("cogs.exp_utils")
+        await self.load_extension("cogs.exp_engine")
+        await self.load_extension("cogs.exp_commands")
+        await self.load_extension("cogs.exp_background")
+        await self.load_extension("cogs.ActivityAnalyzer")
 
-        await self.load_extension("exp_system")  # Load existing cogs
-        await self.load_extension("ActivityAnalyzer")
-        await setup_voice_exp(self)  # Load the new voice experience cog
+        await setup_voice_exp(self)
         
+        from cogs.exp_background import setup_crpg
+        await setup_crpg(self)
+
         for guild in self.guilds:
             print(f"[DEBUG] Connected to guild: {guild.name} (ID: {guild.id})")
         await self.tree.sync(guild=guild)  # Sync the commands with the guild directly
-        print("Cogs loaded")
+        print("All cogs and CRPG commands loaded.")
 
 
 
@@ -60,124 +65,6 @@ async def on_ready():
     await bot.tree.sync()
     ###############################
     print("Command tree synced.")
-
-class AdminGroup(app_commands.Group):
-    def __init__(self, bot):
-        super().__init__(name='admin', description='Administration commands')
-        self.bot = bot
-
-    @app_commands.command(name="post", description="🔒 - 📋 Post a message and its images from a private channel to another channel.")
-    @app_commands.describe(message_id="ID of the original message", destination_channel_id="ID of the destination channel")
-    async def post(self, interaction: discord.Interaction, message_id: str, destination_channel_id: str):#
-        member = interaction.user
-        approved = any(role.name == APPROVED_ROLE_NAME for role in member.roles)
-        if not approved:
-            await interaction.response.send_message("You are not authorized to use this command.", ephemeral=True)
-            return
-
-        try:
-            source_channel = interaction.channel  # command must be used in approval channel
-            message = await source_channel.fetch_message(int(message_id))
-        except discord.NotFound:
-            await interaction.response.send_message("Message not found.", ephemeral=True)
-            return
-        except discord.HTTPException as e:
-            await interaction.response.send_message(f"Failed to fetch message: {e}", ephemeral=True)
-            return
-
-        try:
-            destination_channel = self.bot.get_channel(int(destination_channel_id))
-            if destination_channel is None:
-                destination_channel = await self.bot.fetch_channel(int(destination_channel_id))
-
-            files = []
-            for attachment in message.attachments:
-                if attachment.content_type and attachment.content_type.startswith("image"):
-                    fp = await attachment.read()
-                    files.append(discord.File(fp=io.BytesIO(fp), filename=attachment.filename))
-
-
-            sent_message = await destination_channel.send(content=message.content or None, files=files)
-            await interaction.response.send_message(f"Message posted to <#{destination_channel_id}>. Message ID: {sent_message.id}", ephemeral=True)
-
-        except Exception as e:
-            await interaction.response.send_message(f"Failed to post message: {e}", ephemeral=True)
-
-    @app_commands.command(name="edit", description="🔒 - 🖊️ Edit a previously posted message in a specific channel.")
-    @app_commands.describe(destination_channel_id="ID of the channel where the message is posted", message_id="ID of the message to edit", new_content="The new message content")
-    async def edit(self, interaction: discord.Interaction, destination_channel_id: str, message_id: str, new_content: str):
-        member = interaction.user
-        approved = any(role.name == APPROVED_ROLE_NAME for role in member.roles)
-        if not approved:
-            await interaction.response.send_message("You are not authorized to use this command.", ephemeral=True)
-            return
-
-        try:
-            channel = self.bot.get_channel(int(destination_channel_id))
-            if channel is None:
-                channel = await self.bot.fetch_channel(int(destination_channel_id))
-
-            message = await channel.fetch_message(int(message_id))
-            await message.edit(content=new_content)
-            await interaction.response.send_message("Message updated successfully.", ephemeral=True)
-
-        except discord.NotFound:
-            await interaction.response.send_message("Message not found.", ephemeral=True)
-        except discord.Forbidden:
-            await interaction.response.send_message("I don't have permission to edit that message.", ephemeral=True)
-        except discord.HTTPException as e:
-            await interaction.response.send_message(f"Failed to edit message: {e}", ephemeral=True)
-
-    @app_commands.command(name="structure", description="🔒 - 📁 View the current bot file structure.")
-    async def structure(self, interaction: discord.Interaction):
-        if interaction.user.id != OWNER_ID:
-            await interaction.response.send_message("🚫 You are not authorized to use this command.", ephemeral=True)
-            return
-
-        structure_text = (
-            "📁 **Current Project Structure**\n\n"
-            "├── `MaltaBot.py` *(main bot entry point)*\n"
-            "├── `exp_system.py` *(experience system cog)*\n"
-            "├── `requirements.txt` *(Python dependencies)*\n"
-            "└── `Procfile` *(Heroku process declaration)*"
-        )
-
-        await interaction.response.send_message(structure_text, ephemeral=True)
-
-    @app_commands.command(name="ping", description="🔒 - 🛜 Check if the bot is online and responsive.")
-    async def ping(self, interaction: discord.Interaction):
-        member = interaction.user
-        approved = any(role.name == APPROVED_ROLE_NAME for role in member.roles)
-        
-        if not approved:
-            await interaction.response.send_message("🚫 You are not authorized to use this command.", ephemeral=True)
-            return
-
-        latency_ms = round(self.bot.latency * 1000)
-        await interaction.response.send_message(f"🛜 Responsive... Latency: `{latency_ms}ms`", ephemeral=True)
-
-    @app_commands.command(name="sync", description="🔒 - 🔄 Sync commands with Discord.")
-    async def sync(self, interaction: discord.Interaction):
-        if interaction.user.id != OWNER_ID:
-            await interaction.response.send_message("🚫 You are not authorized to use this command.", ephemeral=True)
-            return
-
-        await self.bot.tree.sync(guild=discord.Object(id=GUILD_ID))
-        await interaction.response.send_message("✅ Command tree synced.", ephemeral=True)
-
-    @app_commands.command(name="reload", description="🔒 - 🔄 Reload a bot extension (cog).")
-    @app_commands.describe(extension="Name of the extension (e.g., exp_system)")
-    async def reload(self, interaction: discord.Interaction, extension: str):
-        if interaction.user.id != OWNER_ID:
-            await interaction.response.send_message("🚫 You are not authorized to use this command.", ephemeral=True)
-            return
-
-        try:
-            await self.bot.reload_extension(extension)
-            await interaction.response.send_message(f"🔄 Extension `{extension}` reloaded successfully.", ephemeral=True)
-        except Exception as e:
-            await interaction.response.send_message(f"⚠️ Failed to reload `{extension}`:\n```{e}```", ephemeral=True)
-
 
 @bot.event
 async def on_member_join(member):
