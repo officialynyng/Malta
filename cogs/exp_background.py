@@ -5,17 +5,17 @@ import time
 from discord import app_commands
 from exp_commands import ExpCommands
 
-from exp_config import (
+from cogs.exp_config import (
     EXP_CHANNEL_ID, TIME_DELTA,
     EXP_COOLDOWN,
     engine, players, db,
 )
 
-from exp_utils import (
+from cogs.exp_utils import (
     get_multiplier, get_heirloom_points, get_user_data,
 )
 
-from exp_engine import (
+from cogs.exp_engine import (
     handle_exp_gain, on_user_comment, check_and_reset_multiplier,
 )
 

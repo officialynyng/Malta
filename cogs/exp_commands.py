@@ -1,10 +1,10 @@
 from discord.ext import commands
 
-from exp_engine import (
+from cogs.exp_engine import (
     handle_exp_gain, on_user_comment,
 )
 
-from exp_config import EXP_CHANNEL_ID
+from cogs.exp_config import EXP_CHANNEL_ID
 
 class ExpCommands(commands.Cog):
     def __init__(self, bot):

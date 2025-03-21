@@ -4,7 +4,7 @@ import discord
 from discord.ext import tasks, commands
 import sqlalchemy as db
 from sqlalchemy import select
-from exp_background import process_user_activity  # assumes function exists in exp_system.py
+from cogs.exp_background import process_user_activity  # assumes function exists in exp_system.py
 
 class ActivityToExpProcessor(commands.Cog):
     def __init__(self, bot):

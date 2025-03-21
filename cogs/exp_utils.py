@@ -1,11 +1,8 @@
 import sqlalchemy as db
 from sqlalchemy import select
 
-from exp_config import (
-    BASE_EXP_SCALE
-)
-from exp_config import (
-    players, engine, LEVEL_CAP, TIME_DELTA, MAX_MULTIPLIER,
+from cogs.exp_config import (
+    players, engine, LEVEL_CAP, TIME_DELTA, MAX_MULTIPLIER, BASE_EXP_SCALE,
 )
 
 

@@ -2,11 +2,11 @@ import asyncio
 import os
 from discord.ext import commands
 
-from exp_config import (
+from cogs.exp_config import (
     EXP_CHANNEL_ID,
 )
 
-from exp_engine import (
+from cogs.exp_engine import (
     handle_exp_gain, on_user_comment, check_and_reset_multiplier, 
 )
 
