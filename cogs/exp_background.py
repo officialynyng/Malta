@@ -4,7 +4,7 @@ import os
 import time
 from discord import app_commands
 from discord.ext import commands
-from exp_commands import ExpCommands
+from cogs.exp_commands import ExpCommands
 
 from cogs.exp_config import (
     EXP_CHANNEL_ID, TIME_DELTA,
