@@ -35,14 +35,14 @@ def calculate_multiplier(last_activity_time, current_time, current_daily_multipl
             current_daily_multiplier += 1  # Increment daily multiplier
     
     return current_daily_multiplier
-
+### DICTIONAIRY ### 
 def get_user_data(user_id):
     with engine.connect() as conn:
         stmt = select(
             players.c.last_message_ts,
             players.c.multiplier,
             players.c.daily_multiplier,
-            players.c.last_multiplier_update  # ✅ ADD THIS
+            players.c.last_multiplier_update  
         ).where(players.c.user_id == user_id)
 
         result = conn.execute(stmt)
@@ -69,19 +69,20 @@ def update_user_data(user_id, new_retirement_multiplier, new_daily_multiplier, l
     print(f"[DEBUG] New values: gen_multiplier={new_retirement_multiplier}, daily_multiplier={new_daily_multiplier}, last_activity={last_activity_time}, last_multiplier_update={last_multiplier_update}")
 
     values = {
-        players.c.multiplier: new_retirement_multiplier,
-        players.c.daily_multiplier: new_daily_multiplier,
-        players.c.last_message_ts: last_activity_time,
+        "multiplier": new_retirement_multiplier,
+        "daily_multiplier": new_daily_multiplier,
+        "last_message_ts": last_activity_time,
     }
 
     if last_multiplier_update is not None:
-        values[players.c.last_multiplier_update] = last_multiplier_update
+        values["last_multiplier_update"] = last_multiplier_update
 
     with engine.connect() as conn:
         conn.execute(players.update().where(players.c.user_id == user_id).values(**values))
         conn.commit()
 
     print("[DEBUG] User data updated in database")
+
 
 
 
