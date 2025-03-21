@@ -3,8 +3,8 @@ import io
 import os
 import asyncio
 import sys
-
 from discord import app_commands
+from cogs.exp_utils import (on_user_comment, get_all_user_ids)
 from cogs.admin_config import (APPROVED_ROLE_NAME, OWNER_ID, GUILD_ID)
 
 class AdminGroup(app_commands.Group):
@@ -146,6 +146,20 @@ class AdminGroup(app_commands.Group):
 
         # Exit the current process (which will trigger a restart in environments like Heroku)
         os.execv(sys.executable, ['python'] + sys.argv)
+
+    @app_commands.command(name="multi_check", description="Force a multiplier check for all users.")
+    async def check_all_multipliers(self, interaction: discord.Interaction):
+        await interaction.response.defer(thinking=True)
+
+        user_ids = get_all_user_ids()  # Fetch all from DB
+        triggered = 0
+
+        for user_id in user_ids:
+            await on_user_comment(user_id, self.bot)
+            triggered += 1
+            await asyncio.sleep(0.1)  # Small delay to avoid rate limits
+
+        await interaction.followup.send(f"✅ Multiplier check run for **{triggered} users**.")
 
 async def setup(bot):
     admin_group = AdminGroup(bot)

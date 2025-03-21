@@ -91,5 +91,10 @@ def update_user_data(
         conn.execute(players.update().where(players.c.user_id == user_id).values(**update_data))
     print("[DEBUG] User data updated in database")
 
+def get_all_user_ids():
+    with engine.connect() as conn:
+        result = conn.execute(select(players.c.user_id)).fetchall()
+        return [str(row[0]) for row in result]
+
 async def setup(bot):
     await bot.add_cog(ExpUtils(bot))
