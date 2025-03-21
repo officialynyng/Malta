@@ -13,7 +13,7 @@ class ActivityToExpProcessor(commands.Cog):
         self.engine = db.create_engine(self.fix_db_url(os.getenv("DATABASE_URL")))
         self.metadata = db.MetaData()
         self.recent_activity = db.Table("recent_activity", self.metadata, autoload_with=self.engine)
-        self.cooldown_seconds = 300  ##<-- Set to 900 For Production
+        self.cooldown_seconds = 300  ##<-- Set to 300-900 For Production
         self.guild_id = int(os.getenv("GUILD_ID"))
     async def cog_load(self):  # ✅ NEW: safer than starting loop in __init__
         print("[DEBUG] ActivityToExpProcessor cog fully loaded. Starting task loop...")
@@ -22,7 +22,7 @@ class ActivityToExpProcessor(commands.Cog):
     def fix_db_url(self, url):
         return url.replace("postgres://", "postgresql://", 1) if url.startswith("postgres://") else url
 
-    @tasks.loop(seconds=300)  # Set to 900 For Production
+    @tasks.loop(seconds=300)  ##<-- Set to 300-900 For Production
     async def process_recent_activity(self):
         print("[DEBUG] ActivityAnalyzer task loop triggered.")
         malta_guild = self.bot.get_guild(self.guild_id)

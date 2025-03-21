@@ -17,21 +17,26 @@ class AdminGroup(app_commands.Group):
 
     @app_commands.command(name="post", description="🔒 - 📋 Post a message and its images from a private channel to another channel.")
     @app_commands.describe(message_id="ID of the original message", destination_channel_id="ID of the destination channel")
-    async def post(self, interaction: discord.Interaction, message_id: str, destination_channel_id: str):#
+    async def post(self, interaction: discord.Interaction, message_id: str, destination_channel_id: str):
         member = interaction.user
         approved = any(role.name == APPROVED_ROLE_NAME for role in member.roles)
         if not approved:
-            await interaction.response.send_message("You are not authorized to use this command.", ephemeral=True)
+            await interaction.response.send_message("🚫 You are not authorized to use this command.", ephemeral=True)
             return
 
+        # Debug: Starting command process
+        print(f"[DEBUG] {member.display_name} initiated the post command for message ID {message_id} to channel ID {destination_channel_id}")
+
         try:
-            source_channel = interaction.channel  # command must be used in approval channel
+            source_channel = interaction.channel  # Command must be used in the approval channel
             message = await source_channel.fetch_message(int(message_id))
+            # Debug: Message fetched successfully
+            print(f"[DEBUG] Successfully fetched message from source channel {source_channel.id}")
         except discord.NotFound:
-            await interaction.response.send_message("Message not found.", ephemeral=True)
+            await interaction.response.send_message("❌ Message not found.", ephemeral=True)
             return
         except discord.HTTPException as e:
-            await interaction.response.send_message(f"Failed to fetch message: {e}", ephemeral=True)
+            await interaction.response.send_message(f"⚠️ Failed to fetch message: {e}", ephemeral=True)
             return
 
         try:
@@ -39,18 +44,30 @@ class AdminGroup(app_commands.Group):
             if destination_channel is None:
                 destination_channel = await self.bot.fetch_channel(int(destination_channel_id))
 
+            # Debug: Checking if destination channel is resolved
+            if destination_channel:
+                print(f"[DEBUG] Destination channel resolved: {destination_channel.id}")
+            else:
+                print(f"[DEBUG] Failed to resolve destination channel ID: {destination_channel_id}")
+
             files = []
             for attachment in message.attachments:
                 if attachment.content_type and attachment.content_type.startswith("image"):
                     fp = await attachment.read()
                     files.append(discord.File(fp=io.BytesIO(fp), filename=attachment.filename))
-
+                    # Debug: Attachment prepared for sending
+                    print(f"[DEBUG] Prepared attachment: {attachment.filename}")
 
             sent_message = await destination_channel.send(content=message.content or None, files=files)
-            await interaction.response.send_message(f"Message posted to <#{destination_channel_id}>. Message ID: {sent_message.id}", ephemeral=True)
+            # Debug: Message posted successfully
+            print(f"[DEBUG] Message posted successfully to {destination_channel_id} with Message ID: {sent_message.id}")
+            await interaction.response.send_message(f"✅ Message posted to <#{destination_channel_id}>. Message ID: {sent_message.id}", ephemeral=True)
 
         except Exception as e:
-            await interaction.response.send_message(f"Failed to post message: {e}", ephemeral=True)
+            # Debug: Posting failed
+            print(f"[DEBUG] Failed to post message: {e}")
+            await interaction.response.send_message(f"⚠️ Failed to post message: {e}", ephemeral=True)
+
 
     @app_commands.command(name="edit", description="🔒 - 🖊️ Replace a message’s content with content from another message.")
     @app_commands.describe(
@@ -70,13 +87,18 @@ class AdminGroup(app_commands.Group):
         member = interaction.user
         approved = any(role.name == APPROVED_ROLE_NAME for role in member.roles)
         if not approved:
-            await interaction.response.send_message("You are not authorized to use this command.", ephemeral=True)
+            await interaction.response.send_message("🚫 You are not authorized to use this command.", ephemeral=True)
             return
+
+        # Debug: Command initialization
+        print(f"[DEBUG] Edit command initiated by {member.display_name}")
 
         try:
             # Fetch the source message from the specified source channel
             source_channel = self.bot.get_channel(int(source_channel_id)) or await self.bot.fetch_channel(int(source_channel_id))
             source_message = await source_channel.fetch_message(int(source_message_id))
+            # Debug: Source message fetched
+            print(f"[DEBUG] Source message fetched from channel ID {source_channel_id}")
         except discord.NotFound:
             await interaction.response.send_message("❌ Source message or channel not found.", ephemeral=True)
             return
@@ -84,6 +106,8 @@ class AdminGroup(app_commands.Group):
         try:
             # Fetch the target message from the current channel (assuming the target is in the same channel as command used)
             target_message = await interaction.channel.fetch_message(int(target_message_id))
+            # Debug: Target message fetched
+            print(f"[DEBUG] Target message fetched from current channel")
         except discord.NotFound:
             await interaction.response.send_message("❌ Target message not found in this channel.", ephemeral=True)
             return
@@ -92,11 +116,16 @@ class AdminGroup(app_commands.Group):
             # Use override content if provided, otherwise use content from source message
             updated_content = new_content if new_content else source_message.content
             await target_message.edit(content=updated_content)
+            # Debug: Message updated successfully
+            print(f"[DEBUG] Message updated successfully with new content")
             await interaction.response.send_message("✅ Message updated successfully.", ephemeral=True)
         except discord.Forbidden:
             await interaction.response.send_message("🚫 I don't have permission to edit that message.", ephemeral=True)
         except discord.HTTPException as e:
             await interaction.response.send_message(f"⚠️ Failed to edit message: {e}", ephemeral=True)
+            # Debug: Failed to edit message
+            print(f"[DEBUG] Failed to edit message due to HTTPException: {e}")
+
 
 
     @app_commands.command(name="structure", description="🔒 - 📁 View the current bot file structure.")
@@ -128,13 +157,17 @@ class AdminGroup(app_commands.Group):
     async def ping(self, interaction: discord.Interaction):
         member = interaction.user
         approved = any(role.name == APPROVED_ROLE_NAME for role in member.roles)
-        
+
         if not approved:
             await interaction.response.send_message("🚫 You are not authorized to use this command.", ephemeral=True)
             return
 
         latency_ms = round(self.bot.latency * 1000)
+        
+        print(f"🛜 [DEBUG] Ping command used by {member.display_name} | Latency: {latency_ms}ms")
+
         await interaction.response.send_message(f"🛜 Responsive... Latency: `{latency_ms}ms`", ephemeral=True)
+
 
     @app_commands.command(name="sync", description="🔒 - 🔄 Sync commands with Discord.")
     async def sync(self, interaction: discord.Interaction):
@@ -142,8 +175,14 @@ class AdminGroup(app_commands.Group):
             await interaction.response.send_message("🚫 You are not authorized to use this command.", ephemeral=True)
             return
 
+        # Perform the synchronization
         await self.bot.tree.sync(guild=discord.Object(id=GUILD_ID))
+        
+        # Debug statement with emoji
+        print(f"🔄 [DEBUG] Commands synced by {interaction.user.display_name}")
+
         await interaction.response.send_message("✅ Command tree synced.", ephemeral=True)
+
 
     @app_commands.command(name="reload", description="🔒 - 🔄 Reload a bot extension (cog).")
     @app_commands.describe(extension="Name of the extension (e.g., exp_system)")
@@ -154,15 +193,22 @@ class AdminGroup(app_commands.Group):
 
         try:
             await self.bot.reload_extension(extension)
+            # Debug statement with emoji
+            print(f"🔄 [DEBUG] Extension `{extension}` reloaded by {interaction.user.display_name}")
             await interaction.response.send_message(f"🔄 Extension `{extension}` reloaded successfully.", ephemeral=True)
         except Exception as e:
+            print(f"⚠️ [DEBUG] Failed to reload `{extension}` by {interaction.user.display_name}: {e}")
             await interaction.response.send_message(f"⚠️ Failed to reload `{extension}`:\n```{e}```", ephemeral=True)
+
 
     @app_commands.command(name="restart", description="🔒 - ⏪ Restart the bot.")
     async def restart(self, interaction: discord.Interaction):
         if interaction.user.id != OWNER_ID:
             await interaction.response.send_message("🚫 You are not authorized to use this command.", ephemeral=True)
             return
+
+        # Debug statement with emoji
+        print(f"⏪ [DEBUG] Restart command issued by {interaction.user.display_name}")
 
         await interaction.response.send_message("🔄 Restarting the bot...", ephemeral=True)
 
@@ -171,6 +217,7 @@ class AdminGroup(app_commands.Group):
 
         # Exit the current process (which will trigger a restart in environments like Heroku)
         os.execv(sys.executable, ['python'] + sys.argv)
+
 
     @app_commands.command(name="crpg_multi_check", description="🔒 - 🌀 Force a multiplier check for all users.")
     async def check_all_multipliers(self, interaction: discord.Interaction):
@@ -247,13 +294,18 @@ class AdminGroup(app_commands.Group):
             await interaction.response.send_message("❌ You must specify either a user or use `all: true`.", ephemeral=True)
             return
 
+        # Debug: Starting the adjustment process
+        print(f"🔧 [DEBUG] Starting multiplier adjustment by {interaction.user.display_name}, Value: {value}, All: {all}")
+
         await interaction.response.defer(ephemeral=True)
 
         user_ids = []
         if all:
             user_ids = get_all_user_ids()
+            print(f"🔧 [DEBUG] Applying to all users, total: {len(user_ids)}")  # Debug: Total users affected
         elif users:
             user_ids = [str(users.id)]
+            print(f"🔧 [DEBUG] Applying to specific user ID: {users.id}")  # Debug: Specific user affected
 
         updates = []
         for user_id in user_ids:
@@ -264,6 +316,9 @@ class AdminGroup(app_commands.Group):
 
             current = user_data['daily_multiplier']
             new = max(1, min(value, 5))
+
+            # Debug: Before updating user data
+            print(f"🔧 [DEBUG] Updating {user_id} from {current}x to {new}x")
 
             # Do NOT update last_multiplier_update
             update_user_data(
@@ -279,9 +334,8 @@ class AdminGroup(app_commands.Group):
         summary = "\n".join(updates)
         await interaction.followup.send(f"Daily multiplier adjustment:\n{summary}", ephemeral=True)
 
-
-
-
+        # Debug: Summary of changes
+        print(f"🔧 [DEBUG] Multiplier adjustments completed:\n{summary}")
 
 async def setup(bot):
     admin_group = AdminGroup(bot)
