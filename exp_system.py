@@ -479,13 +479,13 @@ class CRPGGroup(app_commands.Group):
 
             leaderboard_text = "# 📜 Leaderboard\n"
             for i, result in enumerate(results, start=1):
-                username = result.username
+                user_id = result.user_id
                 exp = result.exp
                 level = result.level
                 gold = result.gold
                 retirements = result.retirements
                 leaderboard_text += (
-                    f"{i}. {username} - 🌱 Generation {retirements}, 🧬 Level {level}, 💰 {gold} gold, ⚡ {exp} EXP\n"
+                    f"{i}. <@{user_id}> - 🌱 Generation {retirements}, 🧬 Level {level}, 💰 {gold} gold, ⚡ {exp} EXP\n"
                 )
 
             await exp_channel.send(leaderboard_text)
