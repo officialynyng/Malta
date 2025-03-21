@@ -97,9 +97,10 @@ async def on_user_comment(user_id, bot):
     print("[DEBUG] on_user_comment triggered")
     current_time = int(time.time())
     user_data = get_user_data(user_id)
+    gen_multiplier = user_data['multiplier']
 
     if user_data:
-        last_activity = user_data['last_activity']
+        last_activity = user_data['last_message_ts']
         last_multiplier_update = user_data.get('last_multiplier_update', 0)
         current_daily_multiplier = user_data['daily_multiplier']
 
@@ -107,7 +108,7 @@ async def on_user_comment(user_id, bot):
         print(f"[DEBUG] Daily Multiplier before update: {current_daily_multiplier}")
 
         # Always update last activity timestamp
-        update_user_data(user_id, user_data['retirement_multiplier'], current_daily_multiplier, current_time, last_multiplier_update)
+        update_user_data(user_id, gen_multiplier, current_daily_multiplier, current_time, last_multiplier_update)
 
         # Don't update multiplier more than once per 24h
         if current_time - last_multiplier_update < TIME_DELTA:
