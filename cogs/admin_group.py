@@ -337,7 +337,7 @@ class AdminGroup(app_commands.Group):
         # Debug: Summary of changes
         print(f"[DEBUG]🔧 Multiplier adjustments completed:\n{summary}")
 
-    @app_commands.command(name="crpg_trigger_activity_check", description="🔒 - 🧪 Manually run the recent ActivityAnalyzer check.")
+    @app_commands.command(name="crpg_trigger_activity_check", description="🔒 - 🧪💬 Manually run the recent ActivityAnalyzer check.")
     async def trigger_activity_check(self, interaction: discord.Interaction):
         if interaction.user.id != OWNER_ID:
             await interaction.response.send_message("⛔ You do not have permission to use this command.", ephemeral=True)
@@ -373,7 +373,7 @@ class AdminGroup(app_commands.Group):
             print(f"[ERROR] Failed to run manual activity check: {e}")
             await interaction.response.send_message(f"💢 Failed to run manual activity check:\n```{e}```", ephemeral=True)
 
-    @app_commands.command(name="crpg_trigger_voice_check", description="🔒 - 🧪 Manually trigger VoiceExpCog check.")
+    @app_commands.command(name="crpg_trigger_voice_check", description="🔒 - 🧪📢 Manually trigger VoiceExpCog check.")
     async def trigger_voice_check(self, interaction: discord.Interaction):
         if interaction.user.id != OWNER_ID:
             await interaction.response.send_message("⛔ You do not have permission to use this command.", ephemeral=True)
