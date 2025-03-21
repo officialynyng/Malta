@@ -54,7 +54,7 @@ class CRPGGroup(app_commands.Group):
         super().__init__(name="crpg", description="CRPG system commands.")
         self.bot = bot
 
-    @app_commands.command(name="retire", description="⚗️ -  Retire your character between levels 31-38 for heirloom bonuses.")
+    @app_commands.command(name="retire", description="⚗️ - 🪦 Retire your character between levels 31-38 for heirloom bonuses.")
     async def retire(self, interaction: discord.Interaction):
 
         user_id = str(interaction.user.id)
@@ -118,7 +118,7 @@ class CRPGGroup(app_commands.Group):
                 )
 
 
-    @app_commands.command(name="stats", description="⚗️ -  View your own stats (level, gold, EXP, etc.)")
+    @app_commands.command(name="stats", description="⚗️ - 📊 View your own stats (level, gold, EXP, etc.)")
     async def stats(self, interaction: discord.Interaction):
         user_id = str(interaction.user.id)
 
@@ -145,7 +145,7 @@ class CRPGGroup(app_commands.Group):
 
 
 
-    @app_commands.command(name="profile", description="⚗️ -  View another player's profile")
+    @app_commands.command(name="profile", description="⚗️ - 🧾 View another player's profile")
     @app_commands.describe(user="The user whose profile you want to see")
     async def profile(self, interaction: discord.Interaction, user: discord.User):
         user_id = str(user.id)
@@ -171,7 +171,7 @@ class CRPGGroup(app_commands.Group):
             )
 
 
-    @app_commands.command(name="leaderboard", description="⚗️ - 📜 Show top 10 players by generation, level, gold, and EXP.")
+    @app_commands.command(name="leaderboard", description="⚗️ - 🏆 Show top 10 players by generation, level, gold, and EXP.")
     async def leaderboard(self, interaction: discord.Interaction):
         global last_leaderboard_timestamp
 
@@ -207,7 +207,7 @@ class CRPGGroup(app_commands.Group):
             if not results:
                 await exp_channel.send("No players on the leaderboard yet.")
             else:
-                leaderboard_text = "**📜 Leaderboard**\n\n"
+                leaderboard_text = "**🏆 Leaderboard**\n\n"
                 for i, result in enumerate(results, start=1):
                     user_id = result.user_id
                     user = await self.bot.fetch_user(user_id)
@@ -218,7 +218,7 @@ class CRPGGroup(app_commands.Group):
                     retirements = result.retirements
 
                     leaderboard_text += (
-                        f"**{i}. {name}**\n"
+                        f"## **{i}. {name}**\n"
                         f"🌱 Gen: {retirements} | 🌌 Lvl: {level} | 💰 Gold: {gold} | ⚡ EXP: {exp}\n"
                     )
 
@@ -228,7 +228,7 @@ class CRPGGroup(app_commands.Group):
 
 
 
-    @app_commands.command(name="cooldown", description="⚗️ - Check how long until your next ⚡ experience & 💰 gold tick.")
+    @app_commands.command(name="cooldown", description="⚗️ - ⚡ Check how long until your next ⚡ experience & 💰 gold tick.")
     async def cooldown(self, interaction: discord.Interaction):
         user_id = str(interaction.user.id)
         current_ts = time.time()
@@ -257,7 +257,7 @@ class CRPGGroup(app_commands.Group):
                     ephemeral=True
                 )
 
-    @app_commands.command(name="multipliers", description="⚗️ - Your multiplier information.")
+    @app_commands.command(name="multipliers", description="⚗️ - 🏔️ Your multiplier information.")
     async def next_multiplier(self, interaction: discord.Interaction):
         user_id = str(interaction.user.id)
         current_time = int(time.time())
