@@ -86,7 +86,7 @@ async def on_member_remove(member):
 async def help_command(interaction: discord.Interaction):
     help_text = (
         "# **🏴☩ Malta Bot**\n\n"
-        "## __[PRIVELEDGED]__ Commands\n\n"
+        "## __[ADMIN]__\n\n"
         "🔒 /admin post <message_id> <channel_id> - Post a previously approved message and its images to a target channel. @Divine\n\n"
         "🔒 /admin edit <channel_id> <message_id> <new_content> - Edit a previously posted message. @Divine\n\n"
         "🔒 /admin reload <extension> - Reload a bot extension (cog).\n\n"
@@ -96,13 +96,13 @@ async def help_command(interaction: discord.Interaction):
         "🔒 /admin restart - Restart the bot.\n\n"
         "🔒 /admin crpg_multi_check — Force a multiplier check for all users.\n\n"
         "🔒 /admin crpg_adjust_daily_multiplier <users> <action> [value] [all] - Manually increase, decrease, or set the daily multiplier for one or more users, or apply to all users in the system.\n\n"
-        "## __[CRPG]__ Commands\n\n"
+        "## __[CRPG]__\n\n"
         "⚗️ /crpg stats - View your current level, EXP, gold, and retirement progress.\n\n"
         "⚗️ /crpg profile <user> - View another player's profile.\n\n"
         "⚗️ /crpg leaderboard - Show the top 10 players by level and EXP.\n\n"
         "⚗️ /crpg retire - Retire your character between levels 31-38 for permanent heirloom bonuses.\n\n"
         "⚗️ /crpg cooldown - Check how much time remains before you can earn your next experience & gold tick.\n\n"
-        "## __[TECHNICAL]__ Commands\n\n"
+        "## __[UTILITY]__\n\n"
         "🛡️ /help - Show this help message.\n\n"
         )
     await interaction.response.send_message(help_text, ephemeral=True)
