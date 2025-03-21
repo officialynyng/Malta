@@ -27,9 +27,14 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
 
         if result:
             cooldown_remaining = current_ts - result.last_message_ts
+            print(f"[DEBUG] Checking cooldown for {username} ({user_id}). Time since last message: {cooldown_remaining:.2f} seconds.")
             if cooldown_remaining < EXP_COOLDOWN:
-                print(f"[DEBUG] EXP cooldown active for {username}, {user_id}: {EXP_COOLDOWN - cooldown_remaining:.2f} seconds remaining.")
+                print(f"[DEBUG] EXP cooldown active for {username}, ({user_id}). {EXP_COOLDOWN - cooldown_remaining:.2f} seconds remaining before next update.")
                 return
+            else:
+                print(f"[DEBUG] No cooldown active, proceeding with EXP and gold calculation for {username} ({user_id}).")
+            # Continue with EXP and gold calculation...
+
 
             multiplier = get_multiplier(result.retirements)
             gained_exp = int(EXP_PER_TICK * multiplier)
@@ -133,6 +138,7 @@ async def on_user_comment(user_id, bot):
 async def check_and_reset_multiplier(user_id, bot):
     current_time = int(time.time())
     user_data = get_user_data(user_id)
+    print(f"[DEBUG] Retrieved user data for {user_id}: {user_data}")
 
     if user_data:
         time_since_last = current_time - user_data['last_activity']

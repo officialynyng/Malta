@@ -22,38 +22,35 @@ class ActivityToExpProcessor(commands.Cog):
     def fix_db_url(self, url):
         return url.replace("postgres://", "postgresql://", 1) if url.startswith("postgres://") else url
 
-    @tasks.loop(seconds=300) ##<-- Set to 900 For Production
+    @tasks.loop(seconds=300)  # Set to 900 For Production
     async def process_recent_activity(self):
         print("[DEBUG] ActivityAnalyzer task loop triggered.")
-        print(f"[DEBUG] GUILD_ID being used: {self.guild_id}")
         malta_guild = self.bot.get_guild(self.guild_id)
         if not malta_guild:
             print("[DEBUG] Malta guild not found. Skipping.")
             return
 
-        with self.engine.connect() as conn:
+        with self.engine.begin() as conn:  # Ensures that the transaction is managed with commit or rollback
             results = conn.execute(select(self.recent_activity)).fetchall()
             print(f"[DEBUG] Retrieved {len(results)} activity entries from database.")
 
             for row in results:
                 user_id = str(row.user_id)
-                print(f"[DEBUG] Processing user ID: {user_id}")
-
                 member = malta_guild.get_member(int(user_id))
                 if not member:
-                    print(f"[DEBUG] User {user_id} not found in guild. Removing from activity table.")
-                    # Cleanup: user not in Malta server
-                    conn.execute(self.recent_activity.delete().where(self.recent_activity.c.user_id == user_id))
+                    print(f"[DEBUG] User ID {user_id} not found in guild. Removing from activity table.")
+                    conn.execute(delete(self.recent_activity).where(self.recent_activity.c.user_id == user_id))
                     continue
 
-                # ✅ Corrected call to match your wrapper function exactly
-                print(f"[DEBUG] User {user_id} is valid. Passing to EXP system.")
-                await process_user_activity(self.bot, user_id)
-
-                # Cleanup: processed
-                print(f"[DEBUG] Cleaning up user {user_id} from recent_activity.")
-                conn.execute(self.recent_activity.delete().where(self.recent_activity.c.user_id == user_id))
-
+                try:
+                    # Including Discord name in debug output
+                    user_info = f"{member.name}#{member.discriminator}"
+                    print(f"[DEBUG] Processing activity for {user_info} (ID: {user_id}).")
+                    await process_user_activity(self.bot, user_id)
+                    print(f"[DEBUG] Successfully processed and cleaning up {user_info} from recent_activity.")
+                    conn.execute(delete(self.recent_activity).where(self.recent_activity.c.user_id == user_id))
+                except Exception as e:
+                    print(f"[ERROR] Failed to process activity for {user_info} (ID: {user_id}): {e}")
 
 async def setup(bot):
     await bot.add_cog(ActivityToExpProcessor(bot))
