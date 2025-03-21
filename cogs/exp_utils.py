@@ -1,3 +1,5 @@
+        
+import time
 import sqlalchemy as db
 from sqlalchemy import select
 from discord.ext import commands
@@ -56,40 +58,29 @@ def get_user_data(user_id):
         else:
             return None
 
-        
-import time
 
-import time
+def update_user_data(user_id, new_retirement_multiplier, new_daily_multiplier, last_activity_time, last_multiplier_update=None, username=None):
+    if last_multiplier_update is None:
+        last_multiplier_update = time.time()
 
-def update_user_data(
-    user_id,
-    new_retirement_multiplier,
-    new_daily_multiplier,
-    last_activity_time,
-    last_multiplier_update=None,
-    update_last_multiplier=True
-):
-    if update_last_multiplier:
-        if last_multiplier_update is None:
-            last_multiplier_update = time.time()
+    if username:
+        print(f"[DEBUG] update_user_data called for {username} ({user_id})")
     else:
-        # Skip updating the field if flag is False
-        last_multiplier_update = None
+        print(f"[DEBUG] update_user_data called for user_id={user_id}")
 
-    print(f"[DEBUG] update_user_data called with user_id={user_id}, new_retirement_multiplier={new_retirement_multiplier}, new_daily_multiplier={new_daily_multiplier}, last_activity_time={last_activity_time}, last_multiplier_update={last_multiplier_update}")
+    print(f"[DEBUG] New values: gen_multiplier={new_retirement_multiplier}, daily_multiplier={new_daily_multiplier}, last_activity={last_activity_time}, last_multiplier_update={last_multiplier_update}")
 
     with engine.connect() as conn:
-        update_data = {
-            "multiplier": new_retirement_multiplier,
-            "daily_multiplier": new_daily_multiplier,
-            "last_message_ts": last_activity_time
-        }
+        conn.execute(players.update().where(players.c.user_id == user_id).values(
+            multiplier=new_retirement_multiplier,
+            daily_multiplier=new_daily_multiplier,
+            last_message_ts=last_activity_time,
+            last_multiplier_update=last_multiplier_update
+        ))
+        conn.commit()
 
-        if update_last_multiplier:
-            update_data["last_multiplier_update"] = last_multiplier_update
-
-        conn.execute(players.update().where(players.c.user_id == user_id).values(**update_data))
     print("[DEBUG] User data updated in database")
+
 
 def get_all_user_ids():
     with engine.connect() as conn:
