@@ -5,7 +5,7 @@ import asyncio
 import sys
 from discord import app_commands
 from cogs.exp_engine import (on_user_comment,)
-from cogs.exp_utils import (get_all_user_ids,)
+from cogs.exp_utils import (get_all_user_ids, get_user_data)
 from cogs.admin_config import (APPROVED_ROLE_NAME, OWNER_ID, GUILD_ID)
 
 class AdminGroup(app_commands.Group):
