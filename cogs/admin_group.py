@@ -340,38 +340,73 @@ class AdminGroup(app_commands.Group):
     @app_commands.command(name="crpg_trigger_activity_check", description="🔒 - 🧪 Manually run the recent ActivityAnalyzer check.")
     async def trigger_activity_check(self, interaction: discord.Interaction):
         if interaction.user.id != OWNER_ID:
-            await interaction.response.send_message("🚫 You do not have permission to use this command.", ephemeral=True)
+            await interaction.response.send_message("⛔ You do not have permission to use this command.", ephemeral=True)
             return
 
         try:
             from cogs.ActivityAnalyzer import ActivityToExpProcessor
             cog = self.bot.get_cog("ActivityToExpProcessor")
             if cog:
+                # Get guild and pending activity before triggering
+                guild = self.bot.get_guild(GUILD_ID)
+                engine = cog.engine
+                table = cog.recent_activity
+                with engine.begin() as conn:
+                    results = conn.execute(db.select(table)).fetchall()
+                    if not results:
+                        await interaction.response.send_message("🧼 No users in recent activity queue. Nothing to process.", ephemeral=True)
+                        return
+
+                    users = []
+                    for row in results:
+                        users.append(f"👤 <@{row.user_id}>")
+
                 await cog.process_recent_activity()
-                await interaction.response.send_message("✅ Activity check triggered manually.", ephemeral=True)
+                user_list = "\n".join(users)
+                await interaction.response.send_message(
+                    f"⚙️ Activity check complete — processed `{len(users)}` users:\n{user_list}",
+                    ephemeral=True
+                )
             else:
-                await interaction.response.send_message("⚠️ ActivityAnalyzer cog not found.", ephemeral=True)
+                await interaction.response.send_message("💀 ActivityAnalyzer cog not found.", ephemeral=True)
         except Exception as e:
             print(f"[ERROR] Failed to run manual activity check: {e}")
-            await interaction.response.send_message(f"❌ Failed to run manual activity check:\n```{e}```", ephemeral=True)
+            await interaction.response.send_message(f"💢 Failed to run manual activity check:\n```{e}```", ephemeral=True)
 
     @app_commands.command(name="crpg_trigger_voice_check", description="🔒 - 🧪 Manually trigger VoiceExpCog check.")
     async def trigger_voice_check(self, interaction: discord.Interaction):
         if interaction.user.id != OWNER_ID:
-            await interaction.response.send_message("🚫 You do not have permission to use this command.", ephemeral=True)
+            await interaction.response.send_message("⛔ You do not have permission to use this command.", ephemeral=True)
             return
 
         try:
             from cogs.exp_voice import VoiceExpCog
             cog = self.bot.get_cog("VoiceExpCog")
-            if cog:
-                await cog.check_voice_activity()
-                await interaction.response.send_message("✅ Voice activity check triggered manually.", ephemeral=True)
-            else:
-                await interaction.response.send_message("⚠️ VoiceExpCog not found.", ephemeral=True)
+            if not cog:
+                await interaction.response.send_message("💀 VoiceExpCog not found.", ephemeral=True)
+                return
+
+            processed = []
+            for guild in self.bot.guilds:
+                for vc in guild.voice_channels:
+                    for member in vc.members:
+                        if not member.bot:
+                            await cog.process_user_activity(self.bot, member.id)
+                            processed.append(f"🔊 <@{member.id}> in `#{vc.name}`")
+
+            if not processed:
+                await interaction.response.send_message("🔕 No eligible users found in voice channels.", ephemeral=True)
+                return
+
+            result = "\n".join(processed)
+            await interaction.response.send_message(
+                f"📢 Voice check complete — processed `{len(processed)}` users:\n{result}",
+                ephemeral=True
+            )
+
         except Exception as e:
             print(f"[ERROR] Failed to run manual voice check: {e}")
-            await interaction.response.send_message(f"❌ Failed to run voice activity check:\n```{e}```", ephemeral=True)
+            await interaction.response.send_message(f"💢 Failed to run voice check:\n```{e}```", ephemeral=True)
 
 
 
