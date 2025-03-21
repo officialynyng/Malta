@@ -91,18 +91,18 @@ def get_user_data(user_id):
                 'daily_multiplier': row[2]
             }
         else:
-            return Nonee
+            return None
         
-
-def update_user_data(user_id, new_retirement_multiplier, new_daily_multiplier, last_activity_time):
-    # Update the player's data in the database with new multipliers and last activity timestamp
+def update_user_data(user_id, new_retirement_multiplier, new_daily_multiplier, last_activity_time, last_multiplier_update):
+    print(f"[DEBUG] update_user_data called with user_id={user_id}, new_retirement_multiplier={new_retirement_multiplier}, new_daily_multiplier={new_daily_multiplier}, last_activity_time={last_activity_time}, last_multiplier_update={last_multiplier_update}")
     with engine.connect() as conn:
         conn.execute(players.update().where(players.c.user_id == user_id).values(
-            multiplier=new_retirement_multiplier,  # Update retirement multiplier
-            daily_multiplier=new_daily_multiplier,  # Update daily multiplier
-            last_message_ts=last_activity_time
+            multiplier=new_retirement_multiplier,
+            daily_multiplier=new_daily_multiplier,
+            last_message_ts=last_activity_time,
+            last_multiplier_update=last_multiplier_update
         ))
-
+    print("[DEBUG] User data updated in database")
 
 async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
     print(f"Handling EXP gain for user: {message.author.id}")
