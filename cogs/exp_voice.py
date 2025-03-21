@@ -1,5 +1,6 @@
 import asyncio
 import os
+import traceback
 from discord.ext import commands
 
 from cogs.exp_config import (
@@ -25,18 +26,24 @@ class VoiceExpCog(commands.Cog):
             print("[DEBUG] VoiceExpCog unloaded and background task canceled.")
 
     async def check_voice_activity(self):
-        """Task to check for users in voice channels every 15 minutes and process their activity."""
         print("[DEBUG] Background task for checking voice channel activity started.")
         await self.bot.wait_until_ready()
+
         while not self.bot.is_closed():
-            for guild in self.bot.guilds:
-                print(f"[DEBUG] Checking guild: {guild.name} (ID: {guild.id})")
-                for vc in guild.voice_channels:
-                    print(f"[DEBUG] Checking voice channel: {vc.name} (ID: {vc.id}) with {len(vc.members)} members.")
-                    for member in vc.members:
-                        if not member.bot:
-                            print(f"[DEBUG] Processing member: {member.display_name} (ID: {member.id}) in voice channel: {vc.name} (ID: {vc.id})")
-                            await self.process_user_activity(self.bot, member.id)
+            try:
+                for guild in self.bot.guilds:
+                    print(f"[DEBUG] Checking guild: {guild.name} (ID: {guild.id})")
+                    for vc in guild.voice_channels:
+                        print(f"[DEBUG] Checking voice channel: {vc.name} (ID: {vc.id}) with {len(vc.members)} members.")
+                        for member in vc.members:
+                            if not member.bot:
+                                print(f"[DEBUG] Processing member: {member.display_name} (ID: {member.id}) in voice channel: {vc.name} (ID: {vc.id})")
+                                await self.process_user_activity(self.bot, member.id)
+
+            except Exception as e:
+                print(f"[ERROR] Exception in voice activity task: {e}")
+                traceback.print_exc()
+
             await asyncio.sleep(300)  # Sleep for 5 minutes
 
     async def process_user_activity(self, bot, user_id):
