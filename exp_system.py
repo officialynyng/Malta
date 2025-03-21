@@ -212,7 +212,7 @@ async def on_user_comment(user_id, bot):
         exp_channel = bot.get_channel(EXP_CHANNEL_ID)
         if exp_channel:
             await exp_channel.send(
-                f"🏔️ <@{user_id}>'s daily multiplier updated to **{new_daily_multiplier}x** due to daily posting."
+                f"🏔️ <{user_id}>'s daily multiplier updated to **{new_daily_multiplier}x** due to daily posting."
             )
         else:
             print("[ERROR] EXP channel not found.")
@@ -233,7 +233,7 @@ async def check_and_reset_multiplier(user_id, bot):
             exp_channel = bot.get_channel(EXP_CHANNEL_ID)
             if exp_channel:
                 await exp_channel.send(
-                    f"🌋 <@{user_id}>'s daily multiplier has been reset to **1x** due to inactivity."
+                    f"🌋 <{user_id}>'s daily multiplier has been reset to **1x** due to inactivity."
                 )
             print(f"[DEBUG] Reset daily multiplier for {user_id} due to inactivity ({time_since_last} seconds).")
     else:
@@ -255,7 +255,7 @@ async def award_xp_and_gold(user_id, base_xp, base_gold, bot):
         gold_awarded = int(base_gold * total_multiplier)  # Apply total multiplier to base gold
 
         # Print to console for debugging
-        print(f"Awarded {xp_awarded} XP and {gold_awarded} gold to user <@{user_id}> - Multiplier: {daily_multiplier}x")
+        print(f"Awarded {xp_awarded} XP and {gold_awarded} gold to user <{user_id}> - Multiplier: {daily_multiplier}x")
 
         # Update the XP and gold in the database
         with engine.connect() as conn:
@@ -270,7 +270,7 @@ async def award_xp_and_gold(user_id, base_xp, base_gold, bot):
         exp_channel = bot.get_channel(EXP_CHANNEL_ID)
         if exp_channel:
             await exp_channel.send(
-                f"<@{user_id}> has been awarded ⚡ {xp_awarded} XP and 💰 {gold_awarded} gold. "
+                f"<{user_id}> has been awarded ⚡ {xp_awarded} XP and 💰 {gold_awarded} gold. "
                 f"Total XP is now ⚡ {user_data['exp'] + xp_awarded}, and total gold is 💰 {user_data['gold'] + gold_awarded}. "
                 f"Daily Multiplier applied: 🏔️ {daily_multiplier}x, Generational Multiplier applied: 🧬 {retirement_multiplier + 1:.2f}x."
             )
