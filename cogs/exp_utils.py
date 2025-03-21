@@ -50,7 +50,7 @@ def get_user_data(user_id):
 
         if row:
             return {
-                'last_message_ts': row[0],                     # ⛰️ readable alias
+                'last_message_ts': row[0],                     
                 'multiplier': row[1],
                 'daily_multiplier': row[2],
                 'last_multiplier_update': row[3]             
@@ -62,11 +62,11 @@ def get_user_data(user_id):
 
 def update_user_data(user_id, new_retirement_multiplier, new_daily_multiplier, last_activity_time, last_multiplier_update=None, username=None):
     if username:
-        print(f"[DEBUG] update_user_data called for {username} ({user_id})")
+        print(f"[DEBUG]🗒️🖊️ update_user_data called for {username} ({user_id})")
     else:
-        print(f"[DEBUG] update_user_data called for user_id={user_id}")
+        print(f"[DEBUG]🗒️🖊️ update_user_data called for user_id={user_id}")
 
-    print(f"[DEBUG] New values: gen_multiplier={new_retirement_multiplier}, daily_multiplier={new_daily_multiplier}, last_activity={last_activity_time}, last_multiplier_update={last_multiplier_update}")
+    print(f"[DEBUG]🗒️🖊️ New values: gen_multiplier={new_retirement_multiplier}, daily_multiplier={new_daily_multiplier}, last_activity={last_activity_time}, last_multiplier_update={last_multiplier_update}")
 
     values = {
         "multiplier": new_retirement_multiplier,
@@ -81,7 +81,7 @@ def update_user_data(user_id, new_retirement_multiplier, new_daily_multiplier, l
         conn.execute(players.update().where(players.c.user_id == user_id).values(**values))
         conn.commit()
 
-    print("[DEBUG] User data updated in database")
+    print("[DEBUG]🗒️🖊️☑️ User data updated in database")
 
 
 

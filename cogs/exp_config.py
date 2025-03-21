@@ -8,7 +8,7 @@ class ExpConfig(commands.Cog):
         self.bot = bot
 
 EXP_CHANNEL_ID = int(os.getenv("EXP_CHANNEL_ID"))
-print(f"[DEBUG] EXP_CHANNEL_ID loaded as: {EXP_CHANNEL_ID}")
+print(f"[DEBUG]🗒️⚡ EXP_CHANNEL_ID loaded as: {EXP_CHANNEL_ID}")
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 # Patch the URL so SQLAlchemy accepts it

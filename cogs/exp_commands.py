@@ -14,10 +14,10 @@ class ExpCommands(commands.Cog):
     async def on_message(self, message):
         try:
             channel_name = getattr(message.channel, 'name', 'DM or unknown')
-            print(f"[DEBUG] Message received in #{channel_name} by {message.author} (channel ID: {message.channel.id})")
+            print(f"[DEBUG]🩻 Message received in #{channel_name} by {message.author} (channel ID: {message.channel.id})")
 
             if message.author.bot:
-                print("[DEBUG] Ignored bot message")
+                print("[DEBUG]🩻 Ignored bot message")
                 return
 
             user_id = str(message.author.id)
@@ -29,14 +29,14 @@ class ExpCommands(commands.Cog):
             await on_user_comment(user_id, self.bot)
 
         except Exception as e:
-            print(f"[ERROR] Exception in on_message: {e}")
+            print(f"[ERROR]🩻 Exception in on_message: {e}")
 
 
     @commands.Cog.listener()
     async def on_ready(self):
         global exp_channel
         exp_channel = self.bot.get_channel(EXP_CHANNEL_ID)
-        print(f"[READY] Bot is online. EXP Channel set to: {exp_channel}")
+        print(f"[READY]🩻🫡 Bot is online. EXP Channel set to: {exp_channel}")
 
 
 async def setup(bot):
