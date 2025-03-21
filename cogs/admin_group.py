@@ -156,15 +156,25 @@ class AdminGroup(app_commands.Group):
 
         await interaction.response.defer(thinking=True)
 
-        user_ids = get_all_user_ids()  # Fetch all from DB
-        triggered = 0
+        user_ids = get_all_user_ids()
+        results = []
 
         for user_id in user_ids:
             await on_user_comment(user_id, self.bot)
-            triggered += 1
-            await asyncio.sleep(0.1)  # Avoid rate limits
 
-        await interaction.followup.send(f"✅ Multiplier check run for **{triggered} users**.")
+            # Get their updated multiplier from DB
+            user_data = get_user_data(user_id)
+            display = f"<@{user_id}> — 🏔️ {user_data['daily_multiplier']}x"
+            results.append(display)
+
+            await asyncio.sleep(0.1)  # prevent rate limits
+
+        result_text = "\n".join(results)
+        await interaction.followup.send(
+            content=f"✖️ Multiplier check run for **{len(user_ids)} users**:\n\n{result_text}",
+            ephemeral=True
+        )
+
 
 async def setup(bot):
     admin_group = AdminGroup(bot)
