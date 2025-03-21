@@ -114,12 +114,20 @@ async def on_user_comment(user_id, bot):
         if current_time - last_multiplier_update < TIME_DELTA:
             print(f"[DEBUG] Skipping multiplier update — already updated in the last 24h.")
             return
-
-        # If inactive for 48+ hours, reset
-        if current_time - last_activity >= TIME_DELTA * 2:
+        
+         # Determine new multiplier state based on activity
+        if current_time - last_activity >= TIME_DELTA:
+            # Inactive for 24+ hours — reset multiplier
             new_daily_multiplier = 1
-        else:
+            print(f"[DEBUG] Inactive for 24+ hours — resetting multiplier.")
+        elif last_activity > last_multiplier_update:
+            # Active since last multiplier update — increase multiplier
             new_daily_multiplier = min(current_daily_multiplier + 1, MAX_MULTIPLIER)
+            print(f"[DEBUG] Active since last multiplier update — increasing multiplier.")
+        else:
+            # No activity since last update — no change
+            new_daily_multiplier = current_daily_multiplier
+            print(f"[DEBUG] No new activity since last update — multiplier unchanged.")
 
         # Save new multiplier + timestamp only if it changed
     if new_daily_multiplier != current_daily_multiplier:
