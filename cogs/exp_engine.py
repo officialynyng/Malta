@@ -106,10 +106,18 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
 
 
 
-async def on_user_comment(user_id, bot, is_admin_command=False):
-    print("[DEBUG] on_user_comment triggered")
+async def on_user_comment(user_id, bot, is_admin=False):
+    print("[DEBUG] on_user_comment triggered, Admin Command: " + str(is_admin))
     current_time = int(time.time())
     user_data = get_user_data(user_id)
+
+    if not user_data:
+        print(f"[DEBUG] No user data found for {user_id}.")
+        return
+
+    if is_admin:
+        print("[DEBUG] Admin check, not updating multiplier or timestamps.")
+        return
 
     if user_data:
         last_message_ts = user_data.get('last_message_ts', None)
@@ -123,26 +131,22 @@ async def on_user_comment(user_id, bot, is_admin_command=False):
         print(f"[DEBUG] Last activity: {last_message_ts}, Last multiplier update: {last_multiplier_update}")
         print(f"[DEBUG] Daily Multiplier before update: {current_daily_multiplier}")
 
-        # Only update last activity timestamp without touching the last_multiplier_update when it's an admin command
-        if is_admin_command:
-            update_user_data(user_id, user_data['multiplier'], current_daily_multiplier, current_time, last_multiplier_update)
-        else:
-            update_user_data(user_id, user_data['multiplier'], current_daily_multiplier, current_time, current_time)
+        # Do not update multiplier if it is an admin command to check status
+        if is_admin:
+            print("[DEBUG] Admin check, not updating multiplier.")
+            return
 
-        # Only process multiplier updates if it's not an admin command
-        if not is_admin_command and current_time - last_multiplier_update >= TIME_DELTA:
+        # Only update multiplier and last update timestamp if it's been 24 hours since the last update
+        if current_time - last_multiplier_update >= TIME_DELTA:
             if current_time - last_message_ts >= TIME_DELTA:
                 new_daily_multiplier = 1
-                print(f"[DEBUG] Inactive for 24+ hours — resetting multiplier.")
-            elif last_message_ts > last_multiplier_update:
-                new_daily_multiplier = min(current_daily_multiplier + 1, MAX_MULTIPLIER)
-                print(f"[DEBUG] Active since last multiplier update — increasing multiplier.")
+                print(f"[DEBUG] Inactive for 24+ hours — resetting multiplier to baseline.")
             else:
-                new_daily_multiplier = current_daily_multiplier
-                print(f"[DEBUG] No new activity since last update — multiplier unchanged.")
+                new_daily_multiplier = min(current_daily_multiplier + 1, MAX_MULTIPLIER)
+                print(f"[DEBUG] Active within 24h — potentially increasing multiplier to {new_daily_multiplier}.")
 
             if new_daily_multiplier != current_daily_multiplier:
-                update_user_data(user_id, user_data['multiplier'], new_daily_multiplier, current_time, current_time)
+                update_user_data(user_id, user_data['multiplier'], new_daily_multiplier, last_message_ts, current_time)
                 exp_channel = bot.get_channel(EXP_CHANNEL_ID)
                 if exp_channel:
                     await exp_channel.send(
@@ -152,6 +156,8 @@ async def on_user_comment(user_id, bot, is_admin_command=False):
                     print("[ERROR] EXP channel not found.")
             else:
                 print(f"[DEBUG] Multiplier unchanged for {user_id}, no update message sent.")
+        else:
+            print("[DEBUG] Less than 24h since last update, not updating multiplier.")
     else:
         print(f"[DEBUG] User data not found for {user_id}. Skipping.")
 
