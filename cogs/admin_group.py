@@ -151,17 +151,20 @@ class AdminGroup(app_commands.Group):
     @app_commands.command(name="crpg_multi_check", description="🔒 - 🏔️ Force a multiplier check for all users.")
     async def check_all_multipliers(self, interaction: discord.Interaction):
         if interaction.user.id != OWNER_ID:
-            await interaction.response.defer(thinking=True)
+            await interaction.response.send_message("🚫 You do not have permission to use this command.", ephemeral=True)
+            return
 
-            user_ids = get_all_user_ids()  # Fetch all from DB
-            triggered = 0
+        await interaction.response.defer(thinking=True)
 
-            for user_id in user_ids:
-                await on_user_comment(user_id, self.bot)
-                triggered += 1
-                await asyncio.sleep(0.1)  # Small delay to avoid rate limits
+        user_ids = get_all_user_ids()  # Fetch all from DB
+        triggered = 0
 
-            await interaction.followup.send(f"✅ Multiplier check run for **{triggered} users**.")
+        for user_id in user_ids:
+            await on_user_comment(user_id, self.bot)
+            triggered += 1
+            await asyncio.sleep(0.1)  # Avoid rate limits
+
+        await interaction.followup.send(f"✅ Multiplier check run for **{triggered} users**.")
 
 async def setup(bot):
     admin_group = AdminGroup(bot)
