@@ -158,7 +158,7 @@ async def check_and_reset_multiplier(user_id, bot):
     print(f"[DEBUG] Retrieved user data for {user_id}: {user_data}")
 
     if user_data:
-        time_since_last = current_time - user_data['last_activity']
+        time_since_last = current_time - user_data['last_message_ts']
 
         if time_since_last >= TIME_DELTA * 2:
             # Reset daily multiplier & last_multiplier_update

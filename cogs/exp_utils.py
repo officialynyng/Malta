@@ -52,7 +52,7 @@ def get_user_data(user_id):
 
         if row:
             return {
-                'last_activity': row[0],                     # ⛰️ readable alias
+                'last_message_ts': row[0],                     # ⛰️ readable alias
                 'multiplier': row[1],
                 'daily_multiplier': row[2],
                 'last_multiplier_update': row[3]             
