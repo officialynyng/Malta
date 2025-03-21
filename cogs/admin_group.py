@@ -4,7 +4,7 @@ import os
 import asyncio
 import sys
 import time
-from typing import (Optional, List,)
+from typing import (Optional,)
 from discord import (app_commands,)
 from cogs.exp_engine import (on_user_comment,)
 from cogs.exp_utils import (get_all_user_ids, get_user_data, update_user_data,)
@@ -177,39 +177,35 @@ class AdminGroup(app_commands.Group):
             ephemeral=True
         )
 
-    import time  # Make sure to import time at the top
-
     @app_commands.command(name="crpg_adjust_daily_multiplier", description="🔒 - 🔧🏔️ Manually adjust daily multipliers.")
     @app_commands.describe(
-        users="Select one or more users to update",
-        action="increase, decrease, or set the daily multiplier",
-        value="Used if action is 'set'",
-        all="Apply to all users?"
+        users="Mention one user to update (optional)",
+        value="The value to set the daily multiplier to",
+        all="Apply to all users (optional)"
     )
     async def adjust_daily_multiplier(
         self,
         interaction: discord.Interaction,
-        users: Optional[List[discord.User]] = None,  # Corrected to List[discord.User]
-        action: str = "increase",
+        users: Optional[discord.User] = None,  # Single user or None
         value: int = None,
         all: bool = False
     ):
-    # Command logic continues as before
-
         # Check for permission
         if interaction.user.id != OWNER_ID:
             await interaction.response.send_message("🚫 You do not have permission to use this command.", ephemeral=True)
             return
 
-        # Validate action type
-        valid_actions = ["increase", "decrease", "set"]
-        if action not in valid_actions:
-            await interaction.response.send_message(f"❌ Invalid action. Use: {', '.join(valid_actions)}", ephemeral=True)
+        # Validate 'set' action by ensuring value is provided
+        if value is None:
+            await interaction.response.send_message("❌ You must provide a value when using 'set'.", ephemeral=True)
             return
 
-        # Ensure that 'set' action has a value provided
-        if action == "set" and value is None:
-            await interaction.response.send_message("❌ You must provide a value when using 'set'.", ephemeral=True)
+        # Ensure only one of 'users' or 'all' is used
+        if users and all:
+            await interaction.response.send_message("❌ You cannot specify both a user and `all: true`. Please choose one.", ephemeral=True)
+            return
+        elif not users and not all:
+            await interaction.response.send_message("❌ You must specify either a user or use `all: true`.", ephemeral=True)
             return
 
         # Defer response while processing
@@ -220,10 +216,7 @@ class AdminGroup(app_commands.Group):
         if all:
             user_ids = get_all_user_ids()  # Get all users if 'all' is true
         elif users:
-            user_ids = [str(u.id) for u in users]  # Get mentioned users
-        else:
-            await interaction.followup.send("❌ You must specify at least one user or use `all: true`.", ephemeral=True)
-            return
+            user_ids = [str(users.id)]  # Use the single user ID if a user is mentioned
 
         updates = []
         for user_id in user_ids:
@@ -233,14 +226,7 @@ class AdminGroup(app_commands.Group):
                 continue
 
             current = user_data['daily_multiplier']
-            new = current
-
-            if action == "increase":
-                new = min(current + 1, 5)
-            elif action == "decrease":
-                new = max(current - 1, 1)
-            elif action == "set":
-                new = max(1, min(value, 5))
+            new = max(1, min(value, 5))  # Ensure the value is between 1 and 5
 
             # Update the user's data
             update_user_data(
@@ -255,6 +241,7 @@ class AdminGroup(app_commands.Group):
 
         summary = "\n".join(updates)
         await interaction.followup.send(f"Daily multiplier adjustment:\n{summary}", ephemeral=True)
+
 
 
 
