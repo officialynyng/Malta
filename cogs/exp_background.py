@@ -28,12 +28,22 @@ class ExpBackground(commands.Cog):
 async def start_multiplier_cleanup(bot):
     await bot.wait_until_ready()
     print("[🌀] Multiplier reset loop started.")
+
     while not bot.is_closed():
         user_ids = get_all_user_ids()
+        print(f"[⏳] Checking {len(user_ids)} users for multiplier resets...")
+
+        updated_count = 0
         for user_id in user_ids:
+            before = asyncio.get_event_loop().time()
             await check_and_reset_multiplier(user_id, bot)
-            await asyncio.sleep(1)  # prevents spam
-        await asyncio.sleep(3600)  # run every hour
+            after = asyncio.get_event_loop().time()
+            if after - before > 0.1:
+                print(f"[✅] Processed {user_id} in {after - before:.2f}s")
+            await asyncio.sleep(0.25)  # space out checks
+
+        print(f"[🏁] Multiplier check cycle complete. {len(user_ids)} users checked.")
+        await asyncio.sleep(3600)  # wait 1 hour before next run
 
 
 exp_channel = None
