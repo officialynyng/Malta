@@ -52,9 +52,21 @@ class AdminGroup(app_commands.Group):
         except Exception as e:
             await interaction.response.send_message(f"Failed to post message: {e}", ephemeral=True)
 
-    @app_commands.command(name="edit", description="🔒 - 🖊️ Edit a previously posted message in a specific channel.")
-    @app_commands.describe(destination_channel_id="ID of the channel where the message is posted", message_id="ID of the message to edit", new_content="The new message content")
-    async def edit(self, interaction: discord.Interaction, destination_channel_id: str, message_id: str, new_content: str):
+    @app_commands.command(name="edit", description="🔒 - 🖊️ Replace a message’s content with content from another message.")
+    @app_commands.describe(
+        target_message_id="ID of the message to edit",
+        source_message_id="ID of the message to copy content from",
+        destination_channel_id="ID of the channel where the target message is posted",
+        new_content="(Optional) Custom content to use instead of the source"
+    )
+    async def edit(
+        self,
+        interaction: discord.Interaction,
+        target_message_id: str,
+        source_message_id: str,
+        destination_channel_id: str,
+        new_content: Optional[str] = None
+    ):
         member = interaction.user
         approved = any(role.name == APPROVED_ROLE_NAME for role in member.roles)
         if not approved:
@@ -62,20 +74,29 @@ class AdminGroup(app_commands.Group):
             return
 
         try:
-            channel = self.bot.get_channel(int(destination_channel_id))
-            if channel is None:
-                channel = await self.bot.fetch_channel(int(destination_channel_id))
-
-            message = await channel.fetch_message(int(message_id))
-            await message.edit(content=new_content)
-            await interaction.response.send_message("Message updated successfully.", ephemeral=True)
-
+            # Fetch the source message from the current channel (where the command is used)
+            source_message = await interaction.channel.fetch_message(int(source_message_id))
         except discord.NotFound:
-            await interaction.response.send_message("Message not found.", ephemeral=True)
+            await interaction.response.send_message("❌ Source message not found.", ephemeral=True)
+            return
+
+        try:
+            # Fetch the destination channel and the target message
+            dest_channel = self.bot.get_channel(int(destination_channel_id)) or await self.bot.fetch_channel(int(destination_channel_id))
+            target_message = await dest_channel.fetch_message(int(target_message_id))
+        except discord.NotFound:
+            await interaction.response.send_message("❌ Target message or channel not found.", ephemeral=True)
+            return
+
+        try:
+            # Use override content if provided, otherwise use content from source message
+            updated_content = new_content if new_content else source_message.content
+            await target_message.edit(content=updated_content)
+            await interaction.response.send_message("✅ Message updated successfully.", ephemeral=True)
         except discord.Forbidden:
-            await interaction.response.send_message("I don't have permission to edit that message.", ephemeral=True)
+            await interaction.response.send_message("🚫 I don't have permission to edit that message.", ephemeral=True)
         except discord.HTTPException as e:
-            await interaction.response.send_message(f"Failed to edit message: {e}", ephemeral=True)
+            await interaction.response.send_message(f"⚠️ Failed to edit message: {e}", ephemeral=True)
 
     @app_commands.command(name="structure", description="🔒 - 📁 View the current bot file structure.")
     async def structure(self, interaction: discord.Interaction):
