@@ -154,7 +154,7 @@ class AdminGroup(app_commands.Group):
             await interaction.response.send_message("🚫 You do not have permission to use this command.", ephemeral=True)
             return
 
-        await interaction.response.defer(thinking=True)
+        await interaction.response.defer(thinking=True, ephemeral=True)
 
         user_ids = get_all_user_ids()
         results = []
@@ -164,7 +164,7 @@ class AdminGroup(app_commands.Group):
 
             # Get their updated multiplier from DB
             user_data = get_user_data(user_id)
-            display = f"<@{user_id}> — 🏔️ {user_data['daily_multiplier']}x"
+            display = f"<@{user_id}> — 🏔️ Daily: {user_data['daily_multiplier']}x"
             results.append(display)
 
             await asyncio.sleep(0.1)  # prevent rate limits
