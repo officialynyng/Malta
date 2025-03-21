@@ -3,7 +3,7 @@ import io
 import os
 import asyncio
 import sys
-from typing import list
+from typing import List
 from discord import app_commands
 from cogs.exp_engine import (on_user_comment,)
 from cogs.exp_utils import (get_all_user_ids, get_user_data)
