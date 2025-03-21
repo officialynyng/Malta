@@ -35,7 +35,7 @@ class VoiceExpCog(commands.Cog):
                     print(f"[DEBUG] Checking voice channel: {vc.name} (ID: {vc.id}) with {len(vc.members)} members.")
                     for member in vc.members:
                         if not member.bot:
-                            print(f"[DEBUG] Processing member: {member.display_name} (ID: {member.id}) in voice channel.")
+                            print(f"[DEBUG] Processing member: {member.display_name} (ID: {member.id}) in voice channel: {vc.name} (ID: {vc.id})")
                             await self.process_user_activity(self.bot, member.id)
             await asyncio.sleep(900)  # Sleep for 15 minutes
 
