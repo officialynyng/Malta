@@ -56,7 +56,7 @@ class AdminGroup(app_commands.Group):
     @app_commands.describe(
         target_message_id="ID of the message to edit",
         source_message_id="ID of the message to copy content from",
-        destination_channel_id="ID of the channel where the target message is posted",
+        source_channel_id="ID of the channel where the source message is posted",
         new_content="(Optional) Custom content to use instead of the source"
     )
     async def edit(
@@ -64,7 +64,7 @@ class AdminGroup(app_commands.Group):
         interaction: discord.Interaction,
         target_message_id: str,
         source_message_id: str,
-        destination_channel_id: str,
+        source_channel_id: str,
         new_content: Optional[str] = None
     ):
         member = interaction.user
@@ -74,18 +74,18 @@ class AdminGroup(app_commands.Group):
             return
 
         try:
-            # Fetch the source message from the current channel (where the command is used)
-            source_message = await interaction.channel.fetch_message(int(source_message_id))
+            # Fetch the source message from the specified source channel
+            source_channel = self.bot.get_channel(int(source_channel_id)) or await self.bot.fetch_channel(int(source_channel_id))
+            source_message = await source_channel.fetch_message(int(source_message_id))
         except discord.NotFound:
-            await interaction.response.send_message("❌ Source message not found.", ephemeral=True)
+            await interaction.response.send_message("❌ Source message or channel not found.", ephemeral=True)
             return
 
         try:
-            # Fetch the destination channel and the target message
-            dest_channel = self.bot.get_channel(int(destination_channel_id)) or await self.bot.fetch_channel(int(destination_channel_id))
-            target_message = await dest_channel.fetch_message(int(target_message_id))
+            # Fetch the target message from the current channel (assuming the target is in the same channel as command used)
+            target_message = await interaction.channel.fetch_message(int(target_message_id))
         except discord.NotFound:
-            await interaction.response.send_message("❌ Target message or channel not found.", ephemeral=True)
+            await interaction.response.send_message("❌ Target message not found in this channel.", ephemeral=True)
             return
 
         try:
@@ -97,6 +97,7 @@ class AdminGroup(app_commands.Group):
             await interaction.response.send_message("🚫 I don't have permission to edit that message.", ephemeral=True)
         except discord.HTTPException as e:
             await interaction.response.send_message(f"⚠️ Failed to edit message: {e}", ephemeral=True)
+
 
     @app_commands.command(name="structure", description="🔒 - 📁 View the current bot file structure.")
     async def structure(self, interaction: discord.Interaction):
