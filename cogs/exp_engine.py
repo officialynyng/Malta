@@ -99,9 +99,14 @@ async def on_user_comment(user_id, bot):
     user_data = get_user_data(user_id)
 
     if user_data:
-        last_message_ts = user_data['last_message_ts']  # Use 'last_message_ts' here
+        # Ensure 'last_message_ts' is in user_data
+        last_message_ts = user_data.get('last_message_ts', None)  # Use `.get()` to avoid KeyError
         last_multiplier_update = user_data.get('last_multiplier_update', 0)
         current_daily_multiplier = user_data['daily_multiplier']
+
+        if last_message_ts is None:
+            print(f"[DEBUG] User {user_id} does not have 'last_message_ts'. Skipping multiplier update.")
+            return
 
         print(f"[DEBUG] Last activity: {last_message_ts}, Last multiplier update: {last_multiplier_update}")
         print(f"[DEBUG] Daily Multiplier before update: {current_daily_multiplier}")
@@ -115,7 +120,7 @@ async def on_user_comment(user_id, bot):
             return
 
         # Determine new multiplier state based on activity
-        if current_time - last_message_ts >= TIME_DELTA:  # Compare to 'last_message_ts' now
+        if current_time - last_message_ts >= TIME_DELTA:
             # Inactive for 24+ hours — reset multiplier
             new_daily_multiplier = 1
             print(f"[DEBUG] Inactive for 24+ hours — resetting multiplier.")
@@ -142,6 +147,9 @@ async def on_user_comment(user_id, bot):
                 print("[ERROR] EXP channel not found.")
         else:
             print(f"[DEBUG] Multiplier unchanged for {user_id}, no update message sent.")
+    else:
+        print(f"[DEBUG] User data not found for {user_id}. Skipping.")
+
 
 
 async def check_and_reset_multiplier(user_id, bot):
