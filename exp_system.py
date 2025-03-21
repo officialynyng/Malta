@@ -205,7 +205,8 @@ async def on_user_comment(user_id, bot):
         else:
             new_daily_multiplier = min(current_daily_multiplier + 1, MAX_MULTIPLIER)
 
-        # Save new multiplier + timestamp
+        # Save new multiplier + timestamp only if it changed
+    if new_daily_multiplier != current_daily_multiplier:
         update_user_data(user_id, user_data['retirement_multiplier'], new_daily_multiplier, current_time, current_time)
 
         exp_channel = bot.get_channel(EXP_CHANNEL_ID)
@@ -216,7 +217,8 @@ async def on_user_comment(user_id, bot):
         else:
             print("[ERROR] EXP channel not found.")
     else:
-        print(f"[ERROR] User {user_id} not found in database.")
+        print(f"[DEBUG] Multiplier unchanged for {user_id}, no update message sent.")
+
 
 async def check_and_reset_multiplier(user_id, bot):
     current_time = int(time.time())
