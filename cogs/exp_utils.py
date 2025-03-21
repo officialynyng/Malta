@@ -1,11 +1,14 @@
 import sqlalchemy as db
 from sqlalchemy import select
+from discord.ext import commands
 
 from cogs.exp_config import (
     players, engine, LEVEL_CAP, TIME_DELTA, MAX_MULTIPLIER, BASE_EXP_SCALE,
 )
 
-
+class ExpUtils(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
 
 def get_multiplier(retirements: int) -> float:
     return min(1 + 0.03 * retirements, 1.48)
@@ -64,3 +67,6 @@ def update_user_data(user_id, new_retirement_multiplier, new_daily_multiplier, l
             last_multiplier_update=last_multiplier_update
         ))
     print("[DEBUG] User data updated in database")
+
+async def setup(bot):
+    await bot.add_cog(ExpUtils(bot))
