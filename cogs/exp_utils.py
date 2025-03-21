@@ -43,7 +43,8 @@ def get_user_data(user_id):
         stmt = select(
             players.c.last_message_ts,
             players.c.multiplier,
-            players.c.daily_multiplier
+            players.c.daily_multiplier,
+            players.c.last_multiplier_update  # ✅ ADD THIS
         ).where(players.c.user_id == user_id)
 
         result = conn.execute(stmt)
@@ -51,12 +52,14 @@ def get_user_data(user_id):
 
         if row:
             return {
-                'last_message_ts': row[0],
+                'last_activity': row[0],                     # ⛰️ readable alias
                 'multiplier': row[1],
-                'daily_multiplier': row[2]
+                'daily_multiplier': row[2],
+                'last_multiplier_update': row[3]             
             }
         else:
             return None
+
 
 
 def update_user_data(user_id, new_retirement_multiplier, new_daily_multiplier, last_activity_time, last_multiplier_update=None, username=None):
