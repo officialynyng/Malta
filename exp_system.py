@@ -491,7 +491,7 @@ class CRPGGroup(app_commands.Group):
                         f"🌱 Generation: {retirements}\n"
                         f"🌌 Level: {level}\n"
                         f"💰 Gold: {gold}\n"
-                        f"⚡ EXP: {exp}\n\n"
+                        f"⚡ EXP: {exp}\n"
                     )
 
                 await exp_channel.send(leaderboard_text)
