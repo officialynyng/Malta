@@ -247,8 +247,6 @@ class AdminGroup(app_commands.Group):
         await interaction.followup.send(f"Daily multiplier adjustment:\n{summary}", ephemeral=True)
 
 
-
-
 async def setup(bot):
     admin_group = AdminGroup(bot)
     bot.tree.add_command(admin_group)
