@@ -264,18 +264,25 @@ class CRPGGroup(app_commands.Group):
         user_data = get_user_data(user_id)
 
         if not user_data:
-            await interaction.response.send_message("You have no EXP record yet. Start participating to gain experience.", ephemeral=True)
+            await interaction.response.send_message("🚫 You have no EXP record yet. Start participating to gain experience.", ephemeral=True)
             return
 
-        last_activity = user_data['last_message_ts']
+        last_multiplier_update = user_data['last_multiplier_update']
         daily_multiplier = user_data['daily_multiplier']  # Using the daily multiplier
         retirement_multiplier = user_data['multiplier']  # Using the retirement multiplier
-        time_since_last_activity = current_time - last_activity
 
-        if time_since_last_activity < TIME_DELTA:
-            time_until_update = TIME_DELTA - time_since_last_activity
+        time_since_last_multiplier_update = current_time - last_multiplier_update
+
+        print(f"[DEBUG]📅 Last Multiplier Update: {last_multiplier_update}")
+        print(f"[DEBUG]🕐 Current Time: {current_time}")
+        print(f"[DEBUG]🏔️ Time Since Last Multiplier Update: {time_since_last_multiplier_update} seconds")
+
+        if time_since_last_multiplier_update < TIME_DELTA:
+            time_until_update = TIME_DELTA - time_since_last_multiplier_update
             hours, remainder = divmod(time_until_update, 3600)
             minutes, seconds = divmod(remainder, 60)
+
+            print(f"[DEBUG]🏔️ Multiplier Update Countdown: {int(hours)} hours, {int(minutes)} minutes, {int(seconds)} seconds")
             await interaction.response.send_message(
                 f"**Daily Multiplier**: 🏔️ **{daily_multiplier}x**\n"
                 f"**Generational Multiplier**: 🧬 **{retirement_multiplier + 1:.2f}x**\n\n"
@@ -283,12 +290,14 @@ class CRPGGroup(app_commands.Group):
                 ephemeral=True
             )
         else:
+            print(f"[DEBUG]🚀 Daily multiplier update is available now.")
             await interaction.response.send_message(
                 f"**Current Daily Multiplier**: 🏔️ **{daily_multiplier}x**\n"
                 f"**Current Generational Multiplier**: 🧬 **{retirement_multiplier + 1:.2f}x**\n\n"
                 "Your daily multiplier update is available now.",
                 ephemeral=True
             )
+
 
 
 
