@@ -31,24 +31,26 @@ class ActivityToExpProcessor(commands.Cog):
             print("[DEBUG]💬❌ Malta guild not found. Skipping.")
             return
 
-        with self.engine.begin() as conn:  # Ensures transaction management
+        with self.engine.begin() as conn:
             results = conn.execute(select(self.recent_activity)).fetchall()
             print(f"[DEBUG]💬☑️ Retrieved {len(results)} activity entries from database.")
 
             for row in results:
                 user_id = str(row.user_id)
                 member = malta_guild.get_member(int(user_id))
-                if not member:
-                    print(f"[DEBUG]💬❌ User ID {user_id} not found in guild. Skipping this entry.")
-                    continue
+                if member:
+                    try:
+                        await process_user_activity(self.bot, user_id)
+                        print(f"[DEBUG]💬🗒️🖊️☑️ Entry for user ID {user_id} successfully processed.")
+                    except Exception as e:
+                        print(f"[ERROR]💬 Failed to process activity for user {user_id}: {e}")
+                else:
+                    print(f"[DEBUG]💬❌ User ID {user_id} not found in guild. Deleting entry.")
 
-                try:
-                    await process_user_activity(self.bot, user_id)  # Ensure this function is defined
-                    delete_stmt = self.recent_activity.delete().where(self.recent_activity.c.user_id == row.user_id)
-                    conn.execute(delete_stmt)
-                    print(f"[DEBUG]💬🗒️🖊️☑️ Entry for user ID {user_id} successfully processed and deleted.")
-                except Exception as e:
-                    print(f"[ERROR]💬 Failed to process activity for user {user_id}: {e}")
+                # Delete the entry regardless of member being found or not
+                delete_stmt = self.recent_activity.delete().where(self.recent_activity.c.user_id == row.user_id)
+                conn.execute(delete_stmt)
+
 
 async def setup(bot):
         await bot.add_cog(ActivityToExpProcessor(bot))
