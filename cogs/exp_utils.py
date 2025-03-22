@@ -39,11 +39,12 @@ def calculate_multiplier(last_activity_time, current_time, current_daily_multipl
 def get_user_data(user_id):
     with engine.connect() as conn:
         stmt = select(
-            players.c.last_message_ts,
-            players.c.multiplier,
-            players.c.daily_multiplier,
-            players.c.last_multiplier_update  
-        ).where(players.c.user_id == user_id)
+        players.c.last_message_ts,
+        players.c.multiplier,
+        players.c.daily_multiplier,
+        players.c.last_multiplier_update  
+    ).where(players.c.user_id == str(user_id))
+
 
         result = conn.execute(stmt)
         row = result.fetchone()
