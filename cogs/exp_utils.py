@@ -6,6 +6,10 @@ from cogs.exp_config import (
     players, engine, LEVEL_CAP, TIME_DELTA, MAX_MULTIPLIER, BASE_EXP_SCALE,
 )
 
+# 🔒 Ensures all user_id comparisons match the VARCHAR type in Postgres
+def safe_id(uid) -> str:
+    return str(uid)
+
 class ExpUtils(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -43,7 +47,7 @@ def get_user_data(user_id):
         players.c.multiplier,
         players.c.daily_multiplier,
         players.c.last_multiplier_update  
-    ).where(players.c.user_id == str(user_id))
+    ).where(players.c.user_id == safe_id(user_id))
 
 
         result = conn.execute(stmt)
@@ -79,7 +83,7 @@ def update_user_data(user_id, new_retirement_multiplier, new_daily_multiplier, l
         values["last_multiplier_update"] = last_multiplier_update
 
     with engine.connect() as conn:
-        conn.execute(players.update().where(players.c.user_id == user_id).values(**values))
+        conn.execute(players.update().where(players.c.user_id == safe_id(user_id)).values(**values))
         conn.commit()
 
     print("[DEBUG]🗒️🖊️☑️ User data updated in database")
