@@ -147,10 +147,11 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
             exp_channel = message.guild.get_channel(EXP_CHANNEL_ID)
             if exp_channel:
                 await exp_channel.send(
-                f"**{message.author.display_name}** gained ⚡ **{gained_exp} EXP** and 💰 **{gained_gold} gold**\n"
-                f"🏔️ Daily Multiplier: **{daily:.2f}x**\n"
-                f"🧬 Generational Multiplier: **{retire:.2f}x**\n"
-            )
+                    f"**{message.author.display_name}** gained ⚡ **{gained_exp} EXP** and 💰 **{gained_gold} gold**\n"
+                    f"🏔️ Daily Multiplier: **{daily:.2f}x**\n"
+                    f"🧬 Generational Multiplier: **{retire:.2f}x**\n"
+                    f"🍾🍸 Happy Hour Multiplier: **{combined_multiplier}x**"  # Include Happy Hour info in the message
+                )
 
             if new_level > 0:
                 await announce_level_up(message.guild, message.author, new_level, level_up_channel_id)
@@ -181,14 +182,6 @@ async def on_user_comment(user_id, bot, is_admin=False):
     print(f"[DEBUG]🚂 - 🏔️ Last activity: {last_message_ts}, Last multiplier update: {last_multiplier_update}")
     print(f"[DEBUG]🚂 - 🏔️ Daily Multiplier before update: {current_daily_multiplier}")
 
-    user = bot.get_user(user_id)  # Try fetching from cache
-    if not user:  # If the user is not cached, fetch from Discord API
-        try:
-            user = await bot.fetch_user(user_id)
-        except discord.NotFound:
-            print(f"[ERROR] User with ID {user_id} not found.")
-            return
-        
     if current_time - last_multiplier_update >= TIME_DELTA:
         if current_time - last_message_ts >= TIME_DELTA:
             new_daily_multiplier = 1
@@ -198,7 +191,7 @@ async def on_user_comment(user_id, bot, is_admin=False):
             exp_channel = bot.get_channel(EXP_CHANNEL_ID)
             if exp_channel:
                 await exp_channel.send(
-                    f"🌋 **{user.display_name}**'s daily multiplier has been reset to **1x** due to inactivity."
+                    f"🌋 <@{user_id}>'s daily multiplier has been reset to **1x** due to inactivity."
                 )
         else:
             new_daily_multiplier = min(current_daily_multiplier + 1, MAX_MULTIPLIER)
@@ -209,7 +202,7 @@ async def on_user_comment(user_id, bot, is_admin=False):
                 exp_channel = bot.get_channel(EXP_CHANNEL_ID)
                 if exp_channel:
                     await exp_channel.send(
-                        f"🏔️ **{user.display_name}**'s daily multiplier updated to **{new_daily_multiplier}x** due to daily posting."
+                        f"🏔️ <@{user_id}>'s daily multiplier updated to **{new_daily_multiplier}x** due to daily posting."
                     )
             else:
                 print(f"[DEBUG] Multiplier unchanged for {user_id}, no update message sent.")
@@ -233,19 +226,10 @@ async def check_and_reset_multiplier(user_id, bot):
             update_user_data(user_id, user_data['retirement_multiplier'], 1, current_time, current_time)
             notified_users.add(user_id)
 
-            # Fetch the user by user_id to get their display name
-            user = bot.get_user(user_id)  # Try fetching from cache
-            if not user:  # If the user is not cached, fetch from Discord API
-                try:
-                    user = await bot.fetch_user(user_id)
-                except discord.NotFound:
-                    print(f"[ERROR] User with ID {user_id} not found.")
-                    return
-
             exp_channel = bot.get_channel(EXP_CHANNEL_ID)
             if exp_channel:
                 await exp_channel.send(
-                    f"🌋  **{user.display_name}**'s daily multiplier has been reset to **1x** due to inactivity."
+                    f"🌋 <@{user_id}>'s daily multiplier has been reset to **1x** due to inactivity."
                 )
             print(f"[DEBUG]🚂 - 🌋 Reset daily multiplier for {user_id} due to inactivity ({time_since_last} seconds).")
 
