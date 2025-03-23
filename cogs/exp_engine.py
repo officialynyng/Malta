@@ -33,8 +33,7 @@ async def send_happy_hour_announcement(bot, is_starting=False, is_tick=False):
     print("[DEBUG]🚂 - send_happy_hour_announcement called.")
     
     # Get the EXP channel by its ID
-    exp_channel = bot.get_channel(exp_channel)  # Use the same EXP channel ID for announcements
-   
+    exp_channel = bot.get_channel(EXP_CHANNEL_ID)  # Use the same EXP channel ID for announcements
     
     # Debug: Check if exp_channel was retrieved
     if exp_channel:
@@ -60,7 +59,7 @@ async def send_happy_hour_tick(bot):
         print("[DEBUG]🚂 - Happy Hour is active.")
         
         # Get the EXP channel directly using the bot
-        
+        exp_channel = bot.get_channel(EXP_CHANNEL_ID)
         if exp_channel:
             print(f"[DEBUG]🚂 - Found EXP channel: {exp_channel.name} ({exp_channel.id})")
             await exp_channel.send("🍾🍸 **Happy Hour 2x Tick Added!** ⚡ EXP and 💰 gold are doubled!")
@@ -71,7 +70,7 @@ async def send_happy_hour_tick(bot):
 
 
 
-async def handle_exp_gain(message: discord.Message, bot, exp_channel: discord.TextChannel):
+async def handle_exp_gain(message: discord.Message, bot, exp_channel: int):
     print(f"🚂 - ⚡⚡⚡(H_E_G) Handling EXP gain for user: {message.author.id} ⚡⚡⚡")
     if message.author.bot:
         return
