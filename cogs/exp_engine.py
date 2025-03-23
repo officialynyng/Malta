@@ -70,9 +70,8 @@ async def send_happy_hour_tick(bot):
 
 
 
-async def handle_exp_gain(message: discord.Message, bot, level_up_channel_id: int):
+async def handle_exp_gain(message: discord.Message, bot, exp_channel: int):
     print(f"🚂 - ⚡⚡⚡(H_E_G) Handling EXP gain for user: {message.author.id} ⚡⚡⚡")
-    level_up_channel_id = int(os.getenv("EXP_CHANNEL_ID"))
     if message.author.bot:
         return
 
@@ -131,7 +130,7 @@ async def handle_exp_gain(message: discord.Message, bot, level_up_channel_id: in
                 await send_happy_hour_tick(bot, message.guild.id)  # Send Happy Hour Tick message
 
             if new_level > result.level:
-                await announce_level_up(message.guild, message.author, new_level, level_up_channel_id)
+                await announce_level_up(message.guild, message.author, new_level, exp_channel)
         else:
             daily = 1.0  # Default daily multiplier for new users
             retire = get_multiplier(0)
@@ -165,7 +164,7 @@ async def handle_exp_gain(message: discord.Message, bot, level_up_channel_id: in
             )
 
             if new_level > 0:
-                await announce_level_up(message.guild, message.author, new_level, level_up_channel_id)
+                await announce_level_up(message.guild, message.author, new_level, exp_channel)
 
 
 
