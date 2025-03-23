@@ -46,14 +46,18 @@ async def send_happy_hour_tick(bot, guild_id):
         # Get the guild by its ID
         guild = bot.get_guild(guild_id)
         
+        # Ensure the guild exists
         if guild:
             exp_channel = guild.get_channel(EXP_CHANNEL_ID)
             if exp_channel:
-                await exp_channel.send("🍾🍸 **Happy Hour Tick Added!** ⚡ EXP and 💰 gold are doubled!")
+                await exp_channel.send("🍾🍸 **Happy Hour - Additional 2x**")
             else:
                 print("🚂 - [ERROR] EXP channel not found.")
         else:
             print(f"🚂 - [ERROR] Guild with ID {guild_id} not found.")
+
+
+
 
 async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
     print(f"🚂 - ⚡⚡⚡(H_E_G) Handling EXP gain for user: {message.author.id} ⚡⚡⚡")
@@ -112,7 +116,7 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
             )
 
             if happy_hour_multiplier == 2:
-                await send_happy_hour_tick(bot, message.guild.id)  # Send Happy Hour Tick message
+                await send_happy_hour_tick(message.guild)  # Send Happy Hour Tick message
 
             if new_level > result.level:
                 await announce_level_up(message.guild, message.author, new_level, level_up_channel_id)
