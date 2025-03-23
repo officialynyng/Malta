@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 import time
 import pytz
-import os
 from datetime import datetime
 from cogs.exp_config import (
     db, players, exp_channel, engine, EXP_COOLDOWN, EXP_PER_TICK, GOLD_PER_TICK, LEVEL_CAP, EXP_CHANNEL_ID, TIME_DELTA, MAX_MULTIPLIER,
@@ -72,7 +71,6 @@ async def send_happy_hour_tick(bot):
 
 async def handle_exp_gain(message: discord.Message, bot, level_up_channel_id: int):
     print(f"🚂 - ⚡⚡⚡(H_E_G) Handling EXP gain for user: {message.author.id} ⚡⚡⚡")
-    level_up_channel_id = int(os.getenv("EXP_CHANNEL_ID"))
     if message.author.bot:
         return
 
