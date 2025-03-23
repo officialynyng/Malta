@@ -29,31 +29,45 @@ def is_happy_hour():
     return False
 
 async def send_happy_hour_announcement(bot, is_starting=False, is_tick=False):
+    print("[DEBUG]🚂 - send_happy_hour_announcement called.")
+    
+    # Get the EXP channel by its ID
     exp_channel = bot.get_channel(EXP_CHANNEL_ID)  # Use the same EXP channel ID for announcements
+    
+    # Debug: Check if exp_channel was retrieved
     if exp_channel:
+        print(f"[DEBUG]🚂 - Found EXP channel: {exp_channel.name} ({exp_channel.id})")
+        
         if is_starting:
+            print("[DEBUG]🚂 - Happy Hour is starting.")
             await exp_channel.send("🍾🍸 **Happy Hour is now LIVE!** Additional 2x Multiplier added until 11:30 PM CST!")
         elif is_tick:
-            await exp_channel.send("🍾🍸 **Happy Hour Tick Added!** ⚡ EXP and 💰 gold are doubled!")
+            print("[DEBUG]🚂 - Happy Hour tick added.")
+            await exp_channel.send("🍾🍸 **Happy Hour 2x Tick Added!** ⚡ EXP and 💰 gold are doubled!")
         else:
+            print("[DEBUG]🚂 - Happy Hour has ended.")
             await exp_channel.send("💤 **Happy Hour has ENDED!** See you again tomorrow at 7:30 PM CST for more rewards!")
     else:
         print("🚂 - [ERROR] Announcement channel not found.")
+        
+async def send_happy_hour_tick(bot):
+    print(f"[DEBUG]🚂 - send_happy_hour_tick called.")
 
-async def send_happy_hour_tick(bot, guild_id):
     # Check if it's Happy Hour
     if is_happy_hour():
-        # Get the guild by its ID
-        guild = bot.get_guild(guild_id)
+        print("[DEBUG]🚂 - Happy Hour is active.")
         
-        if guild:
-            exp_channel = guild.get_channel(EXP_CHANNEL_ID)
-            if exp_channel:
-                await exp_channel.send("🍾🍸 **Happy Hour Tick Added!** ⚡ EXP and 💰 gold are doubled!")
-            else:
-                print("🚂 - [ERROR] EXP channel not found.")
+        # Get the EXP channel directly using the bot
+        exp_channel = bot.get_channel(EXP_CHANNEL_ID)
+        if exp_channel:
+            print(f"[DEBUG]🚂 - Found EXP channel: {exp_channel.name} ({exp_channel.id})")
+            await exp_channel.send("🍾🍸 **Happy Hour 2x Tick Added!** ⚡ EXP and 💰 gold are doubled!")
         else:
-            print(f"🚂 - [ERROR] Guild with ID {guild_id} not found.")
+            print("🚂 - [ERROR] EXP channel not found.")
+    else:
+        print("[DEBUG]🚂 - Happy Hour is NOT active.")
+
+
 
 async def handle_exp_gain(message: discord.Message, bot, level_up_channel_id: int):
     print(f"🚂 - ⚡⚡⚡(H_E_G) Handling EXP gain for user: {message.author.id} ⚡⚡⚡")
@@ -254,7 +268,7 @@ async def check_and_reset_multiplier(user_id, bot):
 
 
 
-async def award_xp_and_gold(user_id, guild_id, base_xp, base_gold, bot):
+async def award_xp_and_gold(user_id, base_xp, base_gold, bot):
     # Get the user data (multipliers, etc.) from the database
     user_data = get_user_data(user_id)
     
@@ -307,7 +321,7 @@ async def award_xp_and_gold(user_id, guild_id, base_xp, base_gold, bot):
 
                 # Add Happy Hour Tick Announcement if it's Happy Hour
                 if happy_hour_multiplier == 2:
-                    await send_happy_hour_tick(bot, guild_id)
+                    await send_happy_hour_tick(bot,)
 
             else:
                 print("🚂 - [ERROR] EXP channel not found.")
