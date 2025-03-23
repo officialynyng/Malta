@@ -12,7 +12,7 @@ from cogs.admin_config import (APPROVED_ROLE_NAME, OWNER_ID, GUILD_ID)
 from cogs.exp_config import (
     db
 )
-
+from cogs.exp_engine import is_happy_hour
 class AdminGroup(app_commands.Group):
     def __init__(self, bot):
         super().__init__(name='admin', description='Administration commands')
@@ -410,6 +410,20 @@ class AdminGroup(app_commands.Group):
         except Exception as e:
             print(f"[ERROR] Failed to run manual voice check: {e}")
             await interaction.response.send_message(f"💢 Failed to run voice check:\n```{e}```", ephemeral=True)
+
+    @app_commands.command(name="check_happy_hour", description="🔒 - 🕒 Check if it's currently Happy Hour.")
+    async def check_happy_hour(self, interaction: discord.Interaction):
+        # Ensure only the admin can use this command
+        if interaction.user.id != OWNER_ID:
+            await interaction.response.send_message("🚫 You are not authorized to use this command.", ephemeral=True)
+            return
+
+        # Check if it's Happy Hour
+        if is_happy_hour():
+            await interaction.response.send_message("🍾🍸 **Happy Hour is LIVE!** EXP and 💰 gold are doubled until 11:30 PM CST!", ephemeral=True)
+        else:
+            await interaction.response.send_message("💤 **Happy Hour is NOT active.**", ephemeral=True)
+        
 
 
 
