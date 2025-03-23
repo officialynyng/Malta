@@ -1,8 +1,6 @@
 import discord
 from discord.ext import commands
 import time
-import pytz
-from datetime import datetime
 from cogs.exp_config import (
     db, players, exp_channel, engine, EXP_COOLDOWN, EXP_PER_TICK, GOLD_PER_TICK, LEVEL_CAP, EXP_CHANNEL_ID, TIME_DELTA, MAX_MULTIPLIER,
 )
@@ -15,48 +13,6 @@ notified_users = set()
 class ExpEngine(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
-def is_happy_hour():
-    # Define the timezone for Central Standard Time (CST)
-    tz = pytz.timezone('US/Central')
-    
-    # Get current time in CST
-    current_time = datetime.now(tz)
-    
-    # Check if current time is between 7:30 PM and 11:30 PM
-    if current_time.hour >= 19 and current_time.minute >= 30 or current_time.hour < 23:
-        return True
-    return False
-
-async def send_happy_hour_announcement(bot, is_starting=False, is_tick=False):
-    exp_channel = bot.get_channel(EXP_CHANNEL_ID)  # Use the same EXP channel ID for announcements
-    if exp_channel:
-        if is_starting:
-            await exp_channel.send("🍾🍸 **Happy Hour is now LIVE!** Additional 2x Multiplier added until 11:30 PM CST!")
-        elif is_tick:
-            await exp_channel.send("🍾🍸 **Happy Hour Tick Added!** ⚡ EXP and 💰 gold are doubled!")
-        else:
-            await exp_channel.send("💤 **Happy Hour has ENDED!** See you again tomorrow at 7:30 PM CST for more rewards!")
-    else:
-        print("🚂 - [ERROR] Announcement channel not found.")
-
-async def send_happy_hour_tick(bot, guild_id):
-    # Check if it's Happy Hour
-    if is_happy_hour():
-        # Get the guild by its ID
-        guild = bot.get_guild(guild_id)
-        
-        # Ensure the guild exists
-        if guild:
-            exp_channel = guild.get_channel(EXP_CHANNEL_ID)
-            if exp_channel:
-                await exp_channel.send("🍾🍸 **Happy Hour - Additional 2x**")
-            else:
-                print("🚂 - [ERROR] EXP channel not found.")
-        else:
-            print(f"🚂 - [ERROR] Guild with ID {guild_id} not found.")
-
-
 
 
 async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
@@ -79,14 +35,10 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
                 return
             else:
                 print(f"[DEBUG]🚂 - 🍾 No cooldown active, proceeding with EXP and gold calculation for {username} ({user_id}).")
-            
-            # Inject Happy Hour multiplier
-            happy_hour_multiplier = 2 if is_happy_hour() else 1  # Apply the Happy Hour multiplier
-
+            # Continue with EXP and gold calculation...
             daily = result.daily_multiplier
             retire = get_multiplier(result.retirements)
-            combined_multiplier = daily * retire * happy_hour_multiplier  # Apply happy hour multiplier
-
+            combined_multiplier = daily * retire
             # Calculate rewards
             gained_exp = int(EXP_PER_TICK * combined_multiplier)
             gained_gold = int(GOLD_PER_TICK * combined_multiplier)
@@ -113,17 +65,14 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
                 f"**{message.author.display_name}** gained ⚡ **{gained_exp} EXP** and 💰 **{gained_gold} gold**\n"
                 f"🏔️ Daily Multiplier: **{daily:.2f}x**\n"
                 f"🧬 Generational Multiplier: **{retire:.2f}x**\n"
-            )
-
-            if happy_hour_multiplier == 2:
-                await send_happy_hour_tick(message.guild)  # Send Happy Hour Tick message
+                )
 
             if new_level > result.level:
                 await announce_level_up(message.guild, message.author, new_level, level_up_channel_id)
         else:
             daily = 1.0  # Default daily multiplier for new users
             retire = get_multiplier(0)
-            combined_multiplier = daily * retire * (2 if is_happy_hour() else 1)  # Apply the Happy Hour multiplier
+            combined_multiplier = daily * retire
 
             gained_exp = int(EXP_PER_TICK * combined_multiplier)
             gained_gold = int(GOLD_PER_TICK * combined_multiplier)
@@ -149,8 +98,7 @@ async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
                 await exp_channel.send(
                     f"**{message.author.display_name}** gained ⚡ **{gained_exp} EXP** and 💰 **{gained_gold} gold**\n"
                     f"🏔️ Daily Multiplier: **{daily:.2f}x**\n"
-                    f"🧬 Generational Multiplier: **{retire:.2f}x**\n"
-                    f"🍾🍸 Happy Hour Multiplier: **{combined_multiplier}x**"  # Include Happy Hour info in the message
+                    f"🧬 Generational Multiplier: **{retire:.2f}x**"
                 )
 
             if new_level > 0:
@@ -242,20 +190,15 @@ async def check_and_reset_multiplier(user_id, bot):
 
 
 
-async def award_xp_and_gold(user_id, guild_id, base_xp, base_gold, bot):
-    # Get the user data (multipliers, etc.) from the database
+async def award_xp_and_gold(user_id, base_xp, base_gold, bot):
     user_data = get_user_data(user_id)
-    
     if user_data:
         # Retrieve both multipliers
         retirement_multiplier = user_data['multiplier']  # Stored as a float like 0.45
         daily_multiplier = user_data['daily_multiplier']  # Usually 1-5
 
-        # Inject Happy Hour multiplier
-        happy_hour_multiplier = 2 if is_happy_hour() else 1  # Apply the Happy Hour multiplier
-
-        # Correct calculation: Add 1 to retirement multiplier and apply Happy Hour
-        total_multiplier = (retirement_multiplier + 1) * daily_multiplier * happy_hour_multiplier
+        # Correct calculation: Add 1 to retirement multiplier
+        total_multiplier = (retirement_multiplier + 1) * daily_multiplier
 
         # Calculate awarded XP and gold
         xp_awarded = int(base_xp * total_multiplier)
@@ -264,44 +207,26 @@ async def award_xp_and_gold(user_id, guild_id, base_xp, base_gold, bot):
         # Print debug info
         print(f"[DEBUG]🚂 - ⚡⚡⚡(A_x_a_g) Awarded {xp_awarded} XP and {gold_awarded} gold to <{user_id}> — Total Multiplier: {total_multiplier:.2f}x ⚡⚡⚡")
 
-        # Fetch the user by ID to get their display name
-        user = bot.get_user(user_id)  # Try fetching from cache
-        if not user:  # If the user is not cached, fetch from Discord API
-            try:
-                user = await bot.fetch_user(user_id)
-            except discord.NotFound:
-                print(f"🚂 - [ERROR] User with ID {user_id} not found.")
-                return
+        # Update XP and gold in DB
+        with engine.connect() as conn:
+            update_query = players.update().where(players.c.user_id == user_id).values(
+                exp=user_data['exp'] + xp_awarded,
+                gold=user_data['gold'] + gold_awarded
+            )
+            conn.execute(update_query)
+            conn.commit()
 
-        # Check if the user is valid
-        if user:
-            # Update XP and gold in DB
-            with engine.connect() as conn:
-                update_query = players.update().where(players.c.user_id == user_id).values(
-                    exp=user_data['exp'] + xp_awarded,
-                    gold=user_data['gold'] + gold_awarded
-                )
-                conn.execute(update_query)
-                conn.commit()
-
-            # Send result to EXP channel
-            exp_channel = bot.get_channel(EXP_CHANNEL_ID)
-            if exp_channel:
-                await exp_channel.send(
-                    f"**{user.display_name}** gained ⚡ **{xp_awarded} EXP** and 💰 **{gold_awarded} gold**\n"
-                    f"🏔️ Daily Multiplier: {daily_multiplier:.2f}x\n"
-                    f"🧬 Generational Multiplier: {retirement_multiplier + 1:.2f}x"
-                )
-
-                # Add Happy Hour Tick Announcement if it's Happy Hour
-                if happy_hour_multiplier == 2:
-                    await send_happy_hour_tick(bot, guild_id)
-
-            else:
-                print("🚂 - [ERROR] EXP channel not found.")
+        # Send result to EXP channel
+        exp_channel = bot.get_channel(EXP_CHANNEL_ID)
+        if exp_channel:
+            await exp_channel.send(
+                f"🏅 <@{user_id}> has been awarded ⚡ **{xp_awarded} XP** and 💰 **{gold_awarded} gold**\n"
+                f"Total: ⚡ **{user_data['exp'] + xp_awarded} XP**, 💰 **{user_data['gold'] + gold_awarded} gold**\n"
+                f"🏔️ Daily Multiplier: **{daily_multiplier}x**\n"
+                f"🧬 Generational Multiplier: **{retirement_multiplier + 1:.2f}x**"
+            )
         else:
-            print(f"🚂 - [ERROR] Failed to fetch user with ID {user_id}.")
-
+            print("🚂 - [ERROR] EXP channel not found.")
 
 async def announce_level_up(guild: discord.Guild, member: discord.Member, level: int, channel_id: int):
     channel = guild.get_channel(channel_id)
