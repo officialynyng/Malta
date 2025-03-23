@@ -67,7 +67,7 @@ class VoiceExpCog(commands.Cog):
                 return
             
             # Call handle_exp_gain with correct parameters
-            await handle_exp_gain(fake_message, bot, exp_channel)  # Adjust this call according to your function signature
+            await handle_exp_gain(fake_message, bot, exp_channel, EXP_CHANNEL_ID)  # Adjust this call according to your function signature
             await on_user_comment(user_id, bot)
             await check_and_reset_multiplier(user_id, bot)
         else:

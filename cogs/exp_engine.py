@@ -70,6 +70,7 @@ async def send_happy_hour_tick(bot):
         print("[DEBUG]🚂 - Happy Hour is NOT active.")
 
 
+
 async def handle_exp_gain(message: discord.Message, bot, exp_channel: discord.TextChannel):
     print(f"🚂 - ⚡⚡⚡(H_E_G) Handling EXP gain for user: {message.author.id} ⚡⚡⚡")
     if message.author.bot:
