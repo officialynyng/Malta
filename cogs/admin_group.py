@@ -411,7 +411,7 @@ class AdminGroup(app_commands.Group):
             print(f"[ERROR] Failed to run manual voice check: {e}")
             await interaction.response.send_message(f"💢 Failed to run voice check:\n```{e}```", ephemeral=True)
 
-    @app_commands.command(name="check_happy_hour", description="🔒 - 🕒 Check if it's currently Happy Hour.")
+    @app_commands.command(name="crpg_happy_hour", description="🔒 - 🕒 Check if it's currently Happy Hour.")
     async def check_happy_hour(self, interaction: discord.Interaction):
         # Ensure only the admin can use this command
         if interaction.user.id != OWNER_ID:

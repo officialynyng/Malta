@@ -55,7 +55,7 @@ async def send_happy_hour_tick(bot, guild_id):
         else:
             print(f"🚂 - [ERROR] Guild with ID {guild_id} not found.")
 
-async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
+async def handle_exp_gain(message: discord.Message, bot, level_up_channel_id: int):
     print(f"🚂 - ⚡⚡⚡(H_E_G) Handling EXP gain for user: {message.author.id} ⚡⚡⚡")
     if message.author.bot:
         return
