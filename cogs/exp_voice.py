@@ -59,20 +59,11 @@ class VoiceExpCog(commands.Cog):
             print(f"[DEBUG]📢☑️ Member {member.display_name} (ID: {user_id}) is still in a voice channel: {member.voice.channel.name}.")
             # Simulate message handling for EXP gain
             fake_message = type('FakeMessage', (object,), {'author': member, 'guild': guild})
-            
-            # Fetch the EXP Channel
-            exp_channel = guild.get_channel(EXP_CHANNEL_ID)
-            if not exp_channel:
-                print("[ERROR]📢 EXP Channel not found.")
-                return
-            
-            # Call handle_exp_gain with correct parameters
-            await handle_exp_gain(fake_message, bot, exp_channel, LEVEL_UP_CHANNEL_ID)  # Adjust this call according to your function signature
+            await handle_exp_gain(fake_message, EXP_CHANNEL_ID)
             await on_user_comment(user_id, bot)
             await check_and_reset_multiplier(user_id, bot)
         else:
             print(f"[DEBUG]📢❌ Member {member.display_name} (ID: {user_id}) is not in a voice channel or has left.")
-
 
 async def setup(bot):
     await bot.add_cog(VoiceExpCog(bot))
