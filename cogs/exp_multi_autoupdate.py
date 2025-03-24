@@ -7,7 +7,7 @@ async def start_multiplier_cleanup(bot):
     print("[🌀] Routine Multiplier reset loop started.")
 
     while not bot.is_closed():
-        user_ids = await get_all_user_ids()
+        user_ids = get_all_user_ids()
         print(f"[🌀⏳] Checking {len(user_ids)} users for multiplier resets...")
 
         for user_id in user_ids:
