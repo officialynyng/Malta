@@ -1,0 +1,138 @@
+[
+    {
+      "id": "pet_barn_cat",
+      "name": "Barn Cat",
+      "category": "pets",
+      "price": 80,
+      "stock": 10,
+      "cooldown": 1800,
+      "description": "Keeps the rats away. Only responds to sardines."
+    },
+    {
+      "id": "pet_farm_dog",
+      "name": "Farm Dog",
+      "category": "pets",
+      "price": 100,
+      "stock": 12,
+      "cooldown": 1800,
+      "description": "Loyal and loud. Grew up chasing chickens."
+    },
+    {
+      "id": "pet_falcon",
+      "name": "Falcon",
+      "category": "pets",
+      "price": 300,
+      "stock": 4,
+      "cooldown": 1800,
+      "description": "Flies overhead. Trained to scout, not kill."
+    },
+    {
+      "id": "pet_rabbit",
+      "name": "Rabbit",
+      "category": "pets",
+      "price": 60,
+      "stock": 10,
+      "cooldown": 1800,
+      "description": "Jumps into your pack when startled."
+    },
+    {
+      "id": "pet_sheep",
+      "name": "Sheep",
+      "category": "pets",
+      "price": 150,
+      "stock": 6,
+      "cooldown": 1800,
+      "description": "Soft, slow, and easily lost in tall grass."
+    },
+    {
+      "id": "pet_crow",
+      "name": "Crow",
+      "category": "pets",
+      "price": 200,
+      "stock": 5,
+      "cooldown": 1800,
+      "description": "Watches everything. Mimics insults."
+    },
+    {
+      "id": "pet_rat",
+      "name": "Tavern Rat",
+      "category": "pets",
+      "price": 40,
+      "stock": 20,
+      "cooldown": 1800,
+      "description": "Scrappy little thing with a taste for crumbs."
+    },
+    {
+      "id": "pet_goose",
+      "name": "Goose",
+      "category": "pets",
+      "price": 120,
+      "stock": 7,
+      "cooldown": 1800,
+      "description": "Will honk at your enemies. And your friends."
+    },
+    {
+      "id": "pet_squirrel",
+      "name": "Squirrel",
+      "category": "pets",
+      "price": 90,
+      "stock": 10,
+      "cooldown": 1800,
+      "description": "Stashes shiny things. Might steal from other players."
+    },
+    {
+      "id": "pet_chicken",
+      "name": "Chicken",
+      "category": "pets",
+      "price": 50,
+      "stock": 15,
+      "cooldown": 1800,
+      "description": "Lays no eggs. Looks at you with one eye."
+    },
+    {
+      "id": "pet_dormouse",
+      "name": "Dormouse",
+      "category": "pets",
+      "price": 65,
+      "stock": 12,
+      "cooldown": 1800,
+      "description": "Sleeps 90% of the time. Still adorable."
+    },
+    {
+      "id": "pet_piglet",
+      "name": "Piglet",
+      "category": "pets",
+      "price": 130,
+      "stock": 8,
+      "cooldown": 1800,
+      "description": "Squeals when you're attacked."
+    },
+    {
+      "id": "pet_tortoise",
+      "name": "Tortoise",
+      "category": "pets",
+      "price": 110,
+      "stock": 5,
+      "cooldown": 1800,
+      "description": "Slow, but always finds its way back."
+    },
+    {
+      "id": "pet_hound",
+      "name": "Hunting Hound",
+      "category": "pets",
+      "price": 250,
+      "stock": 4,
+      "cooldown": 1800,
+      "description": "Fast. Tracks threats silently. Smells like smoke."
+    },
+    {
+      "id": "pet_duck",
+      "name": "Duck",
+      "category": "pets",
+      "price": 75,
+      "stock": 10,
+      "cooldown": 1800,
+      "description": "Quacks on cooldown. Nobody knows why."
+    }
+  ]
+  

@@ -4,7 +4,6 @@ import os
 import time
 from discord import app_commands
 from discord.ext import commands
-from cogs.exp_utils import get_all_user_ids
 from cogs.exp_engine import check_and_reset_multiplier
 
 from cogs.exp_config import (
@@ -24,26 +23,6 @@ from cogs.exp_engine import (
 class ExpBackground(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
-async def start_multiplier_cleanup(bot):
-    await bot.wait_until_ready()
-    print("[🌀] Routine Multiplier reset loop started.")
-
-    while not bot.is_closed():
-        user_ids = get_all_user_ids()
-        print(f"[⏳] Checking {len(user_ids)} users for multiplier resets...")
-
-        updated_count = 0
-        for user_id in user_ids:
-            before = asyncio.get_event_loop().time()
-            await check_and_reset_multiplier(user_id, bot)
-            after = asyncio.get_event_loop().time()
-            if after - before > 0.1:
-                print(f"[✅] Processed {user_id} in {after - before:.2f}s")
-            await asyncio.sleep(0.25)  # space out checks
-
-        print(f"[🌀🏁🌀]Routine Multiplier check cycle complete. {len(user_ids)} users checked.")
-        await asyncio.sleep(3600)  # wait 1 hour before next run
 
 
 exp_channel = None

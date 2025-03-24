@@ -1,0 +1,75 @@
+[
+    {
+      "id": "mount_field_horse",
+      "name": "Field Horse",
+      "category": "mounts",
+      "price": 120,
+      "stock": 12,
+      "cooldown": 3600,
+      "description": "A calm, dependable horse. Good for travel and patrol."
+    },
+    {
+      "id": "mount_black_hunter",
+      "name": "Black Hunter",
+      "category": "mounts",
+      "price": 280,
+      "stock": 8,
+      "cooldown": 3600,
+      "description": "Fast and loyal, bred in the forests near Malta."
+    },
+    {
+      "id": "mount_battle_boar",
+      "name": "Battle Boar",
+      "category": "mounts",
+      "price": 400,
+      "stock": 4,
+      "cooldown": 3600,
+      "description": "A muscular, armored beast known to charge into chaos."
+    },
+    {
+      "id": "mount_military_mare",
+      "name": "Military Mare",
+      "category": "mounts",
+      "price": 350,
+      "stock": 6,
+      "cooldown": 3600,
+      "description": "Trained to ignore fear. Steady under fire."
+    },
+    {
+      "id": "mount_pack_donkey",
+      "name": "Pack Donkey",
+      "category": "mounts",
+      "price": 90,
+      "stock": 15,
+      "cooldown": 3600,
+      "description": "Stubborn, but loyal. Carries more than its rider."
+    },
+    {
+      "id": "mount_farm_mule",
+      "name": "Farm Mule",
+      "category": "mounts",
+      "price": 70,
+      "stock": 18,
+      "cooldown": 3600,
+      "description": "Raised in village fields. Built for endurance, not speed."
+    },
+    {
+      "id": "mount_dapple_grey",
+      "name": "Dapple Grey Stallion",
+      "category": "mounts",
+      "price": 300,
+      "stock": 5,
+      "cooldown": 3600,
+      "description": "Handsome and agile. A favorite among knights."
+    },
+    {
+      "id": "mount_old_roadhorse",
+      "name": "Old Road Horse",
+      "category": "mounts",
+      "price": 50,
+      "stock": 25,
+      "cooldown": 3600,
+      "description": "No longer fast, but still gets the job done."
+    }
+  ]
+  

@@ -1,0 +1,253 @@
+[
+    {
+      "id": "trail_arrow",
+      "name": "Arrow Barrage",
+      "category": "trails",
+      "price": 200,
+      "stock": 10,
+      "cooldown": 1800,
+      "display": "🏹🏹🏹",
+      "description": "Arrows rain down behind your words."
+    },
+    {
+      "id": "trail_firestep",
+      "name": "Firestep",
+      "category": "trails",
+      "price": 250,
+      "stock": 8,
+      "cooldown": 1800,
+      "display": "🔥🔥🔥",
+      "description": "Your words ignite the ground beneath you."
+    },
+    {
+      "id": "trail_smoke",
+      "name": "Smoke Puff",
+      "category": "trails",
+      "price": 150,
+      "stock": 12,
+      "cooldown": 1800,
+      "display": "💨💨💨",
+      "description": "Leave a smoky trail as you pass."
+    },
+    {
+      "id": "trail_blood",
+      "name": "Blood Drip",
+      "category": "trails",
+      "price": 220,
+      "stock": 6,
+      "cooldown": 1800,
+      "display": "🩸🩸🩸",
+      "description": "Something follows. Something wounded."
+    },
+    {
+      "id": "trail_lightning",
+      "name": "Lightning Surge",
+      "category": "trails",
+      "price": 280,
+      "stock": 5,
+      "cooldown": 1800,
+      "display": "⚡⚡⚡",
+      "description": "Static energy trails your voice."
+    },
+    {
+      "id": "trail_stars",
+      "name": "Starfall",
+      "category": "trails",
+      "price": 200,
+      "stock": 10,
+      "cooldown": 1800,
+      "display": "✨✨✨",
+      "description": "Celestial dust dances in your wake."
+    },
+    {
+      "id": "trail_skulls",
+      "name": "Skull March",
+      "category": "trails",
+      "price": 300,
+      "stock": 3,
+      "cooldown": 1800,
+      "display": "💀💀💀",
+      "description": "Each step crushes the bones of old foes."
+    },
+    {
+      "id": "trail_crescent",
+      "name": "Moonstep",
+      "category": "trails",
+      "price": 170,
+      "stock": 7,
+      "cooldown": 1800,
+      "display": "🌙🌙🌙",
+      "description": "Silent, silvery traces in the dark."
+    },
+    {
+      "id": "trail_dust",
+      "name": "Dust Kick",
+      "category": "trails",
+      "price": 130,
+      "stock": 15,
+      "cooldown": 1800,
+      "display": "🌫️🌫️🌫️",
+      "description": "Kicks up the battlefield behind you."
+    },
+    {
+      "id": "trail_chain",
+      "name": "Clanking Chain",
+      "category": "trails",
+      "price": 240,
+      "stock": 7,
+      "cooldown": 1800,
+      "display": "⛓️⛓️⛓️",
+      "description": "You carry the weight of old oaths."
+    },
+    {
+      "id": "trail_sparkles",
+      "name": "Sparkle Steps",
+      "category": "trails",
+      "price": 190,
+      "stock": 10,
+      "cooldown": 1800,
+      "display": "🌟🌟🌟",
+      "description": "Every word glimmers like gold dust."
+    },
+    {
+      "id": "trail_bubbles",
+      "name": "Bubble Pop",
+      "category": "trails",
+      "price": 140,
+      "stock": 12,
+      "cooldown": 1800,
+      "display": "🫧🫧🫧",
+      "description": "Bubbles float up behind you, delicate and soft."
+    },
+    {
+      "id": "trail_footprints",
+      "name": "Footprints",
+      "category": "trails",
+      "price": 110,
+      "stock": 20,
+      "cooldown": 1800,
+      "display": "👣👣👣",
+      "description": "You leave a visible path of presence."
+    },
+    {
+      "id": "trail_leaf",
+      "name": "Falling Leaves",
+      "category": "trails",
+      "price": 180,
+      "stock": 10,
+      "cooldown": 1800,
+      "display": "🍃🍂🍃",
+      "description": "Autumn follows close behind."
+    },
+    {
+      "id": "trail_feathers",
+      "name": "Feather Fall",
+      "category": "trails",
+      "price": 170,
+      "stock": 10,
+      "cooldown": 1800,
+      "display": "🪶🪶🪶",
+      "description": "Light as air, gone with the wind."
+    },
+    {
+      "id": "trail_cross",
+      "name": "Sanctified",
+      "category": "trails",
+      "price": 220,
+      "stock": 6,
+      "cooldown": 1800,
+      "display": "✝️✝️✝️",
+      "description": "A trail of blessings (or warnings)."
+    },
+    {
+      "id": "trail_warning",
+      "name": "Hazard",
+      "category": "trails",
+      "price": 160,
+      "stock": 10,
+      "cooldown": 1800,
+      "display": "☣️☣️☣️",
+      "description": "A toxic vibe trails your presence."
+    },
+    {
+      "id": "trail_bricks",
+      "name": "Broken Ground",
+      "category": "trails",
+      "price": 175,
+      "stock": 10,
+      "cooldown": 1800,
+      "display": "🧱🧱🧱",
+      "description": "Every step fractures the floor."
+    },
+    {
+      "id": "trail_dagger",
+      "name": "Blades Behind",
+      "category": "trails",
+      "price": 240,
+      "stock": 7,
+      "cooldown": 1800,
+      "display": "🗡️🗡️🗡️",
+      "description": "Silent steel echoes with each word."
+    },
+    {
+      "id": "trail_wave",
+      "name": "Wake Trail",
+      "category": "trails",
+      "price": 150,
+      "stock": 9,
+      "cooldown": 1800,
+      "display": "🌊🌊🌊",
+      "description": "Your voice ripples like the sea."
+    },
+    {
+      "id": "trail_torch",
+      "name": "Torchlight",
+      "category": "trails",
+      "price": 230,
+      "stock": 5,
+      "cooldown": 1800,
+      "display": "🕯️🕯️🕯️",
+      "description": "Dim light follows your passage through darkness."
+    },
+    {
+      "id": "trail_pawprint",
+      "name": "Pawprint",
+      "category": "trails",
+      "price": 135,
+      "stock": 10,
+      "cooldown": 1800,
+      "display": "🐾🐾🐾",
+      "description": "Is it you... or your beast?"
+    },
+    {
+      "id": "trail_black_heart",
+      "name": "Heartless",
+      "category": "trails",
+      "price": 160,
+      "stock": 10,
+      "cooldown": 1800,
+      "display": "🖤🖤🖤",
+      "description": "No warmth left. Just shadow."
+    },
+    {
+      "id": "trail_horseshoe",
+      "name": "Horseshoe Marks",
+      "category": "trails",
+      "price": 190,
+      "stock": 8,
+      "cooldown": 1800,
+      "display": "🐴🐴🐴",
+      "description": "Someone rides with force and style."
+    },
+    {
+      "id": "trail_tombstone",
+      "name": "Gravebound",
+      "category": "trails",
+      "price": 275,
+      "stock": 4,
+      "cooldown": 1800,
+      "display": "🪦🪦🪦",
+      "description": "You are not followed. You are haunted."
+    }
+  ]
+  

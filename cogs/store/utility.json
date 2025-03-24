@@ -1,0 +1,60 @@
+[
+    {
+      "id": "utility_slot_upgrade",
+      "name": "Inventory Slot Upgrade",
+      "category": "utility",
+      "price": 500,
+      "stock": 10,
+      "description": "Expands your inventory by 1 slot."
+    },
+    {
+      "id": "utility_backpack_upgrade",
+      "name": "Backpack",
+      "category": "utility",
+      "price": 1000,
+      "stock": 5,
+      "description": "Upgrade your storage to carry more items."
+    },
+    {
+      "id": "utility_banner_black",
+      "name": "Banner Color: Black",
+      "category": "utility",
+      "price": 150,
+      "stock": 50,
+      "description": "Switch your banner to the black Malta variant."
+    },
+    {
+      "id": "utility_banner_red",
+      "name": "Banner Color: Red",
+      "category": "utility",
+      "price": 150,
+      "stock": 50,
+      "description": "Switch your banner to the red Malta variant."
+    },
+    {
+      "id": "utility_trail_reset",
+      "name": "Trail Cooldown Reset",
+      "category": "utility",
+      "price": 300,
+      "stock": 8,
+      "description": "Reset the cooldown on your currently equipped trail."
+    },
+    {
+      "id": "utility_rename_pet",
+      "name": "Pet Rename Token",
+      "category": "utility",
+      "price": 250,
+      "stock": 10,
+      "description": "Allows you to rename one of your pets."
+    },
+    {
+        "id": "utility_deloomer",
+        "name": "Deloomer Token",
+        "category": "utility",
+        "price": 1200,
+        "stock": 2,
+        "description": "Remove 1 loom from an upgraded item and return it to your inventory. One use only."
+    }
+      
+  ]
+  
