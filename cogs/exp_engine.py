@@ -172,7 +172,7 @@ async def check_and_reset_multiplier(user_id, bot):
                 return
 
             # Reset daily multiplier & last_multiplier_update
-            update_user_data(user_id, user_data['retirement_multiplier'], 1, current_time, current_time)
+            update_user_data(user_id, user_data['multiplier'], 1, current_time, current_time)
             notified_users.add(user_id)
 
             exp_channel = bot.get_channel(EXP_CHANNEL_ID)
