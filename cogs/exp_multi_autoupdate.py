@@ -1,7 +1,7 @@
 import asyncio
 from discord.ext import tasks
-from exp_engine import check_and_reset_multiplier
-from exp_utils import get_all_user_ids
+from cogs.exp_engine import check_and_reset_multiplier
+from cogs.exp_utils import get_all_user_ids
 
 # Hourly background task to auto-check and update multipliers
 async def start_hourly_multiplier_check(bot):
