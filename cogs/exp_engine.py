@@ -14,7 +14,6 @@ class ExpEngine(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-
 async def handle_exp_gain(message: discord.Message, level_up_channel_id: int):
     print(f"🚂 - ⚡⚡⚡(H_E_G) Handling EXP gain for user: {message.author.id} ⚡⚡⚡")
     if message.author.bot:
@@ -110,6 +109,7 @@ async def on_user_comment(user_id, bot, is_admin=False):
     print("[DEBUG]🚂 -  on_user_comment triggered, Admin Command: " + str(is_admin))
     current_time = int(time.time())
     user_data = get_user_data(user_id)
+    member = await bot.fetch_user(user_id)
 
     if not user_data:
         print(f"[DEBUG]🚂 - 🏔️ No user data found for {user_id}.")
@@ -139,7 +139,7 @@ async def on_user_comment(user_id, bot, is_admin=False):
             exp_channel = bot.get_channel(EXP_CHANNEL_ID)
             if exp_channel:
                 await exp_channel.send(
-                    f"🌋 <@{user_id}>'s daily multiplier has been reset to **1x** due to inactivity."
+                    f"🌋 {member.display_name}'s daily multiplier has been reset to **1x** due to inactivity."
                 )
         else:
             new_daily_multiplier = min(current_daily_multiplier + 1, MAX_MULTIPLIER)
@@ -150,7 +150,7 @@ async def on_user_comment(user_id, bot, is_admin=False):
                 exp_channel = bot.get_channel(EXP_CHANNEL_ID)
                 if exp_channel:
                     await exp_channel.send(
-                        f"🏔️ <@{user_id}>'s daily multiplier updated to **{new_daily_multiplier}x** due to daily posting."
+                        f"🏔️ {member.display_name}'s daily multiplier updated to **{new_daily_multiplier}x** due to daily posting."
                     )
             else:
                 print(f"[DEBUG] Multiplier unchanged for {user_id}, no update message sent.")
@@ -160,6 +160,7 @@ async def on_user_comment(user_id, bot, is_admin=False):
 async def check_and_reset_multiplier(user_id, bot):
     current_time = int(time.time())
     user_data = get_user_data(user_id)
+    member = await bot.fetch_user(user_id)
     print(f"[DEBUG]🚂 - Retrieved user data for {user_id}: {user_data}")
 
     if user_data:
@@ -177,7 +178,7 @@ async def check_and_reset_multiplier(user_id, bot):
             exp_channel = bot.get_channel(EXP_CHANNEL_ID)
             if exp_channel:
                 await exp_channel.send(
-                    f"🌋 <@{user_id}>'s daily multiplier has been reset to **1x** due to inactivity."
+                    f"🌋 {member.display_name}'s daily multiplier has been reset to **1x** due to inactivity."
                 )
             print(f"[DEBUG]🚂 - 🌋 Reset daily multiplier for {user_id} due to inactivity ({time_since_last} seconds).")
 

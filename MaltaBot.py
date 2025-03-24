@@ -28,6 +28,7 @@ class MaltaBot(commands.Bot):
         await self.load_extension("cogs.exp_commands")
         await self.load_extension("cogs.exp_background")
         await self.load_extension("cogs.ActivityAnalyzer")
+        await self.load_extension("cogs.exp_multi_autoupdate")
 
         await setup_voice_exp(self)
 
