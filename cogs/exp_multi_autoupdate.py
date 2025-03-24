@@ -20,6 +20,7 @@ async def start_hourly_multiplier_check(bot):
         await asyncio.sleep(3600)  # wait 1 hour
 
 # Helper to hook this in on bot startup
-def setup(bot):
+async def setup(bot):
     print("[🏔️⏲ AutoMultiplier] Setting up hourly multiplier check...")
     bot.loop.create_task(start_hourly_multiplier_check(bot))
+
