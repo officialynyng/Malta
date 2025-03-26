@@ -227,3 +227,6 @@ def remove_item_from_inventory(user_id, item_id):
         update_user_data(user_id, data["multiplier"], data["daily_multiplier"], data["last_message_ts"], data["last_multiplier_update"])
         if DEBUG:
             print(f"[DEBUG] Removed '{item_id}' from user {user_id}'s inventory")
+
+async def setup(bot):
+    pass

@@ -302,3 +302,10 @@ def get_filtered_hand_armor(**kwargs):
 def get_filtered_leg_armor(**kwargs):
     items = load_items_from_json("armor_legs")
     return filter_armor_items(items, **kwargs)
+
+
+
+##################################################
+
+async def setup(bot):
+    pass  # This file only contains utility functions, no commands yet

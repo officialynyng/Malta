@@ -18,7 +18,7 @@ class MaltaBot(commands.Bot):
         super().__init__(command_prefix="!", intents=INTENTS)
 
     async def setup_hook(self):
-        print("Loading cogs...")
+        print("Loading 🚂CRPG cogs...")
         guild = discord.Object(id=GUILD_ID)
         await self.load_extension("cogs.admin_config")
         await self.load_extension("cogs.admin_group")
@@ -28,6 +28,11 @@ class MaltaBot(commands.Bot):
         await self.load_extension("cogs.exp_background")
         await self.load_extension("cogs.ActivityAnalyzer")
         await self.load_extension("cogs.exp_multi_autoupdate")
+        print("Loading 🍯Store cogs...")
+        await self.load_extension("cogs.store.store_utils")
+        await self.load_extension("cogs.store.store_upkeep")
+        await self.load_extension("cogs.store.store_search")
+        await self.load_extension("cogs.store.store_group")
 
         await setup_voice_exp(self)
         
@@ -37,7 +42,7 @@ class MaltaBot(commands.Bot):
         for guild in self.guilds:
             print(f"[DEBUG] Connected to guild: {guild.name} (ID: {guild.id})")
         await self.tree.sync(guild=guild)  # Sync the commands with the guild directly
-        print("All cogs and CRPG commands loaded.")
+        print("🟩🟩🟩All cogs and commands loaded.🟩🟩🟩")
 
 
 
