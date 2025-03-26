@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
-from store_utils import STORE_CATEGORIES, get_all_items, get_item_by_id, get_item_by_category
-from store_search import filter_weapon_items
+from cogs.store.store_utils import STORE_CATEGORIES, get_all_items, get_item_by_id, get_item_by_category
+from cogs.store.store_search import filter_weapon_items
 
 class CategorySelect(discord.ui.Select):
     def __init__(self, ctx, callback_func):
