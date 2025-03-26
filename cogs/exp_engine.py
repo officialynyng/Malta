@@ -160,35 +160,26 @@ async def on_user_comment(user_id, bot, is_admin=False):
 async def check_and_reset_multiplier(user_id, bot):
     current_time = int(time.time())
     user_data = get_user_data(user_id)
-    member = await bot.fetch_user(user_id)
-    print(f"[DEBUG]🚂 - Retrieved user data for {user_id}: {user_data}")
 
     if user_data:
-        time_since_last = current_time - user_data['last_multiplier_update']
+        time_since_last_message = current_time - user_data['last_message_ts']
+        member = await bot.fetch_user(user_id)  # Fetch the user early to use in all prints
 
-        if time_since_last >= TIME_DELTA * 2:
-            if user_id in notified_users:
-                print(f"[DEBUG] Reset notice already sent for {user_id}, skipping message.")
-                return
-
-            # Reset daily multiplier & last_multiplier_update
-            update_user_data(user_id, user_data['multiplier'], 1, current_time, current_time)
-            notified_users.add(user_id)
-
+        # Check if 24 hours have passed since the last post
+        if time_since_last_message >= 86400:  # 24 hours in seconds
+            # Reset the daily multiplier & update last_message_ts to current time to avoid repetitive resets
+            update_user_data(user_id, user_data['exp'], 1, user_data['last_multiplier_update'], current_time)
             exp_channel = bot.get_channel(EXP_CHANNEL_ID)
             if exp_channel:
                 await exp_channel.send(
                     f"🌋 {member.display_name}'s daily multiplier has been reset to **1x** due to inactivity."
                 )
-            print(f"[DEBUG]🚂 - 🌋 Reset daily multiplier for {user_id} due to inactivity ({time_since_last} seconds).")
-
+            print(f"[DEBUG]🚂 - 🌋 Reset daily multiplier for {member.display_name} due to inactivity ({time_since_last_message} seconds).")
         else:
-            if user_id in notified_users:
-                notified_users.remove(user_id)  # user became active again, clear flag
-
+            # If the user has been active, ensure the multiplier is not reset
+            print(f"[DEBUG]🚂 - User {member.display_name} has been active within the last 24 hours.")
     else:
         print(f"[ERROR]🚂 - User {user_id} not found in database.")
-
 
 
 async def award_xp_and_gold(user_id, base_xp, base_gold, bot):
