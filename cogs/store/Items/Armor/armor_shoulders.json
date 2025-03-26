@@ -1,0 +1,14 @@
+{
+    "id": "shoulders_mail_pauldrons",
+    "name": "Mail Pauldrons",
+    "category": "armor_shoulders",
+    "material": "mail",
+    "weight": 3.2,
+    "body_armor": 20,
+    "arm_armor": 10,
+    "tier": 2,
+    "price": 180,
+    "stock": 6,
+    "description": "Protects the upper arms and shoulder joint from glancing blows."
+  }
+  

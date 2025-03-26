@@ -1,0 +1,15 @@
+{
+    "id": "bow_ash_longbow",
+    "name": "Ash Longbow",
+    "category": "bows",
+    "damage_types": ["pierce"],
+    "missile_speed": 78,
+    "accuracy": 84,
+    "aim_speed": 70,
+    "reload_speed": 62,
+    "weight": 3.6,
+    "tier": 2,
+    "price": 380,
+    "stock": 7,
+    "description": "Crafted from ashwood, this longbow delivers both range and power with moderate draw time."
+  }

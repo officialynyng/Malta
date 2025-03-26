@@ -1,0 +1,28 @@
+[
+{
+    "id": "mountarmor_steel_barding",
+    "name": "Steel Plated Barding",
+    "category": "mount_armor",
+    "material": "steel",
+    "weight": 22.0,
+    "armor_value": 70,
+    "compatible_mounts": ["horse"],
+    "tier": 4,
+    "price": 850,
+    "stock": 3,
+    "description": "Heavy plate armor offering superior protection for cavalry mounts."
+  },
+  {
+    "id": "mountarmor_boar_hide",
+    "name": "Thickened Boar Hide",
+    "category": "mount_armor",
+    "material": "hide",
+    "weight": 10.0,
+    "armor_value": 35,
+    "compatible_mounts": ["boar"],
+    "tier": 2,
+    "price": 400,
+    "stock": 5,
+    "description": "Reinforced hide built specifically for the low center of a battle boar."
+  }
+]

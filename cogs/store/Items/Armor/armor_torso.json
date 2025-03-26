@@ -1,0 +1,15 @@
+{
+    "id": "torso_lamellar_warplate",
+    "name": "Lamellar Warplate",
+    "category": "armor_torso",
+    "material": "lamellar",
+    "weight": 12.5,
+    "body_armor": 50,
+    "arm_armor": 25,
+    "leg_armor": 10,
+    "tier": 4,
+    "price": 500,
+    "stock": 4,
+    "description": "A solid chestplate designed to distribute weight evenly while still protecting limbs."
+  }
+  

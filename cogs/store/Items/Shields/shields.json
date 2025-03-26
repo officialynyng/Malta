@@ -1,0 +1,30 @@
+[
+{
+    "id": "shield_cavalry_steel",
+    "name": "Steel Cavalry Shield",
+    "category": "shields",
+    "weight": 12.0,
+    "speed": 90,
+    "reach": 75,
+    "durability": 200,
+    "armory": "cavalry",
+    "can_be_used_on_mounts": true,
+    "price": 450,
+    "stock": 10,
+    "description": "A large steel shield designed for mounted combat."
+  },
+  {
+    "id": "shield_infantry_wooden",
+    "name": "Wooden Infantry Shield",
+    "category": "shields",
+    "weight": 8.0,
+    "speed": 80,
+    "reach": 60,
+    "durability": 120,
+    "armory": "infantry",
+    "can_be_used_on_mounts": false,
+    "price": 150,
+    "stock": 15,
+    "description": "A lightweight shield for foot soldiers, quick but fragile."
+  }
+]  

@@ -1,0 +1,13 @@
+{
+    "id": "arrow_steel",
+    "name": "Steel Arrows",
+    "category": "arrows",
+    "damage_types": ["pierce"],
+    "stack_weight": 1.6,
+    "ammo_count": 24,
+    "tier": 2,
+    "price": 60,
+    "stock": 10,
+    "description": "Hardened steel tips ideal for piercing armor. Comes in a bundle of 24."
+  }
+  

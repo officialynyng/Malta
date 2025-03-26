@@ -1,0 +1,13 @@
+{
+    "id": "gloves_steel_gauntlets",
+    "name": "Steel Gauntlets",
+    "category": "armor_hands",
+    "material": "steel",
+    "weight": 2.1,
+    "arm_armor": 12,
+    "tier": 3,
+    "price": 150,
+    "stock": 8,
+    "description": "Fully enclosed gauntlets, standard for knightly cavalry."
+  }
+  

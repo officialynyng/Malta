@@ -1,0 +1,12 @@
+{
+    "id": "helmet_steel_bascinet",
+    "name": "Steel Bascinet",
+    "category": "armor_head",
+    "material": "steel",
+    "weight": 4.8,
+    "head_armor": 40,
+    "tier": 3,
+    "price": 280,
+    "stock": 5,
+    "description": "Heavily reinforced helmet used in tournament melee."
+  }

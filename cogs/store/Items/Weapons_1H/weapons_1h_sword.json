@@ -1,0 +1,17 @@
+{
+    "id": "sword_gladius",
+    "name": "Gladius",
+    "category": "weapons/1h",
+    "damage_types": ["cut", "pierce"],
+    "length": 70,
+    "reach": 85,
+    "handling": 92,   
+    "swing_speed": 100,     
+    "thrust_speed": 98,
+    "price": 300,
+    "weight": 5.5,
+    "tier": 2,
+    "stock": 6,
+    "description": "A short, nimble legionnaire blade effective for both cuts and thrusts."
+  }
+  

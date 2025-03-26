@@ -1,0 +1,13 @@
+{
+    "id": "xbow_heavy_crossbow",
+    "name": "Heavy Crossbow",
+    "category": "weapon_xbows",
+    "damage_types": ["pierce"],
+    "reload_speed": 45,
+    "aim_speed": 60,
+    "accuracy": 85,
+    "weight": 15.0,
+    "price": 400,
+    "stock": 5
+  }
+  

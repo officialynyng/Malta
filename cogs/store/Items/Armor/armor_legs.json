@@ -1,0 +1,13 @@
+{
+    "id": "legs_brigandine_greaves",
+    "name": "Brigandine Greaves",
+    "category": "armor_legs",
+    "material": "brigandine",
+    "weight": 5.2,
+    "leg_armor": 30,
+    "tier": 2,
+    "price": 210,
+    "stock": 6,
+    "description": "Layered thigh-to-shin protection built for mobility and strength."
+  }
+  
