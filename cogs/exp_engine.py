@@ -165,6 +165,10 @@ async def check_and_reset_multiplier(user_id, bot):
         time_since_last_message = current_time - user_data['last_message_ts']
         member = await bot.fetch_user(user_id)  # Fetch the user early to use in all prints
 
+        if user_data['multiplier'] == 1:
+            print(f"[DEBUG]🚂 - ⏩ Skipping {member.display_name}, already at 1x multiplier.")
+            return
+
         # Check if 24 hours have passed since the last post
         if time_since_last_message >= 86400:  # 24 hours in seconds
             # Reset the daily multiplier & update last_message_ts to current time to avoid repetitive resets
