@@ -31,6 +31,7 @@ class StoreGroup(commands.Cog):
 
         @self.shop_group.command(name="open", description="🍯 - 🛒 Open the shop UI")
         async def shop_main(interaction: discord.Interaction):
+
             print(f"[🍯🛒 DEBUG] /shop open used by {interaction.user} (ID: {interaction.user.id})")
 
             embed = discord.Embed(title="🍯 Malta's CRPG Item Shop", color=discord.Color.gold())
@@ -104,7 +105,7 @@ class StoreGroup(commands.Cog):
             for item in pages[page]:
                 embed.add_field(
                     name=f"{item['name']} - {item.get('price', 0)} gold",
-                    value=item.get('short_description', 'No description.'),
+                    value=item.get('short_description') or item.get('description', 'No description.'),
                     inline=False
                 )
             return embed
