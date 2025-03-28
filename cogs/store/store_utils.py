@@ -3,23 +3,51 @@ import os
 from cogs.exp_utils import get_user_data, update_user_data
 
 DEBUG = True  # Set to False in production
+DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 
-STORE_CATEGORIES = [
-    "weapons/1h",
-    "weapons/2h",
-    "weapons/polearm",
-    "bows",
-    "crossbows",
-    "arrows",
-    "bolts",
-    "armor",
-    "mounts",
-    "pets",
-    "titles",
-    "trails",
-    "utility",
-    "estates"
-]
+
+CATEGORY_TO_FILES = {
+    "Armor": [
+        "armor_hands.json",
+        "armor_head.json",
+        "armor_legs.json",
+        "armor_shoulders.json",
+        "armor_torso.json"
+    ],
+    "Estates": ["estates.json"],
+    "Mounts - Mounts": ["mounts.json"],
+    "Mounts - Armor": ["mounts_armor.json"],
+    "Pets": ["pets.json"],
+    "Shields": ["shields.json"],
+    "Titles": ["titles.json"],
+    "Trails": ["trails.json"],
+    "Utility": ["utility.json"],
+    "Weapons - 1H": [
+        "weapons_1h_axe.json",
+        "weapons_1h_mace.json",
+        "weapons_1h_sword.json"
+    ],
+    "Weapons - 2H": [
+        "weapons_1h_axe.json",
+        "weapons_1h_mace.json",
+        "weapons_1h_sword.json"
+    ],
+    "Weapons - Arrows": [
+        "arrows_cut.json",
+        "arrows_pierce.json"
+    ],
+    "Weapons - Bolts": [
+        "bolts_cut.json",
+        "bolts_pierce.json"
+    ],
+    "Weapons - Polearms": [
+        "weapons_polearm_2d.json",
+        "weapons_polearm_4d.json"
+    ],
+    "Weapons - Crossbows": ["weapons_xbows.json"]
+}
+
+STORE_CATEGORIES = list(CATEGORY_TO_FILES.keys())
 
 STORE_ROOT = "cogs/items"
 
@@ -38,41 +66,43 @@ def load_items_from_json(file_path):
 # Return all items across all files
 def get_all_items():
     all_items = []
-    for category in STORE_CATEGORIES:
-        items = load_items_from_json(category)
-        all_items.extend(items)
+    for file_list in CATEGORY_TO_FILES.values():
+        for filename in file_list:
+            full_path = os.path.join(DATA_DIR, filename)
+            if os.path.exists(full_path):
+                with open(full_path, "r", encoding="utf-8") as f:
+                    all_items.extend(json.load(f))
     if DEBUG:
         print(f"[DEBUG] Loaded {len(all_items)} total items from all categories")
     return all_items
 
 # Get item by ID (searching across all files)
 def get_item_by_id(item_id):
-    for category in STORE_CATEGORIES:
-        items = load_items_from_json(category)
-        for item in items:
-            if item["id"] == item_id:
-                if DEBUG:
-                    print(f"[DEBUG] Found item '{item_id}' in category '{category}'")
-                return item
+    for file_list in CATEGORY_TO_FILES.values():
+        for filename in file_list:
+            path = os.path.join(DATA_DIR, filename)
+            if os.path.exists(path):
+                with open(path, "r", encoding="utf-8") as f:
+                    items = json.load(f)
+                    for item in items:
+                        if item["id"] == item_id:
+                            if DEBUG:
+                                print(f"[DEBUG] Found item '{item_id}' in file '{filename}'")
+                            return item
     if DEBUG:
         print(f"[DEBUG] Item '{item_id}' not found in any category")
     return None
 
-# Get items by a specific category
-def get_item_by_category(category):
-    if DEBUG:
-        print(f"[DEBUG] Getting items from category: {category}")
-    return load_items_from_json(category)
 
-# Get items by subcategory (e.g., arrows, bolts, bows)
-def get_item_by_subcategory(subcategory):
-    if DEBUG:
-        print(f"[DEBUG] Getting items by subcategory: {subcategory}")
-    if subcategory not in STORE_CATEGORIES:
-        if DEBUG:
-            print(f"[DEBUG] Subcategory '{subcategory}' not found")
-        return []
-    return load_items_from_json(subcategory)
+def get_item_by_category(category_name):
+    file_list = CATEGORY_TO_FILES.get(category_name, [])
+    items = []
+    for filename in file_list:
+        path = os.path.join(DATA_DIR, filename)
+        if os.path.exists(path):
+            with open(path, "r", encoding="utf-8") as f:
+                items.extend(json.load(f))
+    return items
 
 # Get all available category names
 def get_category_names():
@@ -106,23 +136,25 @@ def check_item_availability(item_id):
 
 # Update item stock in its file
 def update_item_stock(item_id, new_stock):
-    for category in STORE_CATEGORIES:
-        path = os.path.join(STORE_ROOT, category + ".json")
-        if not os.path.exists(path):
-            continue
-        with open(path, "r") as f:
-            items = json.load(f)
-        for item in items:
-            if item["id"] == item_id:
-                item["stock"] = new_stock
-                with open(path, "w") as f:
-                    json.dump(items, f, indent=4)
-                if DEBUG:
-                    print(f"[DEBUG] Updated stock for '{item_id}' to {new_stock}")
-                return True
+    for file_list in CATEGORY_TO_FILES.values():
+        for filename in file_list:
+            path = os.path.join(DATA_DIR, filename)
+            if not os.path.exists(path):
+                continue
+            with open(path, "r", encoding="utf-8") as f:
+                items = json.load(f)
+            for item in items:
+                if item["id"] == item_id:
+                    item["stock"] = new_stock
+                    with open(path, "w", encoding="utf-8") as f:
+                        json.dump(items, f, indent=4)
+                    if DEBUG:
+                        print(f"[DEBUG] Updated stock for '{item_id}' to {new_stock} in file '{filename}'")
+                    return True
     if DEBUG:
         print(f"[DEBUG] Failed to update stock for '{item_id}' — not found")
     return False
+
 
 # Get user inventory
 def get_user_inventory(user_id):
@@ -165,20 +197,21 @@ def get_item_price(item_id):
     return price
 
 def update_item_price(item_id, new_price):
-    for category in STORE_CATEGORIES:
-        path = os.path.join(STORE_ROOT, category + ".json")
-        if not os.path.exists(path):
-            continue
-        with open(path, "r") as f:
-            items = json.load(f)
-        for item in items:
-            if item["id"] == item_id:
-                item["price"] = new_price
-                with open(path, "w") as f:
-                    json.dump(items, f, indent=4)
-                if DEBUG:
-                    print(f"[DEBUG] Updated price for '{item_id}' to {new_price}")
-                return True
+    for file_list in CATEGORY_TO_FILES.values():
+        for filename in file_list:
+            path = os.path.join(DATA_DIR, filename)
+            if not os.path.exists(path):
+                continue
+            with open(path, "r", encoding="utf-8") as f:
+                items = json.load(f)
+            for item in items:
+                if item["id"] == item_id:
+                    item["price"] = new_price
+                    with open(path, "w", encoding="utf-8") as f:
+                        json.dump(items, f, indent=4)
+                    if DEBUG:
+                        print(f"[DEBUG] Updated price for '{item_id}' to {new_price} in file '{filename}'")
+                    return True
     if DEBUG:
         print(f"[DEBUG] Failed to update price — item '{item_id}' not found")
     return False
