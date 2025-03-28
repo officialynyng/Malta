@@ -3,55 +3,55 @@ import os
 from cogs.exp_utils import get_user_data, update_user_data
 
 DEBUG = True  # Set to False in production
-DATA_DIR = os.path.join(os.path.dirname(__file__), "items")
+DATA_DIR = os.path.join(os.path.dirname(__file__), "Items")
 
 
 CATEGORY_TO_FILES = {
     "Armor": [
-        "armor/armor_hands.json",
-        "armor/armor_head.json",
-        "armor/armor_legs.json",
-        "armor/armor_shoulders.json",
-        "armor/armor_torso.json"
+        "Armor/armor_hands.json",
+        "Armor/armor_head.json",
+        "Armor/armor_legs.json",
+        "Armor/armor_shoulders.json",
+        "Armor/armor_torso.json"
     ],
-    "Estates": ["estates/estates.json"],
+    "Estates": ["Estates/estates.json"],
     "Mounts": [
-        "mounts/mounts.json",
-        "mounts/mounts_armor.json"
+        "Mounts/mounts.json",
+        "Mounts/mounts_armor.json"
     ],
-    "Pets": ["pets/pets.json"],
-    "Shields": ["shields/shields.json"],
-    "Titles": ["titles/titles.json"],
-    "Trails": ["trails/trails.json"],
-    "Utility": ["utility/utility.json"],
+    "Pets": ["Pets/pets.json"],
+    "Shields": ["Shields/shields.json"],
+    "Titles": ["Titles/titles.json"],
+    "Trails": ["Trails/trails.json"],
+    "Utility": ["Utility/utility.json"],
     "Weapons - 1H": [
-        "weapons_1h/weapons_1h_axe.json",
-        "weapons_1h/weapons_1h_mace.json",
-        "weapons_1h/weapons_1h_sword.json"
+        "Weapons_1H/weapons_1h_axe.json",
+        "Weapons_1H/weapons_1h_mace.json",
+        "Weapons_1H/weapons_1h_sword.json"
     ],
     "Weapons - 2H": [
-        "weapons_1h/weapons_1h_axe.json",
-        "weapons_1h/weapons_1h_mace.json",
-        "weapons_1h/weapons_1h_sword.json"
+        "Weapons_2h/weapons_2h_axe.json",
+        "Weapons_2h/weapons_2h_mace.json",
+        "Weapons_2h/weapons_2h_sword.json"
     ],
     "Weapons - Arrows": [
-        "weapons_arrows/arrows_cut.json",
-        "weapons_arrows/arrows_pierce.json"
+        "Weapons_Arrows/arrows_cut.json",
+        "Weapons_Arrows/arrows_pierce.json"
     ],
     "Weapons - Bolts": [
-        "weapons_bolts/bolts_cut.json",
-        "weapons_bolts/bolts_pierce.json"
+        "Weapons_Bolts/bolts_cut.json",
+        "Weapons_Bolts/bolts_pierce.json"
     ],
     "Weapons - Polearms": [
-        "weapons_polearm/weapons_polearm_2d.json",
-        "weapons_polearm/weapons_polearm_4d.json"
+        "Weapons_Polearm/weapons_polearm_2d.json",
+        "Weapons_Polearm/weapons_polearm_4d.json"
     ],
-    "Weapons - Crossbows": ["weapons_xbows/weapons_xbows.json"]
+    "Weapons - Crossbows": ["Weapons_XBows/weapons_xbows.json"]
 }
 
 STORE_CATEGORIES = list(CATEGORY_TO_FILES.keys())
 
-STORE_ROOT = "cogs/items"
+STORE_ROOT = "cogs/Items"
 
 # Generic loader for a single item JSON file
 def load_items_from_json(file_path):
@@ -101,9 +101,14 @@ def get_item_by_category(category_name):
     items = []
     for filename in file_list:
         path = os.path.join(DATA_DIR, filename)
+        if DEBUG:
+            print(f"[DEBUG] Attempting to load: {path}")
         if os.path.exists(path):
             with open(path, "r", encoding="utf-8") as f:
                 items.extend(json.load(f))
+        else:
+            if DEBUG:
+                print(f"[DEBUG] File not found: {path}")
     return items
 
 # Get all available category names
