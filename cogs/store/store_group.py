@@ -128,5 +128,6 @@ class StoreGroup(commands.Cog):
 
 async def setup(bot):
     cog = StoreGroup(bot)
-    await bot.add_cog(cog)  # <-- this ensures /shop commands get registered
+    await bot.add_cog(cog)
+    bot.tree.add_command(cog.shop_group)  # <-- this ensures /shop commands get registered
 
