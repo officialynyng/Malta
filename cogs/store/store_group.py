@@ -115,17 +115,18 @@ class StoreGroup(commands.Cog):
                 super().__init__(timeout=120)
                 self.page = current_page
 
-            @discord.ui.button(label="Previous", style=discord.ButtonStyle.secondary)
-            async def prev(self, button, interaction):
+            @discord.ui.button(label="🍯⬅️ Previous", style=discord.ButtonStyle.secondary)
+            async def prev(self, interaction: discord.Interaction, button: discord.ui.Button):
                 if self.page > 0:
                     self.page -= 1
                     await interaction.response.edit_message(embed=await get_embed(self.page), view=self)
 
-            @discord.ui.button(label="Next", style=discord.ButtonStyle.secondary)
-            async def next(self, button, interaction):
+            @discord.ui.button(label="Next ➡️🍯", style=discord.ButtonStyle.secondary)
+            async def next(self, interaction: discord.Interaction, button: discord.ui.Button):
                 if self.page < len(pages) - 1:
                     self.page += 1
                     await interaction.response.edit_message(embed=await get_embed(self.page), view=self)
+
 
         await interaction.response.send_message(embed=await get_embed(current_page), view=Paginator(), ephemeral=True)
 
