@@ -123,7 +123,7 @@ class StoreGroup(commands.Cog):
         await interaction.response.send_message(embed=await get_embed(current_page), view=Paginator(), ephemeral=True)
 
     def cog_load(self):
-        self.bot.tree.add_command(self.shop_group)
+        pass
 
 
 async def setup(bot):
