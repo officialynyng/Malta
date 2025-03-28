@@ -132,7 +132,11 @@ async def on_user_comment(user_id, bot, is_admin=False):
 
     if current_time - last_multiplier_update >= TIME_DELTA:
         if current_time - last_message_ts >= TIME_DELTA:
+            if current_daily_multiplier == 1:
+                print(f"[DEBUG]🚂 - Multiplier already 1x, no need to reset.")
+                return
             new_daily_multiplier = 1
+            
             print(f"[DEBUG]🚂 - 🌋 Inactive for 24+ hours — resetting multiplier to baseline.")
 
             update_user_data(user_id, user_data['multiplier'], new_daily_multiplier, last_message_ts, current_time)
