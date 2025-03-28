@@ -1,5 +1,5 @@
 import asyncio
-from cogs.exp_engine import check_and_reset_multiplier
+from cogs.exp_engine import on_user_comment
 from cogs.exp_utils import get_all_user_ids
 
 async def start_multiplier_cleanup(bot):
@@ -13,7 +13,7 @@ async def start_multiplier_cleanup(bot):
         for user_id in user_ids:
             before = asyncio.get_event_loop().time()
             try:
-                await check_and_reset_multiplier(user_id, bot)
+                await on_user_comment(user_id, bot, is_admin=False)
                 user = await bot.fetch_user(int(user_id))
                 after = asyncio.get_event_loop().time()
                 print(f"[🌀✅] Processed {user.display_name} ({user_id}) in {after - before:.2f}s")
