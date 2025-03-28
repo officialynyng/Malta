@@ -2,7 +2,7 @@
     {
       "id": "trail_arrow",
       "name": "Arrow Barrage",
-      "category": "trails",
+      "category": "Trails",
       "price": 200,
       "stock": 10,
       "cooldown": 1800,
@@ -12,7 +12,7 @@
     {
       "id": "trail_firestep",
       "name": "Firestep",
-      "category": "trails",
+      "category": "Trails",
       "price": 250,
       "stock": 8,
       "cooldown": 1800,
@@ -22,7 +22,7 @@
     {
       "id": "trail_smoke",
       "name": "Smoke Puff",
-      "category": "trails",
+      "category": "Trails",
       "price": 150,
       "stock": 12,
       "cooldown": 1800,
@@ -32,7 +32,7 @@
     {
       "id": "trail_blood",
       "name": "Blood Drip",
-      "category": "trails",
+      "category": "Trails",
       "price": 220,
       "stock": 6,
       "cooldown": 1800,
@@ -42,7 +42,7 @@
     {
       "id": "trail_lightning",
       "name": "Lightning Surge",
-      "category": "trails",
+      "category": "Trails",
       "price": 280,
       "stock": 5,
       "cooldown": 1800,
@@ -52,7 +52,7 @@
     {
       "id": "trail_stars",
       "name": "Starfall",
-      "category": "trails",
+      "category": "Trails",
       "price": 200,
       "stock": 10,
       "cooldown": 1800,
@@ -62,7 +62,7 @@
     {
       "id": "trail_skulls",
       "name": "Skull March",
-      "category": "trails",
+      "category": "Trails",
       "price": 300,
       "stock": 3,
       "cooldown": 1800,
@@ -72,7 +72,7 @@
     {
       "id": "trail_crescent",
       "name": "Moonstep",
-      "category": "trails",
+      "category": "Trails",
       "price": 170,
       "stock": 7,
       "cooldown": 1800,
@@ -82,7 +82,7 @@
     {
       "id": "trail_dust",
       "name": "Dust Kick",
-      "category": "trails",
+      "category": "Trails",
       "price": 130,
       "stock": 15,
       "cooldown": 1800,
@@ -92,7 +92,7 @@
     {
       "id": "trail_chain",
       "name": "Clanking Chain",
-      "category": "trails",
+      "category": "Trails",
       "price": 240,
       "stock": 7,
       "cooldown": 1800,
@@ -102,7 +102,7 @@
     {
       "id": "trail_sparkles",
       "name": "Sparkle Steps",
-      "category": "trails",
+      "category": "Trails",
       "price": 190,
       "stock": 10,
       "cooldown": 1800,
@@ -112,7 +112,7 @@
     {
       "id": "trail_bubbles",
       "name": "Bubble Pop",
-      "category": "trails",
+      "category": "Trails",
       "price": 140,
       "stock": 12,
       "cooldown": 1800,
@@ -122,7 +122,7 @@
     {
       "id": "trail_footprints",
       "name": "Footprints",
-      "category": "trails",
+      "category": "Trails",
       "price": 110,
       "stock": 20,
       "cooldown": 1800,
@@ -132,7 +132,7 @@
     {
       "id": "trail_leaf",
       "name": "Falling Leaves",
-      "category": "trails",
+      "category": "Trails",
       "price": 180,
       "stock": 10,
       "cooldown": 1800,
@@ -142,7 +142,7 @@
     {
       "id": "trail_feathers",
       "name": "Feather Fall",
-      "category": "trails",
+      "category": "Trails",
       "price": 170,
       "stock": 10,
       "cooldown": 1800,
