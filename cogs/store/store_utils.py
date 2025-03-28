@@ -3,48 +3,50 @@ import os
 from cogs.exp_utils import get_user_data, update_user_data
 
 DEBUG = True  # Set to False in production
-DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
+DATA_DIR = os.path.join(os.path.dirname(__file__), "items")
 
 
 CATEGORY_TO_FILES = {
     "Armor": [
-        "armor_hands.json",
-        "armor_head.json",
-        "armor_legs.json",
-        "armor_shoulders.json",
-        "armor_torso.json"
+        "armor/armor_hands.json",
+        "armor/armor_head.json",
+        "armor/armor_legs.json",
+        "armor/armor_shoulders.json",
+        "armor/armor_torso.json"
     ],
-    "Estates": ["estates.json"],
-    "Mounts - Mounts": ["mounts.json"],
-    "Mounts - Armor": ["mounts_armor.json"],
-    "Pets": ["pets.json"],
-    "Shields": ["shields.json"],
-    "Titles": ["titles.json"],
-    "Trails": ["trails.json"],
-    "Utility": ["utility.json"],
+    "Estates": ["estates/estates.json"],
+    "Mounts": [
+        "mounts/mounts.json",
+        "mounts/mounts_armor.json"
+    ],
+    "Pets": ["pets/pets.json"],
+    "Shields": ["shields/shields.json"],
+    "Titles": ["titles/titles.json"],
+    "Trails": ["trails/trails.json"],
+    "Utility": ["utility/utility.json"],
     "Weapons - 1H": [
-        "weapons_1h_axe.json",
-        "weapons_1h_mace.json",
-        "weapons_1h_sword.json"
+        "weapons_1h/weapons_1h_axe.json",
+        "weapons_1h/weapons_1h_mace.json",
+        "weapons_1h/weapons_1h_sword.json"
     ],
     "Weapons - 2H": [
-        "weapons_1h_axe.json",
-        "weapons_1h_mace.json",
-        "weapons_1h_sword.json"
+        "weapons_1h/weapons_1h_axe.json",
+        "weapons_1h/weapons_1h_mace.json",
+        "weapons_1h/weapons_1h_sword.json"
     ],
     "Weapons - Arrows": [
-        "arrows_cut.json",
-        "arrows_pierce.json"
+        "weapons_arrows/arrows_cut.json",
+        "weapons_arrows/arrows_pierce.json"
     ],
     "Weapons - Bolts": [
-        "bolts_cut.json",
-        "bolts_pierce.json"
+        "weapons_bolts/bolts_cut.json",
+        "weapons_bolts/bolts_pierce.json"
     ],
     "Weapons - Polearms": [
-        "weapons_polearm_2d.json",
-        "weapons_polearm_4d.json"
+        "weapons_polearm/weapons_polearm_2d.json",
+        "weapons_polearm/weapons_polearm_4d.json"
     ],
-    "Weapons - Crossbows": ["weapons_xbows.json"]
+    "Weapons - Crossbows": ["weapons_xbows/weapons_xbows.json"]
 }
 
 STORE_CATEGORIES = list(CATEGORY_TO_FILES.keys())
