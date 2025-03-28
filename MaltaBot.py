@@ -43,7 +43,7 @@ class MaltaBot(commands.Bot):
             print(f"[DEBUG] Connected to guild: {guild.name} (ID: {guild.id})")
         await self.tree.sync(guild=guild)  # Sync the commands with the guild directly
         for cmd in self.tree.walk_commands():
-            print(f"[🔎 DEBUG] Registered slash command: /{cmd.name}")
+            print(f"[🔎[✅Registered] slash command: /{cmd.name}")
 
         print("🟩🟩🟩All cogs and commands loaded.🟩🟩🟩")
 
@@ -92,7 +92,7 @@ async def on_member_remove(member):
         await channel.send(farewell_message)
 
 
-@bot.tree.command(name="help", description="🛡️ - Shows available commands for Malta Bot.")
+@bot.tree.command(name="help", description="🏴📕 - Shows available commands for Malta Bot.")
 async def help_command(interaction: discord.Interaction):
     help_text = (
         "# **🏴☩ Malta Bot**\n\n"
@@ -103,8 +103,12 @@ async def help_command(interaction: discord.Interaction):
         "⚗️🪦 /crpg retire - Retire your character between levels 31-38 for permanent heirloom bonuses.\n\n"
         "⚗️⚡ /crpg cooldown - Check how much time remains before you can earn your next experience & gold tick.\n\n"
         "⚗️🏔️ /crpg multipliers — View your current daily and generational multipliers.\n\n"
+        "## __[SHOP]__\n\n"
+        "🍯🛒 /shop open - Open Malta's CRPG item shop UI.\n\n"
+        "🍯🔍 /shop filter <damage_type> <weapon_type> - Filter shop weapons by damage and type.\n\n"
+        "🍯📘 /shop info <item_id> - View detailed information about a specific item.\n\n"
         "## __[UTILITY]__\n\n"
-        "🛡️ /help - Show this help message.\n\n"
+        "📕 /help - Show this help message.\n\n"
         )
     await interaction.response.send_message(help_text, ephemeral=True)
 

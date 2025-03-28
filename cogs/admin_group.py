@@ -411,24 +411,27 @@ class AdminGroup(app_commands.Group):
             print(f"[ERROR] Failed to run manual voice check: {e}")
             await interaction.response.send_message(f"💢 Failed to run voice check:\n```{e}```", ephemeral=True)
 
-    @app_commands.command(name="help", description="Show a list of admin commands.")
+    @app_commands.command(name="help", description="🔒 - 📕 Show a list of admin commands.")
     async def help(self, interaction: discord.Interaction):
+        if not interaction.user.guild_permissions.administrator:
+            await interaction.response.send_message("❌ You must be an admin to use this command.", ephemeral=True)
+            return
+
         help_text = (
-        "## __[ADMIN]__\n\n"
-        "🔒📋 /admin post <message_id> <channel_id> - Post a previously approved message and its images to a target channel. @Divine\n\n"
-        "🔒🖊️ /admin edit <channel_id> <message_id> <new_content> - Edit a previously posted message. @Divine\n\n"
-        "🔒🛠️ /admin reload <extension> - Reload a bot extension (cog).\n\n"
-        "🔒🔄 /admin sync - Manually sync slash commands with Discord.\n\n"
-        "🔒🛜 /admin ping - Check if the bot is online and responsive.\n\n"
-        "🔒📁 /admin structure - View the current filestructure of the bot.\n\n"
-        "🔒⏪ /admin restart - Restart the bot.\n\n"
-        "🔒🧪🌀 /admin crpg_multi_check — Force a multiplier check for all users.\n\n"
-        "🔒🧪🏔️/admin crpg_adjust_daily_multiplier <users> <action> [value] [all] - Manually increase, decrease, or set the daily multiplier for one or more users, or apply to all users in the system.\n\n"
-        "🔒🧪💬 /admin crpg_trigger_activity_check — Manually process recent user activity from the database.\n\n"
-        "🔒🧪📢 /admin crpg_trigger_voice_check — Manually process all active users in voice channels.\n\n"
+            "## __[ADMIN]__\n\n"
+            "🔒📋 /admin post <message_id> <channel_id> - Post a previously approved message and its images to a target channel. @Divine\n\n"
+            "🔒🖊️ /admin edit <channel_id> <message_id> <new_content> - Edit a previously posted message. @Divine\n\n"
+            "🔒🛠️ /admin reload <extension> - Reload a bot extension (cog).\n\n"
+            "🔒🔄 /admin sync - Manually sync slash commands with Discord.\n\n"
+            "🔒🛜 /admin ping - Check if the bot is online and responsive.\n\n"
+            "🔒📁 /admin structure - View the current filestructure of the bot.\n\n"
+            "🔒⏪ /admin restart - Restart the bot.\n\n"
+            "🔒🧪🌀 /admin crpg_multi_check — Force a multiplier check for all users.\n\n"
+            "🔒🧪🏔️ /admin crpg_adjust_daily_multiplier <users> <action> [value] [all] - Manually increase, decrease, or set the daily multiplier for one or more users, or apply to all users in the system.\n\n"
+            "🔒🧪💬 /admin crpg_trigger_activity_check — Manually process recent user activity from the database.\n\n"
+            "🔒🧪📢 /admin crpg_trigger_voice_check — Manually process all active users in voice channels.\n\n"
         )
         await interaction.response.send_message(help_text, ephemeral=True)
-
 
 async def setup(bot):
     admin_group = AdminGroup(bot)

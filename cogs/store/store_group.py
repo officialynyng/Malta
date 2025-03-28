@@ -29,16 +29,16 @@ class StoreGroup(commands.Cog):
         # Create the /shop command group
         self.shop_group = app_commands.Group(name="shop", description="Access Malta's CRPG shop")
 
-        @self.shop_group.command(name="main", description="Open the shop UI")
+        @self.shop_group.command(name="open", description="🍯 - 🛒 Open the shop UI")
         async def shop_main(interaction: discord.Interaction):
             embed = discord.Embed(title="🍯 Malta's CRPG Item Shop", color=discord.Color.gold())
             embed.description = "Select a category below to view items."
             await interaction.response.send_message(embed=embed, view=CategoryView(interaction, self.show_items_by_category), ephemeral=True)
 
-        @self.shop_group.command(name="filter", description="Filter weapons by damage type and weapon type (1h, 2h, polearm)")
+        @self.shop_group.command(name="filter", description="🍯 - 🔍 Filter weapons by damage type and weapon type (1h, 2h, polearm)")
         @app_commands.describe(damage_type="e.g. blunt, pierce", weapon_type="e.g. 1h, 2h")
         async def shop_filter(interaction: discord.Interaction, damage_type: str = None, weapon_type: str = None):
-            print(f"[🍯 DEBUG] /shop filter used by {interaction.user} (ID: {interaction.user.id})")
+            print(f"[🍯ℹ️ DEBUG] /shop filter used by {interaction.user} (ID: {interaction.user.id})")
             all_items = get_all_items()
             filtered = filter_weapon_items(all_items, damage_types=damage_type, weapon_types=weapon_type)
 
@@ -57,10 +57,10 @@ class StoreGroup(commands.Cog):
                 embed.set_footer(text=f"Showing first 15 of {len(filtered)} results.")
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
-        @self.shop_group.command(name="info", description="Get detailed information about an item by its ID")
+        @self.shop_group.command(name="info", description="🍯 - 📘 Get detailed information about an item by its ID")
         @app_commands.describe(item_id="The item ID to look up")
         async def shop_info(interaction: discord.Interaction, item_id: str):
-            print(f"[🍯 DEBUG] /shop info '{item_id}' used by {interaction.user} (ID: {interaction.user.id})")
+            print(f"[🍯ℹ️ DEBUG] /shop info '{item_id}' used by {interaction.user} (ID: {interaction.user.id})")
             item = get_item_by_id(item_id)
             if not item:
                 await interaction.response.send_message(f"Item with ID `{item_id}` not found.", ephemeral=True)
