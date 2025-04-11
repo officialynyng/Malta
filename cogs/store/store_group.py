@@ -56,7 +56,7 @@ class StoreGroup(commands.Cog):
             embed = discord.Embed(title="Filtered Weapons", color=discord.Color.purple())
             for item in filtered[:15]:
                 embed.add_field(
-                    name=f"{item['name']} - {item.get('price', 0)} gold",
+                    name=f"{item.get('display', '')} {item['name']} - {item.get('price', 0)} gold",
                     value=f"Damage: {', '.join(item.get('damage_types', []))} | Handling: {item.get('handling', '?')}",
                     inline=False
                 )
@@ -104,7 +104,7 @@ class StoreGroup(commands.Cog):
             embed = discord.Embed(title=f"🔹 {category_name.title()} Items (Page {page+1}/{len(pages)})", color=discord.Color.blue())
             for item in pages[page]:
                 embed.add_field(
-                    name=f"{item['name']} - {item.get('price', 0)} gold",
+                    name=f"{item.get('display', '')} {item['name']} - {item.get('price', 0)} gold",
                     value=item.get('short_description') or item.get('description', 'No description.'),
                     inline=False
                 )
