@@ -99,7 +99,6 @@ class StoreGroup(commands.Cog):
 
         is_title = category_name.lower() == "titles"
 
-        # Page structure differs for titles vs other items
         if is_title:
             pages = items  # One title per page
         else:
@@ -108,10 +107,8 @@ class StoreGroup(commands.Cog):
         current_page = 0
 
         async def get_embed(page):
-            is_title = category_name.lower() == "titles"
-
             if is_title:
-                item = items[page]  # One title per page
+                item = items[page]
                 embed = discord.Embed(
                     title=f"🍯 {item['name']}",
                     description=item.get('short_description') or item.get('description', 'No description.'),
@@ -120,7 +117,6 @@ class StoreGroup(commands.Cog):
                 embed.set_footer(text=f"Title {page+1} of {len(items)}")
                 if item.get("avatar_url"):
                     embed.set_image(url=item["avatar_url"])
-
             else:
                 embed = discord.Embed(
                     title=f"🍯 {category_name.title()} Items (Page {page+1}/{len(pages)})",
@@ -133,26 +129,46 @@ class StoreGroup(commands.Cog):
 
             return embed
 
+        view = Paginator(get_embed, pages, self.send_category_selection)
+        await interaction.response.edit_message(embed=await get_embed(current_page), view=view)
 
-        class Paginator(discord.ui.View):
-            def __init__(self):
-                super().__init__(timeout=120)
-                self.page = current_page
+        
+    async def send_category_selection(self, interaction):
+        embed = discord.Embed(title="🍯 Malta's CRPG Item Shop", color=discord.Color.gold())
+        embed.description = "Select a category below to view items."
+        embed.set_image(url="http://ynyng.org/wp-content/uploads/2025/03/ynyng_malta__hospitaller_very_organized_and_open_medieval_shop__26cf32ee-fe4e-405e-ba6c-b306edae40e6-1.png")
 
-            @discord.ui.button(label="🍯⬅️ Previous", style=discord.ButtonStyle.secondary)
-            async def prev(self, interaction: discord.Interaction, button: discord.ui.Button):
-                if self.page > 0:
-                    self.page -= 1
-                    await interaction.response.edit_message(embed=await get_embed(self.page), view=self)
-
-            @discord.ui.button(label="Next ➡️🍯", style=discord.ButtonStyle.secondary)
-            async def next(self, interaction: discord.Interaction, button: discord.ui.Button):
-                if self.page < len(pages) - 1:
-                    self.page += 1
-                    await interaction.response.edit_message(embed=await get_embed(self.page), view=self)
+        await interaction.response.edit_message(embed=embed, view=CategoryView(interaction, self.show_items_by_category))
 
 
-        await interaction.response.send_message(embed=await get_embed(current_page), view=Paginator(), ephemeral=True)
+
+class Paginator(discord.ui.View):
+    def __init__(self, get_embed, pages, show_category_callback):
+        super().__init__(timeout=120)
+        self.page = 0
+        self.get_embed = get_embed
+        self.pages = pages
+        self.show_category_callback = show_category_callback
+
+    @discord.ui.button(label="🍯 Back to Shop", style=discord.ButtonStyle.danger)
+    async def back(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await self.show_category_callback(interaction)
+
+    @discord.ui.button(label="🍯⬅️ Previous", style=discord.ButtonStyle.secondary)
+    async def prev(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if self.page > 0:
+            self.page -= 1
+            await interaction.response.edit_message(embed=await self.get_embed(self.page), view=self)
+
+    @discord.ui.button(label="Next ➡️🍯", style=discord.ButtonStyle.secondary)
+    async def next(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if self.page < len(self.pages) - 1:
+            self.page += 1
+            await interaction.response.edit_message(embed=await self.get_embed(self.page), view=self)
+
+
+
+
 
     def cog_load(self):
         pass
