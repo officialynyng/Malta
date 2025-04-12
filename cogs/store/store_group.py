@@ -113,13 +113,13 @@ class StoreGroup(commands.Cog):
             if is_title:
                 item = items[page]  # One title per page
                 embed = discord.Embed(
-                    title=f"📜 {item['name']}",
+                    title=f"🍯 {item['name']}",
                     description=item.get('short_description') or item.get('description', 'No description.'),
                     color=discord.Color.dark_gold()
                 )
                 embed.set_footer(text=f"Title {page+1} of {len(items)}")
                 if item.get("avatar_url"):
-                    embed.set_thumbnail(url=item["avatar_url"])
+                    embed.set_image(url=item["avatar_url"])
 
             else:
                 embed = discord.Embed(
