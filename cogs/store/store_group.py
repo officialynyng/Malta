@@ -123,7 +123,7 @@ class StoreGroup(commands.Cog):
 
             else:
                 embed = discord.Embed(
-                    title=f"🔹 {category_name.title()} Items (Page {page+1}/{len(pages)})",
+                    title=f"🍯 {category_name.title()} Items (Page {page+1}/{len(pages)})",
                     color=discord.Color.blue()
                 )
                 for item in pages[page]:
