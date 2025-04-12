@@ -97,33 +97,42 @@ class StoreGroup(commands.Cog):
             await interaction.response.send_message(f"No items found in category `{category_name}`.", ephemeral=True)
             return
 
-        pages = [items[i:i+5] for i in range(0, len(items), 5)]
+        is_title = category_name.lower() == "titles"
+
+        # Page structure differs for titles vs other items
+        if is_title:
+            pages = items  # One title per page
+        else:
+            pages = [items[i:i+5] for i in range(0, len(items), 5)]
+
         current_page = 0
 
         async def get_embed(page):
-            embed = discord.Embed(title=f"🔹 {category_name.title()} Items (Page {page+1}/{len(pages)})", color=discord.Color.blue())
-            for item in pages[page]:
-                is_title = category_name.lower() == "titles"
+            is_title = category_name.lower() == "titles"
 
-                # Title name line (remove price for Titles)
-                if is_title:
-                    title_line = f"{item.get('display', '')} {item['name']}".strip()
-                else:
-                    title_line = f"{item.get('display', '')} {item['name']} - {item.get('price', 0)} gold".strip()
-
-                description = item.get('short_description') or item.get('description', 'No description.')
-
-                embed.add_field(
-                    name=title_line,
-                    value=description,
-                    inline=False
+            if is_title:
+                item = items[page]  # One title per page
+                embed = discord.Embed(
+                    title=f"📜 {item['name']}",
+                    description=item.get('short_description') or item.get('description', 'No description.'),
+                    color=discord.Color.dark_gold()
                 )
-
-                # Only apply thumbnail for Titles (shared thumbnail per embed)
-                if is_title and item.get("avatar_url"):
+                embed.set_footer(text=f"Title {page+1} of {len(items)}")
+                if item.get("avatar_url"):
                     embed.set_thumbnail(url=item["avatar_url"])
 
+            else:
+                embed = discord.Embed(
+                    title=f"🔹 {category_name.title()} Items (Page {page+1}/{len(pages)})",
+                    color=discord.Color.blue()
+                )
+                for item in pages[page]:
+                    title_line = f"{item.get('display', '')} {item['name']} - {item.get('price', 0)} gold".strip()
+                    description = item.get('short_description') or item.get('description', 'No description.')
+                    embed.add_field(name=title_line, value=description, inline=False)
+
             return embed
+
 
         class Paginator(discord.ui.View):
             def __init__(self):
