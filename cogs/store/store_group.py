@@ -103,11 +103,26 @@ class StoreGroup(commands.Cog):
         async def get_embed(page):
             embed = discord.Embed(title=f"🔹 {category_name.title()} Items (Page {page+1}/{len(pages)})", color=discord.Color.blue())
             for item in pages[page]:
+                is_title = category_name.lower() == "titles"
+
+                # Title name line (remove price for Titles)
+                if is_title:
+                    title_line = f"{item.get('display', '')} {item['name']}".strip()
+                else:
+                    title_line = f"{item.get('display', '')} {item['name']} - {item.get('price', 0)} gold".strip()
+
+                description = item.get('short_description') or item.get('description', 'No description.')
+
                 embed.add_field(
-                    name=f"{item.get('display', '')} {item['name']} - {item.get('price', 0)} gold",
-                    value=item.get('short_description') or item.get('description', 'No description.'),
+                    name=title_line,
+                    value=description,
                     inline=False
                 )
+
+                # Only apply thumbnail for Titles (shared thumbnail per embed)
+                if is_title and item.get("avatar_url"):
+                    embed.set_thumbnail(url=item["avatar_url"])
+
             return embed
 
         class Paginator(discord.ui.View):
