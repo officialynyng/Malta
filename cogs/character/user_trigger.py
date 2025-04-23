@@ -6,7 +6,7 @@ from cogs.exp_config import EXP_CHANNEL_ID
 from cogs.character.user_inventory import players, user_inventory, engine
 from cogs.store.store_utils import get_item_by_id
 
-TRAIL_COOLDOWN_DEFAULT = 1800  # 30 minutes
+TRAIL_COOLDOWN_DEFAULT = 3600  # 1 Hour
 TITLE_COOLDOWN = 86400         # 24 hours
 DEBUG = True
 
