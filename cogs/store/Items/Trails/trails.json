@@ -4,7 +4,7 @@
     "name": "Shit Poster",
     "category": "trails",
     "price": 4000,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "💩📩📫",
     "description": "For the shitposters."
   },
@@ -13,7 +13,7 @@
     "name": "Pepe",
     "category": "trails",
     "price": 4000,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "🐸",
     "description": "For those that pepe post."
   },
@@ -22,7 +22,7 @@
     "name": "Stoner",
     "category": "trails",
     "price": 4000,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "💨🔥🌳",
     "description": "Your words drift slow, hazy, and kinda profound if you think about it."
   },
@@ -31,7 +31,7 @@
     "name": "Bad Boy",
     "category": "Trails",
     "price": 4000,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "🏎️💨💨🚓",
     "description": "Illegal, loud, and two turns ahead."
   },
@@ -40,7 +40,7 @@
     "name": "GPT User",
     "category": "trails",
     "price": 4000,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "🦾🤖🦿",
     "description": "Where others think, you autocomplete."
   },
@@ -49,7 +49,7 @@
     "name": "The Seducer",
     "category": "Trails",
     "price": 4000,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "👩🐍🍎",
     "description": "You dont chase. You lure- and they always follow."
   },
@@ -58,7 +58,7 @@
     "name": "Drunken Shield",
     "category": "Trails",
     "price": 4000,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "🍺🛡️",
     "description": "Steel in your grip, hops in your breath."
   },
@@ -67,7 +67,7 @@
     "name": "The Broker",
     "category": "trails",
     "price": 4000,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "👔📈📉💰",
     "description": "Charts rise, charts crash and you profit."
   },
@@ -76,7 +76,7 @@
     "name": "Dragon's Breath",
     "category": "Trails",
     "price": 7000,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "🐲💨🔥",
     "description": "Your trail burns hot smoke & fire clings to every message."
   },
@@ -85,7 +85,7 @@
     "name": "Last Drag",
     "category": "Trails",
     "price": 7000,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "🪦💀🚬",
     "description": "A quiet burn follows- low, slow, and final."
   },
@@ -94,7 +94,7 @@
     "name": "Poe Pilled",
     "category": "trails",
     "price": 7000,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "🕯️🐦‍⬛✒️📜💀",
     "description": "Your trail is candlelit, sorrow-soaked, and steeped in loss."
   },
@@ -103,7 +103,7 @@
     "name": "Cloak and Dagger",
     "category": "trails",
     "price": 7000,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "🧥🗡️",
     "description": "No name. No face. Just the job."
   },
@@ -112,7 +112,7 @@
     "name": "Icy Hot",
     "category": "trails",
     "price": 7000,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "🧊🔥",
     "description": "You leave smoke and frostbite in equal measure."
   },
@@ -121,7 +121,7 @@
     "name": "Freakshow",
     "category": "Trails",
     "price": 7000,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "🎟️🎪🤡🧨",
     "description": "Welcome to the show."
   },
@@ -130,7 +130,7 @@
     "name": "Sanguine Sip",
     "category": "Trails",
     "price": 7000,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "🦇🩸🍷",
     "description": "A lust for blood."
   },
@@ -139,7 +139,7 @@
     "name": "Social Engineer",
     "category": "Trails",
     "price": 7000,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "👥💻📶💾",
     "description": "Your words arent loud—theyre loaded. Every message is a breach in disguise."
   },
@@ -148,7 +148,7 @@
     "name": "The Monk",
     "category": "trails",
     "price": 7000,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "🥋🥢🍵",
     "description": "Your words are few, but they echo with balance, discipline, and peace."
   },
@@ -157,7 +157,7 @@
     "name": "Life Saver",
     "category": "trails",
     "price": 7000,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "⛑️🩺🚑⚕️",
     "description": "You dont type to impress. You type to save."
   },
@@ -166,7 +166,7 @@
     "name": "Psychonaut",
     "category": "trails",
     "price": 7000,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "🍄🫠🧠",
     "description": "Each word bends perception— a thought experiment in motion."
   },
@@ -175,7 +175,7 @@
     "name": "Krill Yourself",
     "category": "trails",
     "price": 7000,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "🦐🦐🦐",
     "description": "Krill yourself."
   },
@@ -184,7 +184,7 @@
     "name": "Rising Sun",
     "category": "Trails",
     "price": 11000,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "🪖🇯🇵🌴🔪",
     "description": "Humanity discarded- only survival remains."
   },
@@ -193,7 +193,7 @@
     "name": "The Patriot",
     "category": "Trails",
     "price": 11000,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "🗽🇺🇸🦅",
     "description": "You dont type. You declare independence every damn time."
   },
@@ -202,7 +202,7 @@
     "name": "Spirits Walker",
     "category": "trails",
     "price": 11000,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "🥃🍸🍹🍾🍺",
     "description": "You move through the night, one pour at a time"
   },
@@ -211,7 +211,7 @@
     "name": "The Researcher",
     "category": "trails",
     "price": 11000,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "🧪🦠🔬🥼",
     "description": "Science doesnt ask for permission, neither do you."
   },
@@ -220,7 +220,7 @@
     "name": "Ice Age",
     "category": "trails",
     "price": 11000,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "🌬️❄️🦣",
     "description": "Buried in permafrost—ancient, cold, and unforgiving."
   },
@@ -229,7 +229,7 @@
     "name": "American Psycho",
     "category": "trails",
     "price": 11000,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "👔🪓💁‍♀️🩸",
     "description": "You have to return some video tapes."
   },
@@ -238,7 +238,7 @@
     "name": "Rick Grimes",
     "category": "trails",
     "price": 11000,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "🧟⛏️🤠",
     "description": "One word away from mercy. One twitch from wrath."
   },
@@ -247,7 +247,7 @@
     "name": "NET. WORLDWIDE",
     "category": "Trails",
     "price": 14500,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "👺🇮🇱🛜🌐",
     "description": "Rep Net. WORLDWIDE "
   },
@@ -256,7 +256,7 @@
     "name": "Tidehunter",
     "category": "Trails",
     "price": 14500,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "🌊🐳🪼⚓🏴‍☠️",
     "description": "Salt-soaked and corpse filled, the Tidehunter drags all who follow into the deep."
   },
@@ -265,7 +265,7 @@
     "name": "The Unabomber",
     "category": "Trails",
     "price": 14500,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "📨📮💣",
     "description": "Philosophy mailed with a fuse."
   },
@@ -274,7 +274,7 @@
     "name": "Honey Drip",
     "category": "Trails",
     "price": 14500,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "🌻🐝🍯",
     "description": "Each message leaves a golden trace—sweet, slow, and impossible to ignore."
   },
@@ -283,7 +283,7 @@
     "name": "Arcane Wizard",
     "category": "trails",
     "price": 14500,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "🧙‍♂️⚡❄️💨🔥",
     "description": "The elements answer. The scrolls obey. Your trail radiates power."
   },
@@ -292,7 +292,7 @@
     "name": "No Fly Zone",
     "category": "trails",
     "price": 14500,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "✈️✈️🏢🏢",
     "description": "You cross the line."
   },
@@ -301,7 +301,7 @@
     "name": "High Roller",
     "category": "Trails",
     "price": 20000,
-    "cooldown": 1800,
+    "cooldown": 3600,
     "display": "💲💰🪙🏦",
     "description": "Money talks, but yours shuts the whole server up."
   }
