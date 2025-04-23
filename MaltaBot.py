@@ -102,16 +102,23 @@ async def help_command(interaction: discord.Interaction):
         "⚗️📊 /crpg stats - View your current level, EXP, gold, and retirement progress.\n\n"
         "⚗️🧾 /crpg profile <user> - View another player's profile.\n\n"
         "⚗️🏆 /crpg leaderboard - Show the top 10 players by level and EXP.\n\n"
-        "⚗️🪦 /crpg retire - Retire your character between levels 31-38 for permanent heirloom bonuses.\n\n"
+        "⚗️🪦 /crpg retire - Retire your character between levels 31–38 for permanent heirloom bonuses.\n\n"
         "⚗️⚡ /crpg cooldown - Check how much time remains before you can earn your next experience & gold tick.\n\n"
         "⚗️🏔️ /crpg multipliers — View your current daily and generational multipliers.\n\n"
         "## __[SHOP]__\n\n"
         "🍯🛒 /shop open - Open Malta's CRPG item shop UI.\n\n"
         "🍯🔍 /shop filter <damage_type> <weapon_type> - Filter shop weapons by damage and type.\n\n"
         "🍯📘 /shop info <item_id> - View detailed information about a specific item.\n\n"
+        "🍯💰 /shop sell <item_id> - Sell an unequipped item for 60% of its value.\n\n"
+        "🍯🎲 /shop roll - Roll for a random, unclaimed Title.\n\n"
+        "## __[INVENTORY]__\n\n"
+        "👤🎒 /user inventory - View all your equipped and unequipped items.\n\n"
+        "👤✅📦 /user equip <item_id> - Equip an item from your inventory.\n\n"
+        "👤❌📦 /user unequip <item_id> - Unequip an equipped item (titles cannot be unequipped).\n\n"
+        "👤🎁 /user gift <item_id> <@user> - Gift an unequipped item to another player.\n\n"
         "## __[UTILITY]__\n\n"
         "📕 /help - Show this help message.\n\n"
-        )
+    )
     await interaction.response.send_message(help_text, ephemeral=True)
 
 bot.run(TOKEN)
