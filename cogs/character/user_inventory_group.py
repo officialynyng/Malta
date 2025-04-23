@@ -65,7 +65,7 @@ async def view_inventory(interaction: Interaction):
 
     unequipped_ids = [f"{item.item_id} [{item.item_type}]" for item in unequipped]
     uneq_str = "\n".join(unequipped_ids) or "(none)"
-    embed.add_field(name="📦 Unequipped", value=uneq_str, inline=False)
+    embed.add_field(name="🎒 Unequipped(Inventory)", value=uneq_str, inline=False)
 
     await interaction.response.send_message(embed=embed, ephemeral=True)
 

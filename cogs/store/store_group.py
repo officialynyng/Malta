@@ -227,7 +227,7 @@ class StoreGroup(commands.Cog):
                 # Remove the ephemeral view
                 await interaction.response.edit_message(content="🎲 Title rolled and broadcasted!", view=None)
 
-            @button(label="No", style=ButtonStyle.red, emoji="🍯❌")
+            @button(label="No", style=ButtonStyle.red, emoji="❌")
             async def cancel(self, interaction: Interaction, button):
                 if interaction.user.id != self.user_id:
                     return await interaction.response.send_message("🍯❌ Not your confirmation!", ephemeral=True)
@@ -330,7 +330,7 @@ class ConfirmPurchaseView(discord.ui.View):
         self.item_id = item_id
         self.item_type = item_type
 
-    @discord.ui.button(label="Yes", style=discord.ButtonStyle.green, emoji="🍯💰")
+    @discord.ui.button(label="Yes", style=discord.ButtonStyle.green, emoji="💰")
     async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button):
         if interaction.user.id != self.user_id:
             return await interaction.response.send_message("🍯❌ Not your confirmation!", ephemeral=True)
@@ -350,7 +350,7 @@ class ConfirmPurchaseView(discord.ui.View):
             if exp_channel:
                 await exp_channel.send(public_message)
 
-    @discord.ui.button(label="No", style=discord.ButtonStyle.red, emoji="🍯❌")
+    @discord.ui.button(label="No", style=discord.ButtonStyle.red, emoji="❌")
     async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
         if interaction.user.id != self.user_id:
             return await interaction.response.send_message("🍯❌ Not your confirmation!", ephemeral=True)
