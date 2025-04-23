@@ -5,7 +5,7 @@ from cogs.character.user_inventory import user_inventory, engine
 from sqlalchemy.sql import select, update
 from sqlalchemy import or_
 from discord.ext import commands
-from discord import app_commands
+from discord import app_commands, Interaction
 
 DEBUG = True
 user_group = app_commands.Group(name="user", description="Manage your inventory and items")
@@ -15,7 +15,7 @@ class UserInventoryGroup(commands.Cog):
         self.bot = bot
 
         @user_group.command(name="inventory", description="👤 - 🎒 View your current inventory and equipped items")
-        async def view_inventory(self, interaction: discord.Interaction):
+        async def view_inventory(self, interaction: Interaction):
             user_id = interaction.user.id
             if DEBUG:
                 print(f"[DEBUG]👤🎒 Checking inventory for user {user_id}")
@@ -84,7 +84,7 @@ class UserInventoryGroup(commands.Cog):
 
         @user_group.command(name="unequip", description="👤 - ❌📦 Unequip an item by name")
         @app_commands.describe(item_id="The ID of the item you want to unequip")
-        async def unequip_item(self, interaction: discord.Interaction, item_id: str):
+        async def unequip_item(self, interaction: Interaction, item_id: str):
             user_id = interaction.user.id
             if DEBUG:
                 print(f"[DEBUG]👤📦❌ Attempting to unequip '{item_id}' for user {user_id}")
@@ -120,7 +120,7 @@ class UserInventoryGroup(commands.Cog):
 
         @user_group.command(name="equip", description="👤 - ✅📦 Equip an item by name")
         @app_commands.describe(item_id="The ID of the item you want to equip")
-        async def equip_item(self, interaction: discord.Interaction, item_id: str):
+        async def equip_item(self, interaction: Interaction, item_id: str):
             user_id = interaction.user.id
             if DEBUG:
                 print(f"[DEBUG]👤📦✅ Attempting to equip '{item_id}' for user {user_id}")
@@ -183,7 +183,7 @@ class UserInventoryGroup(commands.Cog):
 
         @user_group.command(name="gift", description="👤 - 🎁 Gift an item to another user")
         @app_commands.describe(item_id="The ID of the item you want to gift", member="The user to gift the item to")
-        async def gift_item(self, interaction: discord.Interaction, item_id: str, member: discord.Member):
+        async def gift_item(self, interaction: Interaction, item_id: str, member: discord.Member):
             user_id = interaction.user.id
             recipient_id = member.id
 
@@ -220,7 +220,7 @@ class UserInventoryGroup(commands.Cog):
                     super().__init__(timeout=30)
 
                 @discord.ui.button(label="Yes", style=discord.ButtonStyle.green, emoji="✅")
-                async def confirm(self, i: discord.Interaction, _):
+                async def confirm(self, i: Interaction, _):
                     if i.user.id != user_id:
                         return await i.response.send_message("❌ Not your confirmation.", ephemeral=True)
 
@@ -252,7 +252,7 @@ class UserInventoryGroup(commands.Cog):
                     await i.response.edit_message(content=f"🎁 Gifted **{item_name}** to {member.mention}!", view=None)
 
                 @discord.ui.button(label="Cancel", style=discord.ButtonStyle.red, emoji="❌")
-                async def cancel(self, i: discord.Interaction, _):
+                async def cancel(self, i: Interaction, _):
                     if i.user.id != user_id:
                         return await i.response.send_message("❌ Not your confirmation.", ephemeral=True)
                     await i.response.edit_message(content="❌ Gift cancelled.", view=None)
