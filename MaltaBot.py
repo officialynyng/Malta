@@ -33,7 +33,9 @@ class MaltaBot(commands.Bot):
         await self.load_extension("cogs.store.store_upkeep")
         await self.load_extension("cogs.store.store_search")
         await self.load_extension("cogs.store.store_group")
-
+        print("Loading 👤Character cogs...")
+        await self.load_extension("cogs.character.user_inventory")
+        await self.load_extension("cogs.character.user_inventory_group")
         await setup_voice_exp(self)
         
         from cogs.exp_background import setup_crpg

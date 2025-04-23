@@ -1,6 +1,8 @@
 import json
 import os
 from cogs.exp_utils import get_user_data, update_user_data
+from cogs.character.user_inventory import user_inventory, engine
+from sqlalchemy.sql import insert, delete, select, and_
 
 DEBUG = True  # Set to False in production
 DATA_DIR = os.path.join(os.path.dirname(__file__), "Items")
@@ -171,15 +173,65 @@ def get_user_inventory(user_id):
         print(f"[DEBUG] Inventory for user {user_id}: {inventory}")
     return inventory
 
-# Add item to user's inventory
-def add_item_to_inventory(user_id, item_id):
-    data = get_user_data(user_id)
-    inventory = data.get("inventory", [])
-    inventory.append(item_id)
-    data["inventory"] = inventory
-    update_user_data(user_id, data["multiplier"], data["daily_multiplier"], data["last_message_ts"], data["last_multiplier_update"])
-    if DEBUG:
-        print(f"[DEBUG] Added '{item_id}' to user {user_id}'s inventory")
+def add_item_to_inventory(user_id, item_id, item_type, equipped=False):
+    with engine.begin() as conn:
+        if equipped:
+            # Unequip any currently equipped item of this type
+            unequip_stmt = user_inventory.update().where(
+                (user_inventory.c.user_id == user_id) &
+                (user_inventory.c.item_type == item_type) &
+                (user_inventory.c.equipped == True)
+            ).values(equipped=False)
+            result = conn.execute(unequip_stmt)
+            if DEBUG:
+                print(f"[DEBUG]👤🔁 Unequipped {result.rowcount} previously equipped {item_type}(s)")
+        # In add_item_to_inventory before insert, if item_type is "titles"
+        if item_type == "titles":
+            check_stmt = select(user_inventory).where(
+                (user_inventory.c.user_id == user_id) &
+                (user_inventory.c.item_type == "titles")
+            )
+            result = conn.execute(check_stmt).fetchone()
+            if result:
+                # User already owns a title
+                if DEBUG:
+                    print(f"[DEBUG]👤🛑 User {user_id} already owns a title — blocking insert.")
+                return  # Or raise/return failure
+        stmt = insert(user_inventory).values(
+            user_id=user_id,
+            item_id=item_id,
+            item_type=item_type,
+            equipped=True if item_type == "titles" else equipped
+        )
+        try:
+            conn.execute(stmt)
+            if DEBUG:
+                print(f"[DEBUG]👤📦 Added item '{item_id}' ({item_type}) to user {user_id}'s inventory with equipped={equipped}")
+        except Exception as e:
+            if DEBUG:
+                print(f"[ERROR]👤🚨 Failed to add item '{item_id}' for user {user_id}: {e}")
+
+def equip_item(user_id, item_id, item_type):
+    with engine.begin() as conn:
+        # Unequip any currently equipped item of this type
+        unequip_stmt = user_inventory.update().where(
+            (user_inventory.c.user_id == user_id) &
+            (user_inventory.c.item_type == item_type) &
+            (user_inventory.c.equipped == True)
+        ).values(equipped=False)
+        conn.execute(unequip_stmt)
+
+        # Equip the new item
+        equip_stmt = user_inventory.update().where(
+            (user_inventory.c.user_id == user_id) &
+            (user_inventory.c.item_id == item_id) &
+            (user_inventory.c.item_type == item_type)
+        ).values(equipped=True)
+        conn.execute(equip_stmt)
+
+        if DEBUG:
+            print(f"[DEBUG] 👤🧢 Equipped '{item_id}' ({item_type}) for user {user_id}")
+
 
 # Get user gold
 def get_user_gold(user_id):
@@ -224,10 +276,13 @@ def update_item_price(item_id, new_price):
     return False
 
 # Process item purchase
-def process_purchase(user_id, item_id):
+def process_purchase(user_id, item_id, item_type):
     item = get_item_by_id(item_id)
-    if not item or not check_item_availability(item_id):
-        return False, "Item not available"
+    if not item:
+        return False, "Item not found"
+
+    if not check_item_availability(item_id):
+        return False, "Item out of stock"
 
     user_data = get_user_data(user_id)
     gold = user_data.get("gold", 0)
@@ -236,37 +291,138 @@ def process_purchase(user_id, item_id):
     if gold < price:
         return False, "Not enough gold"
 
-    # Deduct gold and add item
+    # Check ownership
+    if check_item_ownership(user_id, item_id, item_type):
+        return False, "You already own this item"
+
+    # Deduct gold
     user_data["gold"] -= price
-    inventory = user_data.get("inventory", [])
-    inventory.append(item_id)
-    user_data["inventory"] = inventory
-    update_user_data(user_id, user_data["multiplier"], user_data["daily_multiplier"], user_data["last_message_ts"], user_data["last_multiplier_update"])
+
+    # Update player data (keep existing multiplier-related info)
+    update_user_data(
+        user_id,
+        user_data["multiplier"],
+        user_data["daily_multiplier"],
+        user_data["last_message_ts"],
+        user_data["last_multiplier_update"],
+        gold=user_data["gold"]
+    )
+
+    # Add item to SQL inventory
+    add_item_to_inventory(user_id, item_id, item_type)
 
     # Decrease stock
-    update_item_stock(item_id, item["stock"] - 1)
+    if "stock" in item:
+        update_item_stock(item_id, item["stock"] - 1)
 
     if DEBUG:
-        print(f"[DEBUG] User {user_id} purchased '{item_id}' for {price} gold")
+        print(f"[DEBUG]👤💰 User {user_id} purchased '{item_id}' ({item_type}) for {price} gold")
 
-    return True, f"Purchased {item['name']} for {price} gold"
+    return True, f"Purchased **{item['name']}** for {price} gold"
 
-def check_item_ownership(user_id, item_id):
-    inventory = get_user_inventory(user_id)
-    owned = item_id in inventory
-    if DEBUG:
-        print(f"[DEBUG] User {user_id} owns '{item_id}': {owned}")
-    return owned
-
-def remove_item_from_inventory(user_id, item_id):
-    data = get_user_data(user_id)
-    inventory = data.get("inventory", [])
-    if item_id in inventory:
-        inventory.remove(item_id)
-        data["inventory"] = inventory
-        update_user_data(user_id, data["multiplier"], data["daily_multiplier"], data["last_message_ts"], data["last_multiplier_update"])
+def check_item_ownership(user_id, item_id, item_type):
+    with engine.connect() as conn:
+        stmt = select(user_inventory).where(and_(
+            user_inventory.c.user_id == user_id,
+            user_inventory.c.item_id == item_id,
+            user_inventory.c.item_type == item_type
+        ))
+        result = conn.execute(stmt).fetchone()
+        owned = result is not None
         if DEBUG:
-            print(f"[DEBUG] Removed '{item_id}' from user {user_id}'s inventory")
+            print(f"[DEBUG]👤🔍 User {user_id} owns '{item_id}' ({item_type}): {owned}")
+        return owned
+
+
+def remove_item_from_inventory(user_id, item_id, item_type):
+    with engine.begin() as conn:
+        stmt = delete(user_inventory).where(and_(
+            user_inventory.c.user_id == user_id,
+            user_inventory.c.item_id == item_id,
+            user_inventory.c.item_type == item_type
+        ))
+        conn.execute(stmt)
+        if DEBUG:
+            print(f"[DEBUG]👤❌ Removed item '{item_id}' ({item_type}) from user {user_id}'s inventory")
+
+def get_unowned_titles():
+    from random import shuffle
+
+    all_titles = get_item_by_category("Titles")
+    unclaimed = []
+
+    with engine.connect() as conn:
+        for title in all_titles:
+            stmt = select(user_inventory).where(and_(
+                user_inventory.c.item_id == title["id"],
+                user_inventory.c.item_type == "title"
+            ))
+            result = conn.execute(stmt).fetchone()
+            if result is None:
+                unclaimed.append(title)
+
+    shuffle(unclaimed)
+    return unclaimed
+
+def roll_random_title_for_user(user_id, price):
+    from random import shuffle
+
+    # Get all title items
+    titles = get_item_by_category("Titles")
+    shuffle(titles)
+
+    # Check if user already owns a title
+    with engine.connect() as conn:
+        owned = conn.execute(
+            select(user_inventory).where(
+                and_(
+                    user_inventory.c.user_id == user_id,
+                    user_inventory.c.item_type == "titles",
+                    user_inventory.c.equipped == True
+                )
+            )
+        ).fetchone()
+
+    if owned:
+        return "confirm_overwrite", owned["item_id"]  # Prompt user
+
+    # Find a random unowned title
+    for title in titles:
+        title_id = title["id"]
+        if not check_item_ownership(user_id, title_id, "titles"):
+            user_data = get_user_data(user_id)
+            if user_data["gold"] < price:
+                return False, "Not enough gold for a roll."
+
+            # Deduct gold
+            user_data["gold"] -= price
+            update_user_data(
+                user_id,
+                user_data["multiplier"],
+                user_data["daily_multiplier"],
+                user_data["last_message_ts"],
+                user_data["last_multiplier_update"],
+                gold=user_data["gold"]
+            )
+
+            # Equip title directly
+            add_item_to_inventory(user_id, title_id, "titles", equipped=True)
+            return True, title  # Send full title dict
+
+    return False, "No unclaimed titles left."
+
+
+def get_equipped_title(user_id):
+    with engine.connect() as conn:
+        stmt = select(user_inventory).where(and_(
+            user_inventory.c.user_id == user_id,
+            user_inventory.c.item_type == "titles",
+            user_inventory.c.equipped == True
+        ))
+        result = conn.execute(stmt).fetchone()
+        return dict(result._mapping) if result else None
+
+
 
 async def setup(bot):
     pass
