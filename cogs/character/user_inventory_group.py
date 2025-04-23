@@ -24,12 +24,6 @@ async def view_inventory(interaction: Interaction):
         stmt = select(user_inventory).where(user_inventory.c.user_id == user_id)
         results = conn.execute(stmt).fetchall()
 
-    if not results:
-        if DEBUG:
-            print(f"[DEBUG]👤🎒 No inventory items found for user {user_id}")
-        await interaction.response.send_message("🎒 Your inventory is empty.", ephemeral=True)
-        return
-
     equipped = [row for row in results if row.equipped]
     unequipped = [row for row in results if not row.equipped]
 
@@ -46,26 +40,21 @@ async def view_inventory(interaction: Interaction):
             embed.add_field(name=f"{label}:", value=f"{found.item_id}", inline=True)
             gear_displayed.add(found.item_id)
         else:
-            embed.add_field(name=f"{label}:", value="(none)", inline=True)
+            embed.add_field(name=f"{label}:", value="(empty)", inline=True)
 
-    # Title
     title = next((item for item in equipped if item.item_type == "titles"), None)
-    embed.add_field(name="Title:", value=title.item_id if title else "(none)", inline=True)
+    embed.add_field(name="Title:", value=title.item_id if title else "(empty)", inline=True)
 
-    # Trail
     trail = next((item for item in equipped if item.item_type == "trails"), None)
-    embed.add_field(name="Trail:", value=trail.item_id if trail else "(none)", inline=True)
+    embed.add_field(name="Trail:", value=trail.item_id if trail else "(empty)", inline=True)
 
-    # Shield
     shield = next((item for item in equipped if item.item_type == "shields"), None)
-    embed.add_field(name="Shield:", value=shield.item_id if shield else "(none)", inline=True)
+    embed.add_field(name="Shield:", value=shield.item_id if shield else "(empty)", inline=True)
 
-    # Pets, Mounts, Estates, Utility
     for label, key in [("Pet", "pets"), ("Mount", "mounts"), ("Estate", "estates"), ("Utility", "utility")]:
         entry = next((item for item in equipped if item.item_type == key), None)
-        embed.add_field(name=f"{label}:", value=entry.item_id if entry else "(none)", inline=True)
+        embed.add_field(name=f"{label}:", value=entry.item_id if entry else "(empty)", inline=True)
 
-    # Weapons/Ammo: shared 4 slots
     weapon_types = ["weapons", "arrows", "bolts"]
     shared_weapons = [item for item in equipped if any(item.item_type.startswith(prefix) for prefix in weapon_types)]
     for idx in range(4):
@@ -74,12 +63,12 @@ async def view_inventory(interaction: Interaction):
         except IndexError:
             embed.add_field(name=f"Slot {idx+1}:", value="(empty)", inline=True)
 
-    # Optional: Show unequipped items
     unequipped_ids = [f"{item.item_id} [{item.item_type}]" for item in unequipped]
-    uneq_str = "\n".join(unequipped_ids) or "None"
+    uneq_str = "\n".join(unequipped_ids) or "(none)"
     embed.add_field(name="📦 Unequipped", value=uneq_str, inline=False)
 
     await interaction.response.send_message(embed=embed, ephemeral=True)
+
 
 
 @user_group.command(name="unequip", description="👤 - ❌📦 Unequip an item by name")
