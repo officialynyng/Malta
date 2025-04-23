@@ -69,11 +69,13 @@ async def on_message(message):
 @bot.event
 async def on_ready():
     print(f'{bot.user} has connected to Discord!')
-    ###############################
-    #Remove to prevent MANUAL sync.
-    await bot.tree.sync()
-    ###############################
-    print("Command tree synced.")
+
+    # 🔧 Force clear all slash commands in this guild
+    await bot.tree.clear_commands(guild=discord.Object(id=GUILD_ID))
+    bot.tree.remove_command("inventory", type=discord.AppCommandType.chat_input)
+
+    await bot.tree.sync(guild=discord.Object(id=GUILD_ID))
+    print("Command tree force-synced.")
     
 
 @bot.event
