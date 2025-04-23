@@ -427,6 +427,16 @@ def get_equipped_title(user_id):
         ))
         result = conn.execute(stmt).fetchone()
         return dict(result._mapping) if result else None
+def get_user_by_title_id(title_id):
+    with engine.connect() as conn:
+        stmt = select(user_inventory).where(
+            (user_inventory.c.item_id == title_id) &
+            (user_inventory.c.item_type == "titles")
+        )
+        result = conn.execute(stmt).fetchone()
+        if DEBUG:
+            print(f"[DEBUG] Owner of title '{title_id}': {result['user_id'] if result else 'None'}")
+        return result["user_id"] if result else None
 
 
 

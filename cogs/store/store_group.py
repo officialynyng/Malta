@@ -7,6 +7,7 @@ from cogs.store.store_search import filter_weapon_items
 from cogs.store.store_utils import get_item_by_id
 from cogs.exp_config import EXP_CHANNEL_ID
 from sqlalchemy.sql import select
+import traceback
 DEBUG = True
 ROLL_PRICE = 10000
 
@@ -280,6 +281,7 @@ class StoreGroup(commands.Cog):
                         embed.add_field(name="Status", value=f"🍯❌ Taken by {user.mention}", inline=False)
                     except Exception as e:
                         print(f"[ERROR] Failed to fetch user for title owner: {e}")
+                        traceback.print_exc()
                         embed.add_field(name="Status", value="🍯❌ Taken (unable to resolve user)", inline=False)
                 else:
                     embed.add_field(name="Status", value="🍯✅ Available", inline=False)
