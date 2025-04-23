@@ -42,27 +42,14 @@ def calculate_multiplier(last_activity_time, current_time, current_daily_multipl
 ### DICTIONAIRY ### 
 def get_user_data(user_id):
     with engine.connect() as conn:
-        stmt = select(
-        players.c.last_message_ts,
-        players.c.multiplier,
-        players.c.daily_multiplier,
-        players.c.last_multiplier_update  
-    ).where(players.c.user_id == safe_id(user_id))
-
-
+        stmt = select(players).where(players.c.user_id == safe_id(user_id))
         result = conn.execute(stmt)
         row = result.fetchone()
 
         if row:
-            return {
-                'last_message_ts': row[0],                     
-                'multiplier': row[1],
-                'daily_multiplier': row[2],
-                'last_multiplier_update': row[3]             
-            }
+            return dict(row._mapping)  # Returns the full row as a dict
         else:
             return None
-
 
 
 def update_user_data(user_id, new_retirement_multiplier, new_daily_multiplier, last_activity_time, last_multiplier_update=None, username=None):

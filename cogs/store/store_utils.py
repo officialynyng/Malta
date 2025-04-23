@@ -391,8 +391,13 @@ def roll_random_title_for_user(user_id, price):
         title_id = title["id"]
         if not check_item_ownership(user_id, title_id, "titles"):
             user_data = get_user_data(user_id)
+
+            # Safety check to prevent KeyError
+            if not user_data or "gold" not in user_data:
+                return False, "❌ You don't have any gold yet. Earn some first!"
+
             if user_data["gold"] < price:
-                return False, "Not enough gold for a roll."
+                return False, "❌ Not enough gold for a roll."
 
             # Deduct gold
             user_data["gold"] -= price
@@ -409,7 +414,8 @@ def roll_random_title_for_user(user_id, price):
             add_item_to_inventory(user_id, title_id, "titles", equipped=True)
             return True, title  # Send full title dict
 
-    return False, "No unclaimed titles left."
+    return False, "❌ No unclaimed titles left."
+
 
 
 def get_equipped_title(user_id):
