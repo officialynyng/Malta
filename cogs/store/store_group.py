@@ -6,7 +6,8 @@ from cogs.store.store_utils import STORE_CATEGORIES, get_all_items, get_item_by_
 from cogs.store.store_search import filter_weapon_items
 from cogs.store.store_utils import get_item_by_id
 from cogs.exp_config import EXP_CHANNEL_ID
-
+from sqlalchemy.sql import select
+DEBUG = True
 ROLL_PRICE = 10000
 
 class CategorySelect(discord.ui.Select):
@@ -17,7 +18,12 @@ class CategorySelect(discord.ui.Select):
         self.callback_func = callback_func
 
     async def callback(self, interaction: discord.Interaction):
-        await self.callback_func(interaction, self.values[0])
+        try:
+            await self.callback_func(interaction, self.values[0])
+        except Exception as e:
+            print(f"[ERROR] CategorySelect callback failed: {e}")
+            await interaction.response.send_message("❌ Something went wrong while loading the category.", ephemeral=True)
+
 
 
 class CategoryView(discord.ui.View):
@@ -269,8 +275,12 @@ class StoreGroup(commands.Cog):
 
                 owner_id = get_user_by_title_id(item['id'])
                 if owner_id:
-                    user = await interaction.client.fetch_user(owner_id)
-                    embed.add_field(name="Status", value=f"🍯❌ Taken by {user.mention}", inline=False)
+                    try:
+                        user = await interaction.client.fetch_user(owner_id)
+                        embed.add_field(name="Status", value=f"🍯❌ Taken by {user.mention}", inline=False)
+                    except Exception as e:
+                        print(f"[ERROR] Failed to fetch user for title owner: {e}")
+                        embed.add_field(name="Status", value="🍯❌ Taken (unable to resolve user)", inline=False)
                 else:
                     embed.add_field(name="Status", value="🍯✅ Available", inline=False)
 
