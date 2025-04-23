@@ -15,7 +15,7 @@ class UserInventoryGroup(commands.Cog):
         self.bot = bot
 
 @user_group.command(name="inventory", description="👤 - 🎒 View your current inventory and equipped items")
-async def view_inventory(self, interaction: Interaction):
+async def view_inventory(interaction: Interaction):
     user_id = interaction.user.id
     if DEBUG:
         print(f"[DEBUG]👤🎒 Checking inventory for user {user_id}")
@@ -84,7 +84,7 @@ async def view_inventory(self, interaction: Interaction):
 
 @user_group.command(name="unequip", description="👤 - ❌📦 Unequip an item by name")
 @app_commands.describe(item_id="The ID of the item you want to unequip")
-async def unequip_item(self, interaction: Interaction, item_id: str):
+async def unequip_item(interaction: Interaction, item_id: str):
     user_id = interaction.user.id
     if DEBUG:
         print(f"[DEBUG]👤📦❌ Attempting to unequip '{item_id}' for user {user_id}")
@@ -120,7 +120,7 @@ async def unequip_item(self, interaction: Interaction, item_id: str):
 
 @user_group.command(name="equip", description="👤 - ✅📦 Equip an item by name")
 @app_commands.describe(item_id="The ID of the item you want to equip")
-async def equip_item(self, interaction: Interaction, item_id: str):
+async def equip_item(interaction: Interaction, item_id: str):
     user_id = interaction.user.id
     if DEBUG:
         print(f"[DEBUG]👤📦✅ Attempting to equip '{item_id}' for user {user_id}")
@@ -183,7 +183,7 @@ async def equip_item(self, interaction: Interaction, item_id: str):
 
 @user_group.command(name="gift", description="👤 - 🎁 Gift an item to another user")
 @app_commands.describe(item_id="The ID of the item you want to gift", member="The user to gift the item to")
-async def gift_item(self, interaction: Interaction, item_id: str, member: discord.Member):
+async def gift_item(interaction: Interaction, item_id: str, member: discord.Member):
     user_id = interaction.user.id
     recipient_id = member.id
 
