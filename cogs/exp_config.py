@@ -39,7 +39,9 @@ players = db.Table(
     db.Column("heirloom_points", db.Integer, nullable=False, default=0),
     db.Column("multiplier", db.Integer, nullable=False, default=0),
     db.Column("daily_multiplier", db.Integer, nullable=False, default=1),
-    db.Column("last_multiplier_update", db.Float, nullable=False, default=0.0)
+    db.Column("last_multiplier_update", db.Float, nullable=False, default=0.0),
+    db.Column("last_title_announce_ts", db.Float, nullable=False, default=0.0),
+    db.Column("last_trail_trigger_ts", db.Float, nullable=False, default=0.0),
 )
 
 with engine.connect() as conn:
