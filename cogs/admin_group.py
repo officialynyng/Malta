@@ -71,6 +71,19 @@ class AdminGroup(app_commands.Group):
             print(f"[DEBUG] Failed to post message: {e}")
             await interaction.response.send_message(f"⚠️ Failed to post message: {e}", ephemeral=True)
 
+    @app_commands.command(name="create_invite", description="🔒 - 📨 Create a permanent invite link for the current channel.")
+    async def create_invite(self, interaction: discord.Interaction):
+        if interaction.user.id != OWNER_ID:
+            await interaction.response.send_message("🚫 You are not authorized to use this command.", ephemeral=True)
+            return
+
+        try:
+            invite = await interaction.channel.create_invite(max_age=0, max_uses=0, unique=True)
+            await interaction.response.send_message(f"📨 Permanent invite created: {invite.url}", ephemeral=True)
+            print(f"[DEBUG]🧷 Permanent invite created by {interaction.user.display_name}: {invite.url}")
+        except Exception as e:
+            await interaction.response.send_message(f"⚠️ Failed to create invite: {e}", ephemeral=True)
+            print(f"[ERROR] Failed to create invite: {e}")
 
     @app_commands.command(name="edit", description="🔒 - 🖊️ Replace a message’s content with content from another message.")
     @app_commands.describe(
