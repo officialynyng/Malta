@@ -6,6 +6,7 @@ from cogs.store.store_utils import STORE_CATEGORIES, get_all_items, get_item_by_
 from cogs.store.store_search import filter_weapon_items
 from cogs.store.store_utils import get_item_by_id
 from cogs.exp_config import EXP_CHANNEL_ID
+from cogs.store.store_search import get_item_from_any_store
 from sqlalchemy.sql import select
 import traceback
 DEBUG = True
@@ -105,10 +106,12 @@ class StoreGroup(commands.Cog):
         @self.shop_group.command(name="buy", description="🍯 - 🛒 Buy an item by ID with confirmation")
         @app_commands.describe(item_id="The item ID to buy")
         async def shop_buy(interaction: discord.Interaction, item_id: str):
-            item = get_item_by_id(item_id)
+            item = get_item_from_any_store(item_id)
             if not item:
-                return await interaction.response.send_message("❌ Item not found.", ephemeral=True)
-
+                return await interaction.response.send_message(
+                    f"❌ Could not find any item called `{item_id}`. Please check `/shop open` for exact item names or IDs.",
+                    ephemeral=True
+                )
             item_type = item.get("category", "").lower()
 
             # 🚫 Block direct title purchases

@@ -1,4 +1,4 @@
-from cogs.store.store_utils import (load_all_melee_weapon_items, load_items_from_json)
+from cogs.store.store_utils import (load_all_melee_weapon_items, load_items_from_json, get_all_items)
 
 ############################
 #############MELEE##########
@@ -306,6 +306,14 @@ def get_filtered_leg_armor(**kwargs):
 
 
 ##################################################
+
+def get_item_from_any_store(query: str):
+    """Searches all store items by ID or name (case-insensitive)."""
+    query = query.lower()
+    for item in get_all_items():
+        if item["id"].lower() == query or item["name"].lower() == query:
+            return item
+    return None
 
 async def setup(bot):
     pass  # This file only contains utility functions, no commands yet

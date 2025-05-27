@@ -29,7 +29,7 @@
   {
     "id": "bad_boy",
     "name": "Bad Boy",
-    "category": "Trails",
+    "category": "trails",
     "price": 4000,
     "cooldown": 3600,
     "display": "🏎️💨💨🚓",
@@ -47,7 +47,7 @@
   {
     "id": "the_seducer",
     "name": "The Seducer",
-    "category": "Trails",
+    "category": "trails",
     "price": 4000,
     "cooldown": 3600,
     "display": "👩🐍🍎",
@@ -56,7 +56,7 @@
   {
     "id": "drunken_shield",
     "name": "Drunken Shield",
-    "category": "Trails",
+    "category": "trails",
     "price": 4000,
     "cooldown": 3600,
     "display": "🍺🛡️",
@@ -74,7 +74,7 @@
   {
     "id": "dragons_breath",
     "name": "Dragon's Breath",
-    "category": "Trails",
+    "category": "trails",
     "price": 7000,
     "cooldown": 3600,
     "display": "🐲💨🔥",
@@ -83,7 +83,7 @@
   {
     "id": "last_drag",
     "name": "Last Drag",
-    "category": "Trails",
+    "category": "trails",
     "price": 7000,
     "cooldown": 3600,
     "display": "🪦💀🚬",
@@ -119,7 +119,7 @@
   {
     "id": "freakshow",
     "name": "Freakshow",
-    "category": "Trails",
+    "category": "trails",
     "price": 7000,
     "cooldown": 3600,
     "display": "🎟️🎪🤡🧨",
@@ -128,7 +128,7 @@
   {
     "id": "sanguine_sip",
     "name": "Sanguine Sip",
-    "category": "Trails",
+    "category": "trails",
     "price": 7000,
     "cooldown": 3600,
     "display": "🦇🩸🍷",
@@ -137,7 +137,7 @@
   {
     "id": "social_engineer",
     "name": "Social Engineer",
-    "category": "Trails",
+    "category": "trails",
     "price": 7000,
     "cooldown": 3600,
     "display": "👥💻📶💾",
@@ -182,7 +182,7 @@
   {
     "id": "rising_sun",
     "name": "Rising Sun",
-    "category": "Trails",
+    "category": "trails",
     "price": 11000,
     "cooldown": 3600,
     "display": "🪖🇯🇵🌴🔪",
@@ -191,7 +191,7 @@
   {
     "id": "the_patriot",
     "name": "The Patriot",
-    "category": "Trails",
+    "category": "trails",
     "price": 11000,
     "cooldown": 3600,
     "display": "🗽🇺🇸🦅",
@@ -245,16 +245,16 @@
   {
     "id": "net_worldwide",
     "name": "NET. WORLDWIDE",
-    "category": "Trails",
+    "category": "trails",
     "price": 14500,
     "cooldown": 3600,
     "display": "👺🇮🇱🛜🌐",
-    "description": "Rep Net. WORLDWIDE "
+    "description": "Rep the original Net. WORLDWIDE."
   },
   {
     "id": "tidehunter",
     "name": "Tidehunter",
-    "category": "Trails",
+    "category": "trails",
     "price": 14500,
     "cooldown": 3600,
     "display": "🌊🐳🪼⚓🏴‍☠️",
@@ -263,16 +263,25 @@
   {
     "id": "the_unabomber",
     "name": "The Unabomber",
-    "category": "Trails",
+    "category": "trails",
     "price": 14500,
     "cooldown": 3600,
     "display": "📨📮💣",
     "description": "Philosophy mailed with a fuse."
   },
   {
+    "id": "PuddleV3",
+    "name": "Puddle V.3",
+    "category": "trails",
+    "price": 14500,
+    "cooldown": 3600,
+    "display": "🎣🐊🌧️",
+    "description": "Salt-soaked and corpse filled, the Tidehunter drags all who follow into the deep."
+  },
+  {
     "id": "honey_drip",
     "name": "Honey Drip",
-    "category": "Trails",
+    "category": "trails",
     "price": 14500,
     "cooldown": 3600,
     "display": "🌻🐝🍯",
@@ -299,7 +308,7 @@
   {
     "id": "high_roller",
     "name": "High Roller",
-    "category": "Trails",
+    "category": "trails",
     "price": 20000,
     "cooldown": 3600,
     "display": "💲💰🪙🏦",
