@@ -4,7 +4,6 @@ from discord import app_commands, Interaction, Embed, ButtonStyle
 from discord.ui import View, button
 from cogs.store.store_utils import STORE_CATEGORIES, get_all_items, get_item_by_id, get_item_by_category, roll_random_title_for_user
 from cogs.store.store_search import filter_weapon_items
-from cogs.store.store_utils import get_item_by_id, get_item_by_category
 from cogs.exp_config import EXP_CHANNEL_ID
 from cogs.store.store_search import get_item_from_any_store
 from sqlalchemy.sql import select
