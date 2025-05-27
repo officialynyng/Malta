@@ -154,7 +154,18 @@ def load_all_melee_weapon_items():
 # Check if item is in stock
 def check_item_availability(item_id):
     item = get_item_by_id(item_id)
-    available = item and item.get("stock", 0) > 0
+    if not item:
+        if DEBUG:
+            print(f"[DEBUG] Item '{item_id}' not found.")
+        return False
+
+    # ✅ Always allow trails to be bought
+    if item.get("category", "").lower() == "trails":
+        if DEBUG:
+            print(f"[DEBUG] Item '{item_id}' is a trail and always available.")
+        return True
+
+    available = item.get("stock", 0) > 0
     if DEBUG:
         print(f"[DEBUG] Item '{item_id}' availability: {available}")
     return available
