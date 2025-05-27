@@ -1,6 +1,6 @@
 import json
 import os
-from cogs.exp_utils import get_user_data, update_user_data
+from cogs.exp_utils import get_user_data, update_user_data, update_user_gold
 from cogs.character.user_inventory import user_inventory, engine
 from sqlalchemy.sql import insert, delete, select, and_
 
@@ -321,18 +321,25 @@ def process_purchase(user_id, item_id, item_type):
     # Check ownership
     if check_item_ownership(user_id, item_id, item_type):
         return False, "You already own this item"
+    
+    # Debug before deducting
+    if DEBUG:
+        if user_data["gold"] < price:
+            print(f"[WARN]❌ User {user_id} does NOT have enough gold ({user_data['gold']} < {price}) — this should not happen past pre-check.")
+        else:
+            print(f"[DEBUG]💸 Deducting {price} gold from user {user_id}")
 
     # Deduct gold
-    user_data["gold"] -= price
+    user_data["gold"] = max(0, user_data["gold"] - price)
 
     # Update player data (keep existing multiplier-related info)
+    update_user_gold(user_id, user_data["gold"])
     update_user_data(
         user_id,
         user_data["multiplier"],
         user_data["daily_multiplier"],
         user_data["last_message_ts"],
-        user_data["last_multiplier_update"],
-        gold=user_data["gold"]
+        user_data["last_multiplier_update"]
     )
 
     # Add item to SQL inventory
@@ -425,18 +432,25 @@ def roll_random_title_for_user(user_id, price):
 
             if user_data["gold"] < price:
                 return False, "❌ Not enough gold for a roll."
+            
+            # Debug before deducting
+            if DEBUG:
+                if user_data["gold"] < price:
+                    print(f"[WARN]❌ User {user_id} does NOT have enough gold ({user_data['gold']} < {price}) — this should not happen past pre-check.")
+                else:
+                    print(f"[DEBUG]💸 Deducting {price} gold from user {user_id}")
 
             # Deduct gold
-            user_data["gold"] -= price
+            user_data["gold"] = max(0, user_data["gold"] - price)
+
+            update_user_gold(user_id, user_data["gold"])
             update_user_data(
                 user_id,
                 user_data["multiplier"],
                 user_data["daily_multiplier"],
                 user_data["last_message_ts"],
-                user_data["last_multiplier_update"],
-                gold=user_data["gold"]
+                user_data["last_multiplier_update"]
             )
-
             # Equip title directly
             add_item_to_inventory(user_id, title_id, "titles", equipped=True)
             return True, title  # Send full title dict

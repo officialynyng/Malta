@@ -6,6 +6,7 @@ from cogs.exp_config import (
     players, engine, LEVEL_CAP, TIME_DELTA, MAX_MULTIPLIER, BASE_EXP_SCALE,
 )
 
+DEBUG = True
 # 🔒 Ensures all user_id comparisons match the VARCHAR type in Postgres
 def safe_id(uid) -> str:
     return str(uid)
@@ -75,7 +76,23 @@ def update_user_data(user_id, new_retirement_multiplier, new_daily_multiplier, l
 
     print("[DEBUG]🗒️🖊️☑️ User data updated in database")
 
+def update_user_gold(user_id, new_gold_amount):
+    if not isinstance(new_gold_amount, int):
+        raise ValueError(f"[ERROR] Gold must be an integer, got {type(new_gold_amount)}")
 
+    if DEBUG:
+        print(f"[DEBUG]💰 Updating gold for user {user_id} → {new_gold_amount}")
+
+    with engine.connect() as conn:
+        conn.execute(
+            players.update()
+            .where(players.c.user_id == safe_id(user_id))
+            .values(gold=new_gold_amount)
+        )
+        conn.commit()
+
+    if DEBUG:
+        print(f"[DEBUG]💰 Gold updated successfully for {user_id}")
 
 
 def get_all_user_ids():
