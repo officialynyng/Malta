@@ -118,14 +118,18 @@ class UserTriggers(commands.Cog):
                 update(players).where(players.c.user_id == user_id).values(last_trail_trigger_ts=now)
             )
 
-        emoji = trail.get("display", "✨")
-        try:
-            await message.add_reaction(emoji)
-            if DEBUG:
-                print(f"[DEBUG]✨ Trail '{row.item_id}' reaction '{emoji}' added for {user_id}")
-        except discord.HTTPException as e:
-            if DEBUG:
-                print(f"[DEBUG]⚠️ Failed to add emoji '{emoji}' for {user_id}: {e}")
+        emoji_data = trail.get("display", ["✨"])
+        if isinstance(emoji_data, str):
+            emoji_data = [emoji_data]  # Normalize to list
+
+        for emoji in emoji_data:
+            try:
+                await message.add_reaction(emoji)
+                if DEBUG:
+                    print(f"[DEBUG]✨ Trail '{row.item_id}' reaction '{emoji}' added for {user_id}")
+            except discord.HTTPException as e:
+                if DEBUG:
+                    print(f"[DEBUG]⚠️ Failed to add emoji '{emoji}' for {user_id}: {e}")
 
 async def setup(bot):
     await bot.add_cog(UserTriggers(bot))
