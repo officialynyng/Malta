@@ -33,6 +33,7 @@ class MaltaBot(commands.Bot):
         await self.load_extension("cogs.store.store_upkeep")
         await self.load_extension("cogs.store.store_search")
         await self.load_extension("cogs.store.store_group")
+        await bot.load_extension("cogs.store_reminder")
         print("Loading 👤Character cogs...")
         await self.load_extension("cogs.character.user_inventory")
         await self.load_extension("cogs.character.user_inventory_group")
@@ -108,6 +109,7 @@ async def help_command(interaction: discord.Interaction):
         "⚗️🏔️ /crpg multipliers — View your current daily and generational multipliers.\n\n"
         "## __[SHOP]__\n\n"
         "🍯🛒 /shop open - Open Malta's CRPG item shop UI.\n\n"
+        "🍯🛍️ /shop buy <category> <item_id> - Purchase an item from the shop using its category and ID.\n\n"
         "🍯🔍 /shop filter <damage_type> <weapon_type> - Filter shop weapons by damage and type.\n\n"
         "🍯📘 /shop info <item_id> - View detailed information about a specific item.\n\n"
         "🍯💰 /shop sell <item_id> - Sell an unequipped item for 60% of its value.\n\n"
