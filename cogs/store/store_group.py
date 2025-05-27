@@ -108,7 +108,7 @@ class StoreGroup(commands.Cog):
             item_id="The item ID to buy from that category"
         )
         async def shop_buy(interaction: discord.Interaction, category: str, item_id: str):
-            from store_utils import get_item_by_category
+            from cogs.store.store_utils import get_item_by_category
 
             # Fetch items by category
             items = get_item_by_category(category.lower())
