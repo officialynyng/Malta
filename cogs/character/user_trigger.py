@@ -6,7 +6,7 @@ from cogs.exp_config import EXP_CHANNEL_ID
 from cogs.exp_utils import players
 from cogs.character.user_inventory import user_inventory, engine
 from cogs.store.store_utils import get_item_by_id
-
+import asyncio
 TRAIL_COOLDOWN_DEFAULT = 3600  # 1 Hour
 TITLE_COOLDOWN = 86400         # 24 hours
 DEBUG = True
@@ -122,11 +122,13 @@ class UserTriggers(commands.Cog):
         if isinstance(emoji_data, str):
             emoji_data = [emoji_data]  # Normalize to list
 
+        
         for emoji in emoji_data:
             try:
                 await message.add_reaction(emoji)
                 if DEBUG:
                     print(f"[DEBUG]✨ Trail '{row.item_id}' reaction '{emoji}' added for {user_id}")
+                await asyncio.sleep(0.3)  # ⬅ Add this line to space each reaction
             except discord.HTTPException as e:
                 if DEBUG:
                     print(f"[DEBUG]⚠️ Failed to add emoji '{emoji}' for {user_id}: {e}")
