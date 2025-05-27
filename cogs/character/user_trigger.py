@@ -3,7 +3,8 @@ import discord
 from discord.ext import commands
 from sqlalchemy.sql import select, update
 from cogs.exp_config import EXP_CHANNEL_ID
-from cogs.character.user_inventory import players, user_inventory, engine
+from cogs.exp_utils import players
+from cogs.character.user_inventory import user_inventory, engine
 from cogs.store.store_utils import get_item_by_id
 
 TRAIL_COOLDOWN_DEFAULT = 3600  # 1 Hour
