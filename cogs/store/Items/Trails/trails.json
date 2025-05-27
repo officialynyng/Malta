@@ -5,7 +5,7 @@
     "category": "trails",
     "price": 4000,
     "cooldown": 3600,
-    "display": "💩📩📫",
+    "display": ["💩", "📩", "📫"],
     "description": "For the shitposters."
   },
   {
@@ -14,7 +14,7 @@
     "category": "trails",
     "price": 4000,
     "cooldown": 3600,
-    "display": "🐸",
+    "display": ["🐸"],
     "description": "For those that pepe post."
   },
   {
@@ -23,7 +23,7 @@
     "category": "trails",
     "price": 4000,
     "cooldown": 3600,
-    "display": "💨🔥🌳",
+    "display": ["💨", "🔥", "🌳"],
     "description": "Your words drift slow, hazy, and kinda profound if you think about it."
   },
   {
@@ -32,7 +32,7 @@
     "category": "trails",
     "price": 4000,
     "cooldown": 3600,
-    "display": "🏎️💨💨🚓",
+    "display": ["🏎️", "💨", "💨", "🚓"],
     "description": "Illegal, loud, and two turns ahead."
   },
   {
@@ -41,7 +41,7 @@
     "category": "trails",
     "price": 4000,
     "cooldown": 3600,
-    "display": "🦾🤖🦿",
+    "display": ["🦾", "🤖", "🦿"],
     "description": "Where others think, you autocomplete."
   },
   {
@@ -50,7 +50,7 @@
     "category": "trails",
     "price": 4000,
     "cooldown": 3600,
-    "display": "👩🐍🍎",
+    "display": ["👩", "🐍", "🍎"],
     "description": "You dont chase. You lure- and they always follow."
   },
   {
@@ -59,7 +59,7 @@
     "category": "trails",
     "price": 4000,
     "cooldown": 3600,
-    "display": "🍺🛡️",
+    "display": ["🍺", "🛡️"],
     "description": "Steel in your grip, hops in your breath."
   },
   {
@@ -68,7 +68,7 @@
     "category": "trails",
     "price": 4000,
     "cooldown": 3600,
-    "display": "👔📈📉💰",
+    "display": ["👔", "📈", "📉", "💰"],
     "description": "Charts rise, charts crash and you profit."
   },
   {
@@ -77,7 +77,7 @@
     "category": "trails",
     "price": 7000,
     "cooldown": 3600,
-    "display": "🐲💨🔥",
+    "display": ["🐲", "💨", "🔥"],
     "description": "Your trail burns hot smoke & fire clings to every message."
   },
   {
@@ -86,7 +86,7 @@
     "category": "trails",
     "price": 7000,
     "cooldown": 3600,
-    "display": "🪦💀🚬",
+    "display": ["🪦", "💀", "🚬"],
     "description": "A quiet burn follows- low, slow, and final."
   },
   {
@@ -95,7 +95,7 @@
     "category": "trails",
     "price": 7000,
     "cooldown": 3600,
-    "display": "🕯️🐦‍⬛✒️📜💀",
+    "display": ["🕯️", "🐦‍⬛", "✒️", "📜", "💀"],
     "description": "Your trail is candlelit, sorrow-soaked, and steeped in loss."
   },
   {
@@ -104,7 +104,7 @@
     "category": "trails",
     "price": 7000,
     "cooldown": 3600,
-    "display": "🧥🗡️",
+    "display": ["🧥", "🗡️"],
     "description": "No name. No face. Just the job."
   },
   {
@@ -113,7 +113,7 @@
     "category": "trails",
     "price": 7000,
     "cooldown": 3600,
-    "display": "🧊🔥",
+    "display": ["🧊", "🔥"],
     "description": "You leave smoke and frostbite in equal measure."
   },
   {
@@ -122,7 +122,7 @@
     "category": "trails",
     "price": 7000,
     "cooldown": 3600,
-    "display": "🎟️🎪🤡🧨",
+    "display": ["🎟️", "🎪", "🤡", "🧨"],
     "description": "Welcome to the show."
   },
   {
@@ -131,7 +131,7 @@
     "category": "trails",
     "price": 7000,
     "cooldown": 3600,
-    "display": "🦇🩸🍷",
+    "display": ["🦇", "🩸", "🍷"],
     "description": "A lust for blood."
   },
   {
@@ -140,7 +140,7 @@
     "category": "trails",
     "price": 7000,
     "cooldown": 3600,
-    "display": "👥💻📶💾",
+    "display": ["👥", "💻", "📶", "💾"],
     "description": "Your words arent loud—theyre loaded. Every message is a breach in disguise."
   },
   {
@@ -149,7 +149,7 @@
     "category": "trails",
     "price": 7000,
     "cooldown": 3600,
-    "display": "🥋🥢🍵",
+    "display": ["🥋", "🥢", "🍵"],
     "description": "Your words are few, but they echo with balance, discipline, and peace."
   },
   {
@@ -158,7 +158,7 @@
     "category": "trails",
     "price": 7000,
     "cooldown": 3600,
-    "display": "⛑️🩺🚑⚕️",
+    "display": ["⛑️", "🩺", "🚑", "⚕️"],
     "description": "You dont type to impress. You type to save."
   },
   {
@@ -167,7 +167,7 @@
     "category": "trails",
     "price": 7000,
     "cooldown": 3600,
-    "display": "🍄🫠🧠",
+    "display": ["🍄", "🫠", "🧠"],
     "description": "Each word bends perception— a thought experiment in motion."
   },
   {
@@ -176,7 +176,7 @@
     "category": "trails",
     "price": 7000,
     "cooldown": 3600,
-    "display": "🦐🦐🦐",
+    "display": ["🦐", "🦐", "🦐"],
     "description": "Krill yourself."
   },
   {
@@ -185,7 +185,7 @@
     "category": "trails",
     "price": 11000,
     "cooldown": 3600,
-    "display": "🪖🇯🇵🌴🔪",
+    "display": ["🪖", "🇯🇵", "🌴", "🔪"],
     "description": "Humanity discarded- only survival remains."
   },
   {
@@ -194,7 +194,7 @@
     "category": "trails",
     "price": 11000,
     "cooldown": 3600,
-    "display": "🗽🇺🇸🦅",
+    "display": ["🗽", "🇺🇸", "🦅"],
     "description": "You dont type. You declare independence every damn time."
   },
   {
@@ -203,7 +203,7 @@
     "category": "trails",
     "price": 11000,
     "cooldown": 3600,
-    "display": "🥃🍸🍹🍾🍺",
+    "display": ["🥃", "🍸", "🍹", "🍾", "🍺"],
     "description": "You move through the night, one pour at a time"
   },
   {
@@ -212,7 +212,7 @@
     "category": "trails",
     "price": 11000,
     "cooldown": 3600,
-    "display": "🧪🦠🔬🥼",
+    "display": ["🧪", "🦠", "🔬", "🥼"],
     "description": "Science doesnt ask for permission, neither do you."
   },
   {
@@ -221,7 +221,7 @@
     "category": "trails",
     "price": 11000,
     "cooldown": 3600,
-    "display": "🌬️❄️🦣",
+    "display": ["🌬️", "❄️", "🦣"],
     "description": "Buried in permafrost—ancient, cold, and unforgiving."
   },
   {
@@ -230,7 +230,7 @@
     "category": "trails",
     "price": 11000,
     "cooldown": 3600,
-    "display": "👔🪓💁‍♀️🩸",
+    "display": ["👔", "🪓", "💁‍♀️", "🩸"],
     "description": "You have to return some video tapes."
   },
   {
@@ -239,7 +239,7 @@
     "category": "trails",
     "price": 11000,
     "cooldown": 3600,
-    "display": "🧟⛏️🤠",
+    "display": ["🧟", "⛏️", "🤠"],
     "description": "One word away from mercy. One twitch from wrath."
   },
   {
@@ -248,7 +248,7 @@
     "category": "trails",
     "price": 14500,
     "cooldown": 3600,
-    "display": "👺🇮🇱🛜🌐",
+    "display": ["👺", "🇮🇱", "🛜", "🌐"],
     "description": "Rep the original Net. WORLDWIDE."
   },
   {
@@ -257,7 +257,7 @@
     "category": "trails",
     "price": 14500,
     "cooldown": 3600,
-    "display": "🌊🐳🪼⚓🏴‍☠️",
+    "display": ["🌊", "🐳", "🪼", "⚓", "🏴‍☠️"],
     "description": "Salt-soaked and corpse filled, the Tidehunter drags all who follow into the deep."
   },
   {
@@ -266,7 +266,7 @@
     "category": "trails",
     "price": 14500,
     "cooldown": 3600,
-    "display": "📨📮💣",
+    "display": ["📨", "📮", "💣"],
     "description": "Philosophy mailed with a fuse."
   },
   {
@@ -275,7 +275,7 @@
     "category": "trails",
     "price": 14500,
     "cooldown": 3600,
-    "display": "🎣🐊🌧️",
+    "display": ["🎣", "🐊", "🌧️"],
     "description": "Salt-soaked and corpse filled, the Tidehunter drags all who follow into the deep."
   },
   {
@@ -284,7 +284,7 @@
     "category": "trails",
     "price": 14500,
     "cooldown": 3600,
-    "display": "🌻🐝🍯",
+    "display": ["🌻", "🐝", "🍯"],
     "description": "Each message leaves a golden trace—sweet, slow, and impossible to ignore."
   },
   {
@@ -293,7 +293,7 @@
     "category": "trails",
     "price": 14500,
     "cooldown": 3600,
-    "display": "🧙‍♂️⚡❄️💨🔥",
+    "display": ["🧙‍♂️", "⚡", "❄️", "💨", "🔥"],
     "description": "The elements answer. The scrolls obey. Your trail radiates power."
   },
   {
@@ -302,7 +302,7 @@
     "category": "trails",
     "price": 14500,
     "cooldown": 3600,
-    "display": "✈️✈️🏢🏢",
+    "display": ["✈️", "✈️", "🏢", "🏢"],
     "description": "You cross the line."
   },
   {
@@ -311,7 +311,7 @@
     "category": "trails",
     "price": 20000,
     "cooldown": 3600,
-    "display": "💲💰🪙🏦",
+    "display": ["💲", "💰", "🪙", "🏦"],
     "description": "Money talks, but yours shuts the whole server up."
   }
 ]
