@@ -37,28 +37,30 @@ class UserTriggers(commands.Cog):
         if now - row.last_title_announce_ts >= TITLE_COOLDOWN:
             if DEBUG:
                 print(f"[DEBUG]👑 Cooldown met — triggering title announcement for {user_id}")
-            await self.trigger_title_announcement(message, conn, user_id, now)
+            await self.trigger_title_announcement(message, user_id, now)
         else:
             if DEBUG:
                 remaining = TITLE_COOLDOWN - (now - row.last_title_announce_ts)
                 print(f"[DEBUG]⏳ Title cooldown active for {user_id}: {remaining:.0f}s remaining")
 
         # ✨ Trail reaction
-        await self.trigger_trail_reaction(message, conn, user_id, now, row.last_trail_trigger_ts)
+        await self.trigger_trail_reaction(message, user_id, now, row.last_trail_trigger_ts)
 
-    async def trigger_title_announcement(self, message, conn, user_id, now):
-    # Update cooldown timestamp
-        conn.execute(
-            update(players).where(players.c.user_id == user_id).values(last_title_announce_ts=now)
-        )
 
-        # Fetch equipped title
-        stmt = select(user_inventory).where(
-            (user_inventory.c.user_id == user_id) &
-            (user_inventory.c.item_type == "titles") &
-            (user_inventory.c.equipped == True)
-        )
-        row = conn.execute(stmt).fetchone()
+    async def trigger_title_announcement(self, message, user_id, now):
+        with engine.begin() as conn:
+            conn.execute(
+                update(players).where(players.c.user_id == user_id).values(last_title_announce_ts=now)
+            )
+
+            # Fetch equipped title
+            stmt = select(user_inventory).where(
+                (user_inventory.c.user_id == user_id) &
+                (user_inventory.c.item_type == "titles") &
+                (user_inventory.c.equipped == True)
+            )
+            row = conn.execute(stmt).fetchone()
+
 
         if not row:
             if DEBUG:
@@ -85,34 +87,36 @@ class UserTriggers(commands.Cog):
             if DEBUG:
                 print(f"[DEBUG]👑 Title embed sent for {user_id}")
 
-    async def trigger_trail_reaction(self, message, conn, user_id, now, last_ts):
-        stmt = select(user_inventory).where(
-            (user_inventory.c.user_id == user_id) &
-            (user_inventory.c.item_type == "trails") &
-            (user_inventory.c.equipped == True)
-        )
-        row = conn.execute(stmt).fetchone()
-        if not row:
-            if DEBUG:
-                print(f"[DEBUG]✨ No equipped trail found for {user_id}")
-            return
+    async def trigger_trail_reaction(self, message, user_id, now, last_ts):
+        with engine.begin() as conn:
+            stmt = select(user_inventory).where(
+                (user_inventory.c.user_id == user_id) &
+                (user_inventory.c.item_type == "trails") &
+                (user_inventory.c.equipped == True)
+            )
+            row = conn.execute(stmt).fetchone()
 
-        trail = get_item_by_id(row.item_id)
-        if not trail:
-            if DEBUG:
-                print(f"[DEBUG]✨ Trail JSON not found for {row.item_id}")
-            return
+            if not row:
+                if DEBUG:
+                    print(f"[DEBUG]✨ No equipped trail found for {user_id}")
+                return
 
-        cooldown = trail.get("cooldown", TRAIL_COOLDOWN_DEFAULT)
-        if now - last_ts < cooldown:
-            if DEBUG:
-                remaining = cooldown - (now - last_ts)
-                print(f"[DEBUG]⏳ Trail '{row.item_id}' still on cooldown ({remaining:.0f}s) for {user_id}")
-            return
+            trail = get_item_by_id(row.item_id)
+            if not trail:
+                if DEBUG:
+                    print(f"[DEBUG]✨ Trail JSON not found for {row.item_id}")
+                return
 
-        conn.execute(
-            update(players).where(players.c.user_id == user_id).values(last_trail_trigger_ts=now)
-        )
+            cooldown = trail.get("cooldown", TRAIL_COOLDOWN_DEFAULT)
+            if now - last_ts < cooldown:
+                if DEBUG:
+                    remaining = cooldown - (now - last_ts)
+                    print(f"[DEBUG]⏳ Trail '{row.item_id}' still on cooldown ({remaining:.0f}s) for {user_id}")
+                return
+
+            conn.execute(
+                update(players).where(players.c.user_id == user_id).values(last_trail_trigger_ts=now)
+            )
 
         emoji = trail.get("display", "✨")
         try:
