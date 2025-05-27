@@ -90,16 +90,24 @@ def get_item_by_id(item_id):
         for filename in file_list:
             path = os.path.join(DATA_DIR, filename)
             if os.path.exists(path):
-                with open(path, "r", encoding="utf-8") as f:
-                    items = json.load(f)
-                    for item in items:
-                        if item["id"] == item_id:
-                            if DEBUG:
-                                print(f"[DEBUG] Found item '{item_id}' in file '{filename}'")
-                            return item
+                try:
+                    with open(path, "r", encoding="utf-8") as f:
+                        items = json.load(f)
+                        for item in items:
+                            if not isinstance(item, dict):
+                                if DEBUG:
+                                    print(f"[WARN] Skipping non-dict item in '{filename}': {item}")
+                                continue
+                            if item.get("id") == item_id:
+                                if DEBUG:
+                                    print(f"[DEBUG] Found item '{item_id}' in file '{filename}'")
+                                return item
+                except json.JSONDecodeError as e:
+                    print(f"[ERROR] Failed to parse '{filename}': {e}")
     if DEBUG:
         print(f"[DEBUG] Item '{item_id}' not found in any category")
     return None
+
 
 
 def get_item_by_category(category_name):
