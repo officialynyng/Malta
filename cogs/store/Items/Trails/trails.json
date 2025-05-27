@@ -302,7 +302,7 @@
     "category": "trails",
     "price": 14500,
     "cooldown": 3600,
-    "display": ["✈️", "✈️", "🏢", "🏢"],
+    "display": ["✈️", "🏢", "🛬", "🏤", "💥"],
     "description": "You cross the line."
   },
   {
