@@ -45,7 +45,7 @@ class ShopReminder(commands.Cog):
         variant = random.choice(SHOP_REMINDER_VARIANTS)
 
         embed = discord.Embed(
-            title="🍯🛒 SHOP Reminder",
+            title="🍯🛒 MALTAS DISCORD CRPG SHOP",
             description="**Use** `/shop open` to browse the wares.\n**Use** `/help` for further details.",
             color=discord.Color.gold()
         )
