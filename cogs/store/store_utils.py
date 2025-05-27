@@ -74,8 +74,12 @@ def get_all_items():
         for filename in file_list:
             full_path = os.path.join(DATA_DIR, filename)
             if os.path.exists(full_path):
-                with open(full_path, "r", encoding="utf-8") as f:
-                    all_items.extend(json.load(f))
+                print(f"[DEBUG] Trying to load: {full_path}")  # 🔍 Add this line
+                try:
+                    with open(full_path, "r", encoding="utf-8") as f:
+                        all_items.extend(json.load(f))
+                except json.JSONDecodeError as e:
+                    print(f"[ERROR] Failed to load {full_path}: {e}")
     if DEBUG:
         print(f"[DEBUG] Loaded {len(all_items)} total items from all categories")
     return all_items
