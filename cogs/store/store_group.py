@@ -4,7 +4,7 @@ from discord import app_commands, Interaction, Embed, ButtonStyle
 from discord.ui import View, button
 from cogs.store.store_utils import STORE_CATEGORIES, get_all_items, get_item_by_id, get_item_by_category, roll_random_title_for_user
 from cogs.store.store_search import filter_weapon_items
-from cogs.store.store_utils import get_item_by_id
+from cogs.store.store_utils import get_item_by_id, get_item_by_category
 from cogs.exp_config import EXP_CHANNEL_ID
 from cogs.store.store_search import get_item_from_any_store
 from sqlalchemy.sql import select
@@ -103,15 +103,30 @@ class StoreGroup(commands.Cog):
 
             await interaction.response.send_message(embed=embed, ephemeral=True)
             
-        @self.shop_group.command(name="buy", description="🍯 - 🛒 Buy an item by ID with confirmation")
-        @app_commands.describe(item_id="The item ID to buy")
-        async def shop_buy(interaction: discord.Interaction, item_id: str):
-            item = get_item_from_any_store(item_id)
-            if not item:
+        @self.shop_group.command(name="buy", description="🍯 - 🛒 Buy an item by category and ID with confirmation")
+        @app_commands.describe(
+            category="The item category (e.g. trail, armor, weapon)",
+            item_id="The item ID to buy from that category"
+        )
+        async def shop_buy(interaction: discord.Interaction, category: str, item_id: str):
+            from store_utils import get_item_by_category
+
+            # Fetch items by category
+            items = get_item_by_category(category.lower())
+            if not items:
                 return await interaction.response.send_message(
-                    f"❌ Could not find any item called `{item_id}`. Please check `/shop open` for exact item names or IDs.",
+                    f"❌ No items found for category `{category}`.",
                     ephemeral=True
                 )
+
+            # Try to find item in that category
+            item = next((i for i in items if i.get("id", "").lower() == item_id.lower()), None)
+            if not item:
+                return await interaction.response.send_message(
+                    f"❌ No item with ID `{item_id}` found in category `{category}`.",
+                    ephemeral=True
+                )
+
             item_type = item.get("category", "").lower()
 
             # 🚫 Block direct title purchases
@@ -130,8 +145,9 @@ class StoreGroup(commands.Cog):
                 color=discord.Color.gold()
             )
 
-            view = ConfirmPurchaseView(interaction.user.id, item_id, item_type)
+            view = ConfirmPurchaseView(interaction.user.id, item["id"], item_type)
             await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+
 
         @self.shop_group.command(name="sell", description="🍯 - 💰 Sell an unequipped item for 60% of its value")
         @app_commands.describe(item_id="The ID of the item you want to sell")

@@ -308,12 +308,16 @@ def get_filtered_leg_armor(**kwargs):
 ##################################################
 
 def get_item_from_any_store(query: str):
-    """Searches all store items by ID or name (case-insensitive)."""
+    """Search all store items by ID or name (case-insensitive)."""
     query = query.lower()
     for item in get_all_items():
-        if item["id"].lower() == query or item["name"].lower() == query:
-            return item
+        if not isinstance(item, dict):
+            continue
+        if "id" in item and "name" in item:
+            if item["id"].lower() == query or item["name"].lower() == query:
+                return item
     return None
+
 
 async def setup(bot):
     pass  # This file only contains utility functions, no commands yet

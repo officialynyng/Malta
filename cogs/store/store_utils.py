@@ -103,19 +103,23 @@ def get_item_by_id(item_id):
 
 
 def get_item_by_category(category_name):
-    file_list = CATEGORY_TO_FILES.get(category_name, [])
+    file_list = CATEGORY_TO_FILES.get(category_name.lower(), [])
     items = []
     for filename in file_list:
         path = os.path.join(DATA_DIR, filename)
         if DEBUG:
             print(f"[DEBUG] Attempting to load: {path}")
         if os.path.exists(path):
-            with open(path, "r", encoding="utf-8") as f:
-                items.extend(json.load(f))
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    items.extend(json.load(f))
+            except json.JSONDecodeError as e:
+                print(f"[ERROR] Failed to load {path}: {e}")
         else:
             if DEBUG:
                 print(f"[DEBUG] File not found: {path}")
     return items
+
 
 # Get all available category names
 def get_category_names():
