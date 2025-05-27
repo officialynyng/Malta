@@ -263,12 +263,13 @@ class StoreGroup(commands.Cog):
 
 
     async def show_items_by_category(self, interaction, category_name):
-        items = get_item_by_category(category_name)
+        category_key = category_name.lower()
+        items = get_item_by_category(category_key)
         if not items:
             await interaction.response.send_message(f"No items found in category `{category_name}`.", ephemeral=True)
             return
 
-        is_title = category_name.lower() == "titles"
+        is_title = category_key == "titles"
 
         if is_title:
             pages = items  # One title per page
@@ -276,6 +277,7 @@ class StoreGroup(commands.Cog):
             pages = [items[i:i+5] for i in range(0, len(items), 5)]
 
         current_page = 0
+
 
         async def get_embed(page):
             if is_title:
