@@ -9,46 +9,46 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), "Items")
 
 
 CATEGORY_TO_FILES = {
-    "Armor": [
+    "armor": [
         "Armor/armor_hands.json",
         "Armor/armor_head.json",
         "Armor/armor_legs.json",
         "Armor/armor_shoulders.json",
         "Armor/armor_torso.json"
     ],
-    "Estates": ["Estates/estates.json"],
-    "Mounts": [
+    "estates": ["Estates/estates.json"],
+    "mounts": [
         "Mounts/mounts.json",
         "Mounts/mounts_armor.json"
     ],
-    "Pets": ["Pets/pets.json"],
-    "Shields": ["Shields/shields.json"],
-    "Titles": ["Titles/titles.json"],
-    "Trails": ["Trails/trails.json"],
-    "Utility": ["Utility/utility.json"],
-    "Weapons - 1H": [
+    "pets": ["Pets/pets.json"],
+    "shields": ["Shields/shields.json"],
+    "titles": ["Titles/titles.json"],
+    "trails": ["Trails/trails.json"],
+    "utility": ["Utility/utility.json"],
+    "weapons - 1H": [
         "Weapons_1H/weapons_1h_axe.json",
         "Weapons_1H/weapons_1h_mace.json",
         "Weapons_1H/weapons_1h_sword.json"
     ],
-    "Weapons - 2H": [
+    "weapons - 2h": [
         "Weapons_2h/weapons_2h_axe.json",
         "Weapons_2h/weapons_2h_mace.json",
         "Weapons_2h/weapons_2h_sword.json"
     ],
-    "Weapons - Arrows": [
+    "weapons - arrows": [
         "Weapons_Arrows/arrows_cut.json",
         "Weapons_Arrows/arrows_pierce.json"
     ],
-    "Weapons - Bolts": [
+    "weapons - Bolts": [
         "Weapons_Bolts/bolts_cut.json",
         "Weapons_Bolts/bolts_pierce.json"
     ],
-    "Weapons - Polearms": [
+    "weapons - polearms": [
         "Weapons_Polearm/weapons_polearm_2d.json",
         "Weapons_Polearm/weapons_polearm_4d.json"
     ],
-    "Weapons - Crossbows": ["Weapons_XBows/weapons_xbows.json"]
+    "weapons - crossbows": ["Weapons_XBows/weapons_xbows.json"]
 }
 
 STORE_CATEGORIES = list(CATEGORY_TO_FILES.keys())
