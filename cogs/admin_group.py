@@ -103,7 +103,7 @@ class AdminGroup(app_commands.Group):
         source_message_id: str,
         source_channel_id: str,
         new_content: Optional[str] = None,
-        keep_image: Optional[bool] = True
+        keep_image: bool = True
     ):
         member = interaction.user
         if not any(role.name == APPROVED_ROLE_NAME for role in member.roles):
