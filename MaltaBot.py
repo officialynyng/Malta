@@ -46,7 +46,6 @@ class MaltaBot(commands.Bot):
         await self.load_extension("cogs.gambling.gambling_group")
         await self.load_extension("cogs.gambling.gambling_reminder")
         
-        
         from cogs.exp_background import setup_crpg
         await setup_crpg(self)
 
