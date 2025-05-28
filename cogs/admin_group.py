@@ -85,12 +85,16 @@ class AdminGroup(app_commands.Group):
             await interaction.response.send_message(f"⚠️ Failed to create invite: {e}", ephemeral=True)
             print(f"[ERROR] Failed to create invite: {e}")
 
-    @app_commands.command(name="edit", description="🔒 - 🖊️ Replace a message’s content with content from another message.")
+    @app_commands.command(
+    name="edit",
+    description="🔒 - 🖊️ Replace a message’s content with content from another message."
+)
     @app_commands.describe(
         target_message_id="ID of the message to edit",
         source_message_id="ID of the message to copy content from",
         source_channel_id="ID of the channel where the source message is posted",
-        new_content="(Optional) Custom content to use instead of the source"
+        new_content="(Optional) Custom content to use instead of the source",
+        keep_image="(Optional) Keep the image from the source message? Defaults to True."
     )
     async def edit(
         self,
@@ -98,50 +102,60 @@ class AdminGroup(app_commands.Group):
         target_message_id: str,
         source_message_id: str,
         source_channel_id: str,
-        new_content: Optional[str] = None
+        new_content: Optional[str] = None,
+        keep_image: Optional[bool] = True
     ):
         member = interaction.user
-        approved = any(role.name == APPROVED_ROLE_NAME for role in member.roles)
-        if not approved:
+        if not any(role.name == APPROVED_ROLE_NAME for role in member.roles):
             await interaction.response.send_message("🚫 You are not authorized to use this command.", ephemeral=True)
             return
 
-        # Debug: Command initialization
-        print(f"[DEBUG] Edit command initiated by {member.display_name}")
+        print(f"[DEBUG] Edit command by {member.display_name}")
 
+        # Fetch source channel
+        source_channel = self.bot.get_channel(int(source_channel_id))
+        if source_channel is None:
+            try:
+                source_channel = await self.bot.fetch_channel(int(source_channel_id))
+            except discord.NotFound:
+                await interaction.response.send_message("❌ Source channel not found.", ephemeral=True)
+                return
+
+        # Fetch source message
         try:
-            # Fetch the source message from the specified source channel
-            source_channel = self.bot.get_channel(int(source_channel_id)) or await self.bot.fetch_channel(int(source_channel_id))
             source_message = await source_channel.fetch_message(int(source_message_id))
-            # Debug: Source message fetched
             print(f"[DEBUG] Source message fetched from channel ID {source_channel_id}")
         except discord.NotFound:
-            await interaction.response.send_message("❌ Source message or channel not found.", ephemeral=True)
+            await interaction.response.send_message("❌ Source message not found.", ephemeral=True)
             return
 
+        # Fetch target message (from current channel only)
         try:
-            # Fetch the target message from the current channel (assuming the target is in the same channel as command used)
             target_message = await interaction.channel.fetch_message(int(target_message_id))
-            # Debug: Target message fetched
             print(f"[DEBUG] Target message fetched from current channel")
         except discord.NotFound:
             await interaction.response.send_message("❌ Target message not found in this channel.", ephemeral=True)
             return
 
+        # Prepare content and optional attachments
         try:
-            # Use override content if provided, otherwise use content from source message
-            updated_content = new_content if new_content else source_message.content
-            await target_message.edit(content=updated_content)
-            # Debug: Message updated successfully
-            print(f"[DEBUG] Message updated successfully with new content")
+            content_to_use = new_content if new_content else source_message.content
+            files = []
+
+            if keep_image and source_message.attachments:
+                for attachment in source_message.attachments:
+                    file = await attachment.to_file()
+                    files.append(file)
+
+            await target_message.edit(content=content_to_use, attachments=files)
+            print(f"[DEBUG] Message edited with keep_image={keep_image}")
             await interaction.response.send_message("✅ Message updated successfully.", ephemeral=True)
+
         except discord.Forbidden:
             await interaction.response.send_message("🚫 I don't have permission to edit that message.", ephemeral=True)
         except discord.HTTPException as e:
+            print(f"[DEBUG] HTTPException: {e}")
             await interaction.response.send_message(f"⚠️ Failed to edit message: {e}", ephemeral=True)
-            # Debug: Failed to edit message
-            print(f"[DEBUG] Failed to edit message due to HTTPException: {e}")
-
 
 
     @app_commands.command(name="structure", description="🔒 - 📁 View the current bot file structure.")
