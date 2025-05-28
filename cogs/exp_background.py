@@ -90,7 +90,7 @@ class CRPGGroup(app_commands.Group):
 
             if exp_channel:
                 await exp_channel.send(
-                    f"🎖️ {interaction.user.mention} has retired and earned 🪙 **{heirloom_gain} heirloom point(s)**!\n"
+                    f"🪦 {interaction.user.mention} has retired and earned 🪙 **{heirloom_gain} heirloom point(s)**!\n"
                     f"Total retirements: `{new_retire_count}` → Multiplier: `{multiplier:.2f}x`\n"
                     f"All progress reset. Start your journey anew!\n"
                     f"{bonus_note}"
