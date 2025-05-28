@@ -36,7 +36,7 @@ class ShopReminder(commands.Cog):
     def cog_unload(self):
         self.hourly_shop_reminder.cancel()
 
-    @tasks.loop(hours=1)
+    @tasks.loop(hours=2)
     async def hourly_shop_reminder(self):
         channel = self.bot.get_channel(EXP_CHANNEL_ID)
         if not channel:
