@@ -8,7 +8,7 @@ from cogs.exp_utils import get_user_data, update_user_gold
 from cogs.database.gambling_stats_table import gambling_stats
 
 import os, json
-CONFIG_PATH = os.path.join(os.path.dirname(__file__), "../games_config.json")
+CONFIG_PATH = os.path.join(os.path.dirname(__file__), "games_config.json")
 with open(CONFIG_PATH) as f:
     GAMES = json.load(f)
 
