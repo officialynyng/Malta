@@ -1,5 +1,5 @@
 import sqlalchemy as db
-from cogs.exp_config import metadata
+from cogs.database.meta import metadata
 
 # Define the inventory table
 user_inventory = db.Table(

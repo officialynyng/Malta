@@ -9,9 +9,9 @@ if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
 engine = db.create_engine(DATABASE_URL)
-metadata = db.MetaData()
 
 # === Load tables AFTER defining shared metadata ===
+from cogs.database.meta import metadata
 from cogs.database.players_table import players
 from cogs.database.user_inventory_table import user_inventory
 from cogs.database.recent_activity_table import recent_activity

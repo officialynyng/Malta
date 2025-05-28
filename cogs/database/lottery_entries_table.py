@@ -1,13 +1,9 @@
-{
-  "lottery": {
-    "name": "Weekly Lottery",
-    "emoji": "🎟️",
-    "ticket_price": 100,
-    "draw_day": "Sunday",
-    "draw_hour": 18,
-    "description": "Buy tickets for a chance to win the entire pot! Draw happens every Sunday at 6 PM CST.",
-    "max_tickets_per_user": 100,
-    "min_participants": 3,
-    "announcement_channel": "EXP_CHANNEL_ID"
-  }
-}
+from sqlalchemy import Table, Column, BigInteger, Integer
+from cogs.database.meta import metadata
+
+lottery_entries = Table(
+    "lottery_entries",
+    metadata,
+    Column("user_id", BigInteger, primary_key=True),
+    Column("tickets", Integer, nullable=False, default=0),
+)

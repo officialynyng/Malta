@@ -1,5 +1,5 @@
 import sqlalchemy as db
-from cogs.exp_config import metadata
+from cogs.database.meta import metadata
 
 recent_activity = db.Table(
     "recent_activity", metadata,
