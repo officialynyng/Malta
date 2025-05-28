@@ -1,4 +1,5 @@
 import os
+import discord
 import sqlalchemy as db
 from sqlalchemy.sql import select
 from discord.ext import commands
@@ -20,8 +21,8 @@ from cogs.database.lottery_entries_table import lottery_entries
 from cogs.database.lottery_history_table import lottery_history
 
 # === Constants ===
-exp_channel = discord.Object(id=EXP_CHANNEL_ID)
 EXP_CHANNEL_ID = int(os.getenv("EXP_CHANNEL_ID"))
+exp_channel = discord.Object(id=EXP_CHANNEL_ID)
 print(f"[DEBUG]🗒️⚡ EXP_CHANNEL_ID loaded as: {EXP_CHANNEL_ID}")
 MAX_MULTIPLIER = 5
 TIME_DELTA = 86400  # 24 hours
