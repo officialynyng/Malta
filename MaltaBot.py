@@ -39,6 +39,13 @@ class MaltaBot(commands.Bot):
         await self.load_extension("cogs.character.user_inventory_group")
         await self.load_extension("cogs.character.user_trigger")
         await setup_voice_exp(self)
+        print("Loading 🎟️Lottery cogs...")
+        await self.load_extension("cogs.gambling.lottery.lottery_group")
+        await self.load_extension("cogs.gambling.lottery.lottery_reminder")
+        print("Loading ♠️ ♥️ ♦️ ♣️Gambling cogs...")
+        await self.load_extension("cogs.gambling.gambling_group")
+        await self.load_extension("cogs.gambling.gambling_reminder")
+        
         
         from cogs.exp_background import setup_crpg
         await setup_crpg(self)

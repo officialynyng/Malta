@@ -31,6 +31,7 @@ SHOP_REMINDER_VARIANTS = [
 class ShopReminder(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.hourly_shop_reminder.before_loop(self.bot.wait_until_ready)
         self.hourly_shop_reminder.start()
 
     def cog_unload(self):
@@ -53,19 +54,6 @@ class ShopReminder(commands.Cog):
         embed.set_footer(text="The market is always open! Trails are out and functional! Take a look!")
 
         await channel.send(content=variant["line"], embed=embed)
-
-    @hourly_shop_reminder.before_loop
-    async def before_hourly_shop_reminder(self):
-        await self.bot.wait_until_ready()
-
-        # Align to the top of the next hour
-        now = datetime.datetime.utcnow()
-        next_hour = (now + datetime.timedelta(hours=1)).replace(minute=0, second=0, microsecond=0)
-        wait_seconds = (next_hour - now).total_seconds()
-
-        if wait_seconds > 0:
-            await asyncio.sleep(wait_seconds)
-
 
 async def setup(bot):
     await bot.add_cog(ShopReminder(bot))
