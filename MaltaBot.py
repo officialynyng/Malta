@@ -28,6 +28,7 @@ class MaltaBot(commands.Bot):
         await self.load_extension("cogs.exp_background")
         await self.load_extension("cogs.ActivityAnalyzer")
         await self.load_extension("cogs.exp_multi_autoupdate")
+        await self.load_extension("cogs.exp_reminder")
         print("Loading 🍯Store cogs...")
         await self.load_extension("cogs.store.store_utils")
         await self.load_extension("cogs.store.store_upkeep")
