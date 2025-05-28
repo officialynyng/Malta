@@ -19,7 +19,7 @@ class EXPReminder(commands.Cog):
             return
 
         embed = discord.Embed(
-            title="⚔️ Continue your legacy.",
+            title="⚔️ Hit level 31 or higher?",
             description="**Use** `/crpg retire` to continue your legacy, and earn additional  (🧬) generational multipliers. (Up to 1.48) \n**Use** `/help` for more commands.",
             color=discord.Color.red()()
         )
