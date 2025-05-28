@@ -91,38 +91,77 @@ class GamblingButtonView(View):
             return await interaction.response.send_message("❌ Not your game!", ephemeral=True)
         await interaction.response.edit_message(content="❌ Game cancelled.", view=None)
 
+class GameSelectionView(View):
+    def __init__(self, user_id, user_gold):
+        super().__init__(timeout=60)
+        self.user_id = user_id
+        self.user_gold = user_gold
+
+        self.select = discord.ui.Select(
+            placeholder="🎲 Choose a gambling game...",
+            options=[
+                discord.SelectOption(
+                    label=game["name"],
+                    value=key,
+                    description=game["description"],
+                    emoji=game.get("emoji", "🎰")
+                ) for key, game in GAMES.items()
+            ],
+            custom_id="gamble_game_select"
+        )
+        self.select.callback = self.select_callback
+        self.add_item(self.select)
+
+    async def select_callback(self, interaction: Interaction):
+        if interaction.user.id != self.user_id:
+            return await interaction.response.send_message("❌ Not your selection!", ephemeral=True)
+
+        game_key = self.select.values[0]
+        game = GAMES[game_key]
+
+        min_bet = game.get("min_bet", 1)
+        suggestion = max(min_bet, min(100, self.user_gold // 10))
+
+        if DEBUG:
+            print(f"[DEBUG🎰] {interaction.user.display_name} selected {game_key}. Suggested bet: {suggestion}")
+
+        embed = Embed(
+            title=f"{game['emoji']} {game['name']}",
+            description=(
+                f"{game['description']}\n\n"
+                f"💰 Min Bet: **{min_bet}** gold\n"
+                f"🎯 Odds: **{int(game['odds'] * 100)}%**\n"
+                f"🏆 Payout: **x{game['payout']}**\n\n"
+                f"Use `/bet {game_key} <amount>` to continue — suggested: **{suggestion}** gold."
+            ),
+            color=discord.Color.red()
+        )
+        embed.set_footer(text=f"You have {self.user_gold} gold.")
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+
+
 class GamblingGroup(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="gamble", description="🎰 Choose a game and place your bet!")
-    @app_commands.describe(game="Game key from the list", amount="Amount of gold to bet")
-    async def gamble(self, interaction: Interaction, game: str, amount: int):
-        if game not in GAMES:
-            await interaction.response.send_message("❌ Invalid game.", ephemeral=True)
+    @app_commands.command(name="gamble", description="♠️ ♥️ ♦️ ♣️ Open the gambling hall and choose your game!")
+    async def gamble(self, interaction: Interaction):
+        user_data = get_user_data(interaction.user.id)
+        if not user_data:
+            await interaction.response.send_message("❌ Could not fetch user data.", ephemeral=True)
             return
 
-        if amount <= 0:
-            await interaction.response.send_message("❌ Bet must be a positive amount.", ephemeral=True)
-            return
-
-        game_info = GAMES[game]
-        min_bet = game_info.get("min_bet", 1)
-        if amount < min_bet:
-            await interaction.response.send_message(f"❌ Minimum bet for this game is {min_bet} gold.", ephemeral=True)
-            return
-        if DEBUG:
-            print(f"[DEBUG🎰] {interaction.user.display_name} initiated '{game}' for {amount} gold")
-
-        view = GamblingButtonView(interaction.user.id, game, amount)
+        view = GameSelectionView(interaction.user.id, user_data["gold"])
         embed = Embed(
-            title=f"{game_info['emoji']} {game_info['name']}",
-            description=f"{game_info['description']}\n\nYou are betting **{amount}** gold.",
+            title="🎰 Welcome to the Gambling Hall",
+            description="Pick your game from the dropdown menu to begin betting!",
             color=discord.Color.red()
         )
+        embed.set_footer(text=f"🎲 Gold: {user_data['gold']}")
         await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 
-    @app_commands.command(name="gamble_stats", description="📊 View your gambling history and performance")
+
+    @app_commands.command(name="gamble_stats", description="🎰 - 📊 View your gambling history and performance")
     async def gamble_stats(self, interaction: Interaction):
         user_id = interaction.user.id
         with engine.begin() as conn:
