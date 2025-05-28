@@ -14,7 +14,7 @@ import os
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), "games_config.json")
 with open(CONFIG_PATH) as f:
     GAMES = json.load(f)
-    
+
 DEBUG = True
 
 class GamblingButtonView(View):
@@ -24,7 +24,7 @@ class GamblingButtonView(View):
         self.game_key = game_key
         self.amount = amount
 
-    @Button(label="Play", style=ButtonStyle.red, emoji="🎰")
+    @discord.ui.button(label="Play", style=ButtonStyle.red, emoji="🎰")
     async def play(self, interaction: Interaction, button: Button):
         if interaction.user.id != self.user_id:
             return await interaction.response.send_message("❌ Not your game!", ephemeral=True)
@@ -85,7 +85,7 @@ class GamblingButtonView(View):
 
         await interaction.response.edit_message(embed=embed, view=None)
 
-    @Button(label="Cancel", style=ButtonStyle.grey, emoji="❌")
+    @discord.ui.button(label="Cancel", style=ButtonStyle.grey, emoji="❌")
     async def cancel(self, interaction: Interaction, button: Button):
         if interaction.user.id != self.user_id:
             return await interaction.response.send_message("❌ Not your game!", ephemeral=True)
