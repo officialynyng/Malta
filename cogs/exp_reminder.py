@@ -23,21 +23,10 @@ class EXPReminder(commands.Cog):
             description="**Use** `/crpg retire` to continue your legacy, and earn additional  (🧬) generational multipliers. (Up to 1.48) \n**Use** `/help` for more commands.",
             color=discord.Color.red()
         )
-        embed.set_thumbnail(url="http://theknightsofmalta.net/wp-content/uploads/2025/05/officialretire.png")
+        embed.set_image(url="http://theknightsofmalta.net/wp-content/uploads/2025/05/officialretire.png")
         embed.set_footer(text="Retirement unlocks heirloom points starting at level 31.")
 
-        await channel.send(content="## *The steward bows low and gestures toward the retirement ledger...*", embed=embed)
-
-    @exp_reminder.before_loop
-    async def before_exp_reminder(self):
-        await self.bot.wait_until_ready()
-
-        now = datetime.datetime.utcnow()
-        next_hour = (now + datetime.timedelta(hours=1)).replace(minute=0, second=0, microsecond=0)
-        wait_seconds = (next_hour - now).total_seconds()
-
-        if wait_seconds > 0:
-            await asyncio.sleep(wait_seconds)
+        await channel.send(content="", embed=embed)
 
 
 async def setup(bot):
