@@ -107,28 +107,44 @@ async def on_member_remove(member):
 async def help_command(interaction: discord.Interaction):
     help_text = (
         "# **🏴☩ Malta Bot**\n\n"
-        "## __[CRPG]__\n\n"
-        "⚗️📊 /crpg stats - View your current level, EXP, gold, and retirement progress.\n\n"
-        "⚗️🧾 /crpg profile <user> - View another player's profile.\n\n"
-        "⚗️🏆 /crpg leaderboard - Show the top 10 players by level and EXP.\n\n"
-        "⚗️🪦 /crpg retire - Retire your character between levels 31–38 for permanent heirloom bonuses.\n\n"
-        "⚗️⚡ /crpg cooldown - Check how much time remains before you can earn your next experience & gold tick.\n\n"
-        "⚗️🏔️ /crpg multipliers — View your current daily and generational multipliers.\n\n"
+
+        "## __[CRPG SYSTEM]__\n\n"
+        "⚗️📊 `/crpg stats` — View your current level, EXP, gold, and retirement progress.\n"
+        "⚗️🧾 `/crpg profile <user>` — View another player's profile.\n"
+        "⚗️🏆 `/crpg leaderboard` — Show the top 10 players by level and EXP.\n"
+        "⚗️🪦 `/crpg retire` — Retire your character (Lvl 31–38) to earn permanent (🧬) heirloom bonuses.\n"
+        "⚗️⚡ `/crpg cooldown` — Check when you'll next earn EXP & gold.\n"
+        "⚗️🏔️ `/crpg multipliers` — View your daily and generational multipliers.\n\n"
+
+        "## __[GAMBLING]__\n\n"
+        "♠️♥️♦️♣️ `/gamble` — Open the gambling hall and choose a game via dropdown.\n"
+        "🎰 `/bet <game> <amount>` — Place a gold bet on a selected game.\n"
+        "📊 `/gamble_stats` — View your gambling history and performance.\n\n"
+
+        "## __[LOTTERY]__\n\n"
+        "🎟️ `/lottery <amount>` — Buy weekly lottery tickets (100 gold each).\n"
+        "🏁 `/lottery_stats` — See how many tickets you’ve bought over time.\n"
+        "🥇 `/lottery_leaderboard` — See who has won the most gold from the lottery.\n\n"
+
         "## __[SHOP]__\n\n"
-        "🍯🛒 /shop open - Open Malta's CRPG item shop UI.\n\n"
-        "🍯🛍️ /shop buy <category> <item_id> - Purchase an item from the shop using its category and ID.\n\n"
-        "🍯🔍 /shop filter <damage_type> <weapon_type> - Filter shop weapons by damage and type.\n\n"
-        "🍯📘 /shop info <item_id> - View detailed information about a specific item.\n\n"
-        "🍯💰 /shop sell <item_id> - Sell an unequipped item for 60% of its value.\n\n"
-        "🍯🎲 /shop roll - Roll for a random, unclaimed Title.\n\n"
+        "🍯🛒 `/shop open` — Open Malta’s CRPG item shop interface.\n"
+        "🍯🛍️ `/shop buy <category> <item_id>` — Purchase a shop item.\n"
+        "🍯🔍 `/shop filter <damage_type> <weapon_type>` — Filter weapons by traits.\n"
+        "🍯📘 `/shop info <item_id>` — View details about a specific item.\n"
+        "🍯💰 `/shop sell <item_id>` — Sell unequipped item for 60 percent gold refund.\n"
+        "🍯🎲 `/shop roll` — Roll for a random, unclaimed **Title** (one-of-a-kind).\n\n"
+
         "## __[INVENTORY]__\n\n"
-        "👤🎒 /user inventory - View all your equipped and unequipped items.\n\n"
-        "👤✅📦 /user equip <item_id> - Equip an item from your inventory.\n\n"
-        "👤❌📦 /user unequip <item_id> - Unequip an equipped item (titles cannot be unequipped).\n\n"
-        "👤🎁 /user gift <item_id> <@user> - Gift an unequipped item to another player.\n\n"
+        "👤🎒 `/user inventory` — View your current equipped/unequipped items.\n"
+        "👤✅ `/user equip <item_id>` — Equip an item (1 per type, 4 total for weapons/ammo).\n"
+        "👤❌ `/user unequip <item_id>` — Unequip items (titles cannot be unequipped).\n"
+        "👤🎁 `/user gift <item_id> <@user>` — Gift an unequipped item to another player.\n\n"
+
         "## __[UTILITY]__\n\n"
-        "📕 /help - Show this help message.\n\n"
-    )
+        "📕 `/help` — Show this help message.\n"
+        "📢 System messages and announcements appear in <#1351946730886664325>."
+
+     )
     await interaction.response.send_message(help_text, ephemeral=True)
 
 bot.run(TOKEN)
