@@ -112,14 +112,30 @@ class AdminGroup(app_commands.Group):
 
         print(f"[DEBUG] Edit command by {member.display_name}")
 
-        # Fetch source channel
-        source_channel = self.bot.get_channel(int(source_channel_id))
-        if source_channel is None:
-            try:
-                source_channel = await self.bot.fetch_channel(int(source_channel_id))
-            except discord.NotFound:
-                await interaction.response.send_message("❌ Source channel not found.", ephemeral=True)
-                return
+        # Fetch source channel with debug logging
+        try:
+            source_channel_id_int = int(source_channel_id)
+            print(f"[DEBUG] Trying to resolve source_channel_id: {source_channel_id_int}")
+
+            source_channel = self.bot.get_channel(source_channel_id_int)
+            if source_channel is None:
+                print("[DEBUG] Not in cache — attempting API fetch...")
+                source_channel = await self.bot.fetch_channel(source_channel_id_int)
+
+            print(f"[DEBUG] Source channel resolved: {source_channel.name} ({source_channel.id})")
+
+        except discord.NotFound:
+            print("[DEBUG] ❌ Channel not found.")
+            await interaction.response.send_message("❌ Source channel not found.", ephemeral=True)
+            return
+        except discord.Forbidden:
+            print("[DEBUG] 🚫 Missing permissions for source channel.")
+            await interaction.response.send_message("🚫 Bot does not have permission to access the source channel.", ephemeral=True)
+            return
+        except Exception as e:
+            print(f"[DEBUG] ⚠️ Unexpected error resolving channel: {e}")
+            await interaction.response.send_message(f"⚠️ Unexpected error resolving source channel: {e}", ephemeral=True)
+            return
 
         # Fetch source message
         try:
@@ -169,17 +185,35 @@ class AdminGroup(app_commands.Group):
             "├── `MaltaBot.py` *(main bot entry point)*\n"
             "├── `requirements.txt` *(Python dependencies)*\n"
             "├── `Procfile` *(Heroku process declaration)*\n"
+            "├── `Readme.md` *(Project overview)*\n"
             "└── `cogs/` *(modular bot components)*\n"
-            "    ├── `ActivityAnalyzer.py` *(voice EXP tracking and analysis)*"
-            "    ├── `admin_config.py` *(variables for Heroku)*\n"
-            "    ├── `admin_group.py` *(Admin Group)*\n"
-            "    ├── `exp_background.py` *(CRPG group + background setup)*\n"
-            "    ├── `exp_commands.py` *(Discord commands and event listeners)*\n"
-            "    ├── `exp_config.py` *(constants, DB engine, and schema)*\n"
-            "    ├── `exp_engine.py` *(EXP handling, multiplier logic)*\n"
-            "    ├── `exp_utils.py` *(leveling formulas, calculations)*\n"
-            "    └── `exp_voice.py` *(CRPG Voice Recognition + Reward)*\n"
+            "    ├── `admin_group.py` *(Admin commands)*\n"
+            "    ├── `admin_config.py` *(Role, owner, and guild config)*\n"
+            "    ├── `exp_background.py` *(Background CRPG handling)*\n"
+            "    ├── `exp_commands.py` *(Slash commands and events)*\n"
+            "    ├── `exp_config.py` *(Constants, DB engine, schema)*\n"
+            "    ├── `exp_engine.py` *(EXP, gold, and multiplier logic)*\n"
+            "    ├── `exp_multi_autoupdate.py` *(Daily multiplier scheduler)*\n"
+            "    ├── `exp_reminder.py` *(Retirement reminder embed)*\n"
+            "    ├── `exp_utils.py` *(Leveling, progression formulas)*\n"
+            "    ├── `exp_voice.py` *(Voice activity EXP rewards)*\n"
+            "    ├── `ActivityAnalyzer.py` *(Voice XP detection logic)*\n"
+            "    ├── `store/` *(Shop system, items, trails, admin tools)*\n"
+            "    │   ├── `store_group.py` *(User-facing shop interface)*\n"
+            "    │   ├── `store_admin_group.py` *(Admin shop tools)*\n"
+            "    │   ├── `store_reminder.py` *(Hourly shop reminder)*\n"
+            "    │   ├── `store_search.py` *(Item lookups & previews)*\n"
+            "    │   ├── `store_upkeep.py` *(Item state maintenance)*\n"
+            "    │   ├── `store_utils.py` *(Inventory and SQL handling)*\n"
+            "    │   └── `Items/` *(JSON-backed item directories)*\n"
+            "    │       ├── `Titles/`, `Trails/`, `Armor/`, etc.\n"
+            "    └── `character/` *(Inventory and equipment logic)*\n"
+            "        ├── `user_inventory_group.py` *(User slash commands)*\n"
+            "        ├── `user_inventory.py` *(Inventory SQL logic)*\n"
+            "        ├── `inventory_utils.py` *(Helper utilities)*\n"
+            "        └── `user_trigger.py` *(On-message equip logic)*\n"
         )
+
 
         await interaction.response.send_message(structure_text, ephemeral=True)
 
