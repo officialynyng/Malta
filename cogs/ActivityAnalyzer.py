@@ -1,4 +1,5 @@
 import time
+import os
 import discord
 from discord.ext import tasks, commands
 from sqlalchemy import select
