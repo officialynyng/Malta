@@ -244,14 +244,54 @@ class GamblingPlayButton(discord.ui.Button):
             return await interaction.response.send_message("❌ Not your session!", ephemeral=True)
 
         amount = self.get_amount()
+        user_data = get_user_data(self.user_id)
 
-        # Delegate to the logic used in your GamblingButtonView (copy/paste play logic here)
-        # OR you can import and refactor a shared function to handle actual game logic
-        await interaction.response.send_message(
-            f"🎰 You bet **{amount}** gold on **{self.game_key}**. (Placeholder - implement logic)",
-            ephemeral=True
-        )
+        now = int(time.time())
+        if user_data.get("last_gamble_ts") and now - user_data["last_gamble_ts"] < 5:
+            return await interaction.response.send_message("⏳ You must wait a few seconds before gambling again.", ephemeral=True)
 
+        if self.game_key.startswith("slot_machine:"):
+            variant = self.game_key.split(":")[1]
+            game = GAMES["slot_machine"]["variants"].get(variant)
+            if not game:
+                return await interaction.response.send_message("❌ Invalid slot machine variant.", ephemeral=True)
+        else:
+            game = GAMES[self.game_key]
+
+        if user_data["gold"] < amount:
+            return await interaction.response.send_message(f"❌ You need at least {amount} gold to play.", ephemeral=True)
+
+        win = random.random() < game["odds"]
+        payout = int(amount * game["payout"]) if win else 0
+        net_change = payout - amount
+        user_data["gold"] += net_change
+        user_data["last_gamble_ts"] = now
+        update_user_gold(self.user_id, user_data["gold"])
+
+        # Record stats
+        with engine.begin() as conn:
+            existing = conn.execute(select(gambling_stats).where(gambling_stats.c.user_id == self.user_id)).fetchone()
+            values = {
+                "total_bets": (existing.total_bets + 1) if existing else 1,
+                "total_won": (existing.total_won + payout) if win and existing else (payout if win else 0),
+                "total_lost": (existing.total_lost + amount) if not win and existing else (0 if win else amount),
+                "net_winnings": (existing.net_winnings + net_change) if existing else net_change,
+                "last_gamble_ts": now
+            }
+            if existing:
+                conn.execute(update(gambling_stats).where(gambling_stats.c.user_id == self.user_id).values(**values))
+            else:
+                conn.execute(insert(gambling_stats).values(user_id=self.user_id, **values))
+
+        outcome = f"✅ You won {payout} gold!" if win else f"💀 You lost {amount} gold."
+        await interaction.response.send_message(outcome, ephemeral=True)
+
+        exp_channel = interaction.client.get_channel(EXP_CHANNEL_ID)
+        if amount >= 1000 and exp_channel:
+            await exp_channel.send(
+                f"{game['emoji']} **{interaction.user.display_name}** wagered **{amount}** gold on {game['name']} and "
+                f"{'won 🎉' if win else 'lost 💀'} **{abs(net_change)}** gold!"
+            )
 
 
 class BetAmountDropdown(discord.ui.Select):
@@ -268,14 +308,11 @@ class BetAmountDropdown(discord.ui.Select):
             return await interaction.response.send_message("❌ Not your selection!", ephemeral=True)
 
         self.parent_view.amount = int(self.values[0])
-        self.parent_view.button.amount = self.parent_view.amount  # ← THIS is key
+        self.parent_view.play_button.amount = self.parent_view.amount # ← THIS is key
         await interaction.response.send_message(
             f"✅ Bet amount set to **{self.values[0]} gold**. Press play when ready!",
             ephemeral=True
         )
-
-
-
 
 class GamblingGroup(commands.Cog):
     def __init__(self, bot):
