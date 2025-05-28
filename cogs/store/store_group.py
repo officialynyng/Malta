@@ -108,7 +108,6 @@ class StoreGroup(commands.Cog):
             item_id="The item ID to buy from that category"
         )
         async def shop_buy(interaction: discord.Interaction, category: str, item_id: str):
-            from cogs.store.store_utils import get_item_by_category
 
             # Fetch items by category
             items = get_item_by_category(category.lower())
@@ -153,7 +152,8 @@ class StoreGroup(commands.Cog):
         async def shop_sell(interaction: discord.Interaction, item_id: str):
             user_id = interaction.user.id
 
-            from cogs.character.user_inventory import user_inventory, engine
+            from cogs.exp_config import engine
+            from cogs.database.user_inventory_table import user_inventory
             from cogs.store.store_utils import get_item_by_id, get_user_data, update_user_data, remove_item_from_inventory
 
             if DEBUG:

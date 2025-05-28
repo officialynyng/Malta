@@ -1,12 +1,14 @@
 import time
 import discord
+import asyncio
 from discord.ext import commands
 from sqlalchemy.sql import select, update
-from cogs.exp_config import EXP_CHANNEL_ID
+
+from cogs.exp_config import EXP_CHANNEL_ID, engine
 from cogs.exp_utils import players
-from cogs.character.user_inventory import user_inventory, engine
+from cogs.database.user_inventory_table import user_inventory
 from cogs.store.store_utils import get_item_by_id
-import asyncio
+
 TRAIL_COOLDOWN_DEFAULT = 3600  # 1 Hour
 TITLE_COOLDOWN = 86400         # 24 hours
 DEBUG = True

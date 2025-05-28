@@ -3,15 +3,14 @@ import io
 import os
 import asyncio
 import sys
-import time
 from typing import (Optional,)
 from discord import (app_commands,)
 from cogs.exp_engine import (on_user_comment,)
 from cogs.exp_utils import (get_all_user_ids, get_user_data, update_user_data,)
 from cogs.admin_config import (APPROVED_ROLE_NAME, OWNER_ID, GUILD_ID)
-from cogs.exp_config import (
-    db
-)
+from cogs.exp_config import engine, metadata
+import sqlalchemy as db
+
 
 class AdminGroup(app_commands.Group):
     def __init__(self, bot):
@@ -163,10 +162,6 @@ class AdminGroup(app_commands.Group):
             await interaction.response.send_message("❌ Target message not found in the specified channel.", ephemeral=True)
             return
 
-            print(f"[DEBUG] Target message fetched from current channel")
-        except discord.NotFound:
-            await interaction.response.send_message("❌ Target message not found in this channel.", ephemeral=True)
-            return
 
         # Prepare content and optional attachments
         try:
@@ -438,7 +433,8 @@ class AdminGroup(app_commands.Group):
                 engine = cog.engine
                 table = cog.recent_activity
                 with engine.begin() as conn:
-                    results = conn.execute(db.select(table)).fetchall()
+                    from sqlalchemy import select
+                    results = conn.execute(select(table)).fetchall()
                     if not results:
                         await interaction.response.send_message("🧼 No users in recent activity queue. Nothing to process.", ephemeral=True)
                         return
