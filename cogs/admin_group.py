@@ -91,6 +91,7 @@ class AdminGroup(app_commands.Group):
 )
     @app_commands.describe(
         target_message_id="ID of the message to edit",
+        target_channel_id="ID of the channel containing the message to edit",
         source_message_id="ID of the message to copy content from",
         source_channel_id="ID of the channel where the source message is posted",
         new_content="(Optional) Custom content to use instead of the source",
@@ -100,6 +101,7 @@ class AdminGroup(app_commands.Group):
         self,
         interaction: discord.Interaction,
         target_message_id: str,
+        target_channel_id: str,
         source_message_id: str,
         source_channel_id: str,
         new_content: Optional[str] = None,
@@ -145,9 +147,22 @@ class AdminGroup(app_commands.Group):
             await interaction.response.send_message("❌ Source message not found.", ephemeral=True)
             return
 
-        # Fetch target message (from current channel only)
+        # Fetch target channel
         try:
-            target_message = await interaction.channel.fetch_message(int(target_message_id))
+            target_channel = self.bot.get_channel(int(target_channel_id)) or await self.bot.fetch_channel(int(target_channel_id))
+            print(f"[DEBUG] Target channel resolved: {target_channel.id}")
+        except Exception as e:
+            await interaction.response.send_message(f"❌ Failed to fetch target channel: {e}", ephemeral=True)
+            return
+
+        # Fetch target message
+        try:
+            target_message = await target_channel.fetch_message(int(target_message_id))
+            print(f"[DEBUG] Target message fetched from channel {target_channel.id}")
+        except discord.NotFound:
+            await interaction.response.send_message("❌ Target message not found in the specified channel.", ephemeral=True)
+            return
+
             print(f"[DEBUG] Target message fetched from current channel")
         except discord.NotFound:
             await interaction.response.send_message("❌ Target message not found in this channel.", ephemeral=True)
