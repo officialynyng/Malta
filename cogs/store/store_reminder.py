@@ -50,7 +50,7 @@ class ShopReminder(commands.Cog):
             description="**Use** `/shop open` to browse the wares.\n**Use** `/help` for further details.",
             color=discord.Color.gold()
         )
-        embed.set_thumbnail(url=variant["img"])
+        embed.set_image(url=variant["img"])
         embed.set_footer(text="The market is always open! Trails are out and functional! Take a look!")
 
         await channel.send(content=variant["line"], embed=embed)
