@@ -211,15 +211,16 @@ class BetAmountSelectionView(View):
         self.amount = min_bet
 
         self.dropdown = BetAmountDropdown(self)
-        self.button = GamblingButtonView(user_id, game_key, self.amount)
+        self.play_button = GamblingPlayButton(user_id, game_key, lambda: self.amount)
 
         self.add_item(self.dropdown)
-        self.add_item(self.button)
+        self.add_item(self.play_button)
         self.add_item(RefreshGoldButton(user_id))
+
 
 class RefreshGoldButton(discord.ui.Button):
     def __init__(self, user_id):
-        super().__init__(label="Refresh Gold", emoji="🔄", style=discord.ButtonStyle.grey)
+        super().__init__(label="Refresh Gold View", emoji="🔄", style=discord.ButtonStyle.grey)
         self.user_id = user_id
 
     async def callback(self, interaction: Interaction):
@@ -229,6 +230,26 @@ class RefreshGoldButton(discord.ui.Button):
         user_data = get_user_data(self.user_id)
         await interaction.response.send_message(
             f"💰 You now have **{user_data['gold']}** gold.", ephemeral=True
+        )
+
+class GamblingPlayButton(discord.ui.Button):
+    def __init__(self, user_id, game_key, get_amount_callback):
+        super().__init__(label="Play", emoji="🎰", style=discord.ButtonStyle.red)
+        self.user_id = user_id
+        self.game_key = game_key
+        self.get_amount = get_amount_callback  # A function that returns the current amount
+
+    async def callback(self, interaction: Interaction):
+        if interaction.user.id != self.user_id:
+            return await interaction.response.send_message("❌ Not your session!", ephemeral=True)
+
+        amount = self.get_amount()
+
+        # Delegate to the logic used in your GamblingButtonView (copy/paste play logic here)
+        # OR you can import and refactor a shared function to handle actual game logic
+        await interaction.response.send_message(
+            f"🎰 You bet **{amount}** gold on **{self.game_key}**. (Placeholder - implement logic)",
+            ephemeral=True
         )
 
 
