@@ -9,10 +9,12 @@ from sqlalchemy import select, insert, update
 from cogs.exp_config import engine, EXP_CHANNEL_ID
 from cogs.database.gambling_stats_table import gambling_stats
 from cogs.exp_utils import get_user_data, update_user_gold
+import os
 
-with open("games_config.json") as f:
+CONFIG_PATH = os.path.join(os.path.dirname(__file__), "games_config.json")
+with open(CONFIG_PATH) as f:
     GAMES = json.load(f)
-
+    
 DEBUG = True
 
 class GamblingButtonView(View):
