@@ -8,7 +8,7 @@ import os
 from cogs.gambling.bet_amount import BetAmountDropdown, GamblingPlayButton
 from cogs.exp_utils import get_user_data, get_user_data
 
-CONFIG_PATH = os.path.join(os.path.dirname(__file__), "../games_config.json")
+CONFIG_PATH = os.path.join(os.path.dirname(__file__), "games_config.json")
 with open(CONFIG_PATH) as f:
     GAMES = json.load(f)
 
