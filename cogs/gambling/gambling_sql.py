@@ -1,1 +1,0 @@
-# SQLAlchemy table(s) for tracking user gambling history or cooldowns
