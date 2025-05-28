@@ -222,12 +222,19 @@ class AdminGroup(app_commands.Group):
             "    │   ├── `store_utils.py` *(Inventory and SQL handling)*\n"
             "    │   └── `Items/` *(JSON-backed item directories)*\n"
             "    │       ├── `Titles/`, `Trails/`, `Armor/`, etc.\n"
+            "    ├── `gambling/` *(Wagering system, games of chance)*\n"
+            "    │   ├── `gambling_commands.py` *(Slash commands: /gamble, /coinflip, etc.)*\n"
+            "    │   ├── `gambling_utils.py` *(Game logic, RNG, payout handling)*\n"
+            "    │   ├── `gambling_config.py` *(Odds, cooldowns, and constants)*\n"
+            "    │   ├── `gambling_reminder.py` *(Moody gamble reminder embeds)*\n"
+            "    │   └── `gambling_sql.py` *(User gambling stats and cooldowns)*\n"
             "    └── `character/` *(Inventory and equipment logic)*\n"
             "        ├── `user_inventory_group.py` *(User slash commands)*\n"
             "        ├── `user_inventory.py` *(Inventory SQL logic)*\n"
             "        ├── `inventory_utils.py` *(Helper utilities)*\n"
             "        └── `user_trigger.py` *(On-message equip logic)*\n"
         )
+
 
 
         await interaction.response.send_message(structure_text, ephemeral=True)
