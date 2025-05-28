@@ -44,7 +44,7 @@
   },
   "highlow": {
     "name": "High-Low",
-    "emoji": "📈📉",
+    "emoji": "📈",
     "odds": 0.5,
     "payout": 2,
     "description": "Guess whether the next number (1–100) will be higher or lower than 50."
