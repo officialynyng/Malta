@@ -29,8 +29,19 @@ class GamblingButtonView(View):
         if interaction.user.id != self.user_id:
             return await interaction.response.send_message("❌ Not your game!", ephemeral=True)
 
-        game = GAMES[self.game_key]
+        if self.game_key.startswith("slot_machine:"):
+            variant = self.game_key.split(":")[1]
+            game = GAMES["slot_machine"]["variants"].get(variant)
+            if not game:
+                return await interaction.response.send_message("❌ Invalid slot machine variant.", ephemeral=True)
+
+        else:
+            game = GAMES[self.game_key]
         user_data = get_user_data(self.user_id)
+
+        now = int(time.time())
+        if user_data.get("last_gamble_ts") and now - user_data["last_gamble_ts"] < 5:
+            return await interaction.response.send_message("⏳ You must wait a few seconds before gambling again.", ephemeral=True)
 
         if DEBUG:
             print(f"[DEBUG🎰] User {self.user_id} has {user_data['gold']} gold before betting {self.amount}")
@@ -40,15 +51,16 @@ class GamblingButtonView(View):
             return await interaction.response.send_message("❌ No user data found.", ephemeral=True)
 
         max_loss = self.amount * (1 - game["odds"])
-        if user_data["gold"] < max_loss:
+        if user_data["gold"] < self.amount:
             return await interaction.response.send_message(
-                f"❌ You need at least {int(max_loss)} gold to afford this bet.", ephemeral=True
+                f"❌ You need at least {self.amount} gold to place this bet.", ephemeral=True
             )
 
         win = random.random() < game["odds"]
         payout = int(self.amount * game["payout"]) if win else 0
         net_change = payout - self.amount
         user_data["gold"] += net_change
+        user_data["last_gamble_ts"] = now
         update_user_gold(self.user_id, user_data["gold"])
         if DEBUG:
             print(f"[DEBUG🎰] Payout: {payout}, Net Change: {net_change}, Final Gold: {user_data['gold']}")
@@ -97,18 +109,33 @@ class GameSelectionView(View):
         self.user_id = user_id
         self.user_gold = user_gold
 
-        self.select = discord.ui.Select(
-            placeholder="🎲 Choose a gambling game...",
-            options=[
-                discord.SelectOption(
+        options = []
+
+        for key, game in GAMES.items():
+            if key == "slot_machine" and "variants" in game:
+                for variant_key, variant in game["variants"].items():
+                    options.append(discord.SelectOption(
+                        label=variant['name'],
+                        value=f"slot_machine:{variant_key}",
+                        description=variant["description"][:100],
+                        emoji=variant.get("emoji", "🎰")
+                    ))
+            else:
+                emoji = game.get("emoji", "🎰")
+                emoji = emoji if isinstance(emoji, str) and len(emoji) <= 2 else None
+                options.append(discord.SelectOption(
                     label=game["name"],
                     value=key,
-                    description=game["description"],
-                    emoji=game.get("emoji", "🎰")
-                ) for key, game in GAMES.items()
-            ],
+                    description=game["description"][:100],
+                    emoji=emoji
+                ))
+
+        self.select = discord.ui.Select(
+            placeholder="🎲 Choose a gambling game...",
+            options=options,
             custom_id="gamble_game_select"
         )
+
         self.select.callback = self.select_callback
         self.add_item(self.select)
 
@@ -116,8 +143,14 @@ class GameSelectionView(View):
         if interaction.user.id != self.user_id:
             return await interaction.response.send_message("❌ Not your selection!", ephemeral=True)
 
-        game_key = self.select.values[0]
-        game = GAMES[game_key]
+        selection = self.select.values[0]
+        if selection.startswith("slot_machine:"):
+            variant_key = selection.split(":")[1]
+            game = GAMES["slot_machine"]["variants"][variant_key]
+            game_key = f"slot_machine:{variant_key}"
+        else:
+            game_key = selection
+            game = GAMES[game_key]
 
         min_bet = game.get("min_bet", 1)
         suggestion = max(min_bet, min(100, self.user_gold // 10))

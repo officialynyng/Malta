@@ -107,14 +107,22 @@ class LotteryGroup(commands.Cog):
             channel = self.bot.get_channel(EXP_CHANNEL_ID)
             if channel:
                 await channel.send(
-                    f"🎉🎟️ The weekly lottery has concluded!\n"
-                    f"💰 **Jackpot**: {pot} gold\n"
+                    f"# 🎉🎟️ The weekly lottery has concluded!\n"
+                    f"## 💰 **Jackpot**: {pot} gold\n"
                     f"🏆 **Winner**: <@{winner_id}> (**{winner_name}**)\n\n"
                     f"Congratulations! 🎉"
                 )
 
             if DEBUG:
                 print(f"🎟️ [DEBUG] Winner: {winner_name} ({winner_id}), Pot: {pot} gold")
+
+            # Clear all lottery entries after the draw
+            conn.execute(lottery_entries.delete())
+            if DEBUG:
+                print("🎟️ [DEBUG] Lottery entries have been reset.")
+
+            # Announce reset in Discord
+            await channel.send("🧹 All lottery entries have been cleared for the next round. Good luck next week!")
 
 async def setup(bot):
     await bot.add_cog(LotteryGroup(bot))

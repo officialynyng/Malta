@@ -1,67 +1,109 @@
 {
-    "coinflip": {
-      "name": "Coin Flip",
-      "emoji": "🪙",
-      "odds": 0.5,
-      "payout": 2,
-      "description": "Choose heads or tails and try your luck!"
-    },
-    "blackjack": {
-      "name": "Blackjack",
-      "emoji": "🃏",
-      "odds": 0.42,
-      "payout": 2,
-      "description": "Beat the dealer without going over 21!"
-    },
-    "roulette_red": {
-      "name": "Roulette (Red)",
-      "emoji": "🔴",
-      "odds": 0.486,
-      "payout": 2,
-      "description": "Bet on red for nearly 50/50 odds."
-    },
-    "roulette_black": {
-      "name": "Roulette (Black)",
-      "emoji": "⚫",
-      "odds": 0.486,
-      "payout": 2,
-      "description": "Bet on black for nearly 50/50 odds."
-    },
-    "roulette_number": {
-      "name": "Roulette (Number)",
-      "emoji": "🎯",
-      "odds": 0.027,
-      "payout": 36,
-      "description": "Pick a number between 0-36 for a high-risk high-reward win."
-    },
-    "dice_roll": {
+  "coinflip": {
+    "name": "Coin Flip",
+    "emoji": "🪙",
+    "odds": 0.5,
+    "payout": 2,
+    "description": "Choose heads or tails and try your luck!"
+  },
+  "blackjack": {
+    "name": "Blackjack",
+    "emoji": "🃏",
+    "odds": 0.42,
+    "payout": 2,
+    "description": "Beat the dealer without going over 21!"
+  },
+  "roulette": {
+    "name": "Roulette",
+    "emoji": "🎡",
+    "description": "Classic roulette with red, black, or number bets.",
+    "variants": {
+      "Red": {
+        "emoji": "🔴",
+        "odds": 0.486,
+        "payout": 2.14
+      },
+      "Black": {
+        "emoji": "⚫",
+        "odds": 0.486,
+        "payout": 2.14
+      },
+      "Number (0–36)": {
+        "emoji": "🎯",
+        "odds": 0.027,
+        "payout": 36
+      }
+    }
+  },
+  "dice_roll": {
     "name": "Dice Roll (6-sided)",
     "emoji": "🎲",
     "odds": 0.166,
     "payout": 6,
     "description": "Pick a number from 1 to 6. If it rolls your number, you win!"
-    },
-    "highlow": {
-  "name": "High-Low",
-  "emoji": "📈📉",
-  "odds": 0.5,
-  "payout": 2,
-  "description": "Guess whether the next number (1–100) will be higher or lower than 50."
-    },
-    "slot_machine": {
+  },
+  "highlow": {
+    "name": "High-Low",
+    "emoji": "📈📉",
+    "odds": 0.5,
+    "payout": 2,
+    "description": "Guess whether the next number (1–100) will be higher or lower than 50."
+  },
+  "slot_machine": {
   "name": "Slot Machine",
   "emoji": "🎰",
-  "odds": 0.1,
-  "payout": 10,
-  "description": "Try your luck with a 3-symbol slot pull. Jackpots await!"
+  "description": "Spin the reels and try your luck on a themed slot machine.",
+  "variants": {
+    "dragon": {
+      "name": "Dragon Slots",
+      "emoji": "🐉",
+      "odds": 0.08,
+      "payout": 12,
+      "description": "Spin for glory with blazing dragon reels!"
     },
-    "big_spender": {
-  "name": "Big Spender Roll",
-  "emoji": "💼💰",
-  "odds": 0.05,
-  "payout": 20,
-  "description": "Bet 10,000 gold for a slim shot at massive returns. Only the bold win big.",
-  "min_bet": 10000
+    "yeti": {
+      "name": "Yeti Slots",
+      "emoji": "🧊",
+      "odds": 0.12,
+      "payout": 8,
+      "description": "Spin the frozen reels of the mysterious mountain beast."
+    },
+    "israel": {
+      "name": "Israel Slots",
+      "emoji": "🇮🇱",
+      "odds": 0.1,
+      "payout": 10,
+      "description": "Try your luck under the Star of David!"
+    },
+    "vlads_castle": {
+      "name": "Vlad's Castle",
+      "emoji": "🦇",
+      "odds": 0.07,
+      "payout": 14,
+      "description": "A blood-curdling slot adventure in a vampire’s lair."
+    },
+    "palestinian_bomber": {
+      "name": "Palestinian Bomber",
+      "emoji": "🎆",
+      "odds": 0.06,
+      "payout": 16,
+      "description": "High-risk, high-reward. One wrong move and it’s gone."
+    },
+    "serpent_temple": {
+      "name": "Serpent Temple",
+      "emoji": "🐍",
+      "odds": 0.09,
+      "payout": 11,
+      "description": "Dodge ancient curses for a chance at forbidden treasure."
     }
   }
-  
+},
+  "big_spender": {
+    "name": "Big Spender Roll",
+    "emoji": "💰",
+    "odds": 0.05,
+    "payout": 20,
+    "description": "Bet 10,000 gold for a slim shot at massive returns. Only the bold win big.",
+    "min_bet": 10000
+  }
+}
