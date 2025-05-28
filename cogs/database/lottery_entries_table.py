@@ -1,9 +1,9 @@
-from sqlalchemy import Table, Column, BigInteger, Integer
+import sqlalchemy as db
 from cogs.database.meta import metadata
 
-lottery_entries = Table(
+lottery_entries = db.Table(
     "lottery_entries",
     metadata,
-    Column("user_id", BigInteger, primary_key=True),
-    Column("tickets", Integer, nullable=False, default=0),
+    db.Column("user_id", db.BigInteger, primary_key=True),
+    db.Column("tickets", db.Integer, nullable=False, default=0),
 )
