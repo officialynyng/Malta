@@ -34,7 +34,11 @@ class GamblingButtonView(View):
             game = GAMES["slot_machine"]["variants"].get(variant)
             if not game:
                 return await interaction.response.send_message("❌ Invalid slot machine variant.", ephemeral=True)
-
+        elif self.game_key.startswith("roulette:"):
+            variant = self.game_key.split(":")[1]
+            game = GAMES["roulette"]["variants"].get(variant)
+            if not game:
+                return await interaction.response.send_message("❌ Invalid roulette variant.", ephemeral=True)
         else:
             game = GAMES[self.game_key]
         user_data = get_user_data(self.user_id)
@@ -121,21 +125,17 @@ class GameSelectionView(View):
                         emoji=variant.get("emoji", "🎰")
                     ))
             else:
-                emoji = game.get("emoji", "🎰")
-                emoji = emoji if isinstance(emoji, str) and len(emoji) <= 2 else None
                 options.append(discord.SelectOption(
                     label=game["name"],
                     value=key,
                     description=game["description"][:100],
-                    emoji=emoji
+                    emoji=game.get("emoji", "🎰")
                 ))
 
         self.select = discord.ui.Select(
             placeholder="🎲 Choose a gambling game...",
-            options=options,
-            custom_id="gamble_game_select"
+            options=options
         )
-
         self.select.callback = self.select_callback
         self.add_item(self.select)
 
@@ -143,34 +143,117 @@ class GameSelectionView(View):
         if interaction.user.id != self.user_id:
             return await interaction.response.send_message("❌ Not your selection!", ephemeral=True)
 
-        selection = self.select.values[0]
-        if selection.startswith("slot_machine:"):
-            variant_key = selection.split(":")[1]
+        game_key = self.select.values[0]
+
+        if game_key == "roulette":
+            await interaction.response.send_message(
+                "🎡 Choose your roulette bet type:",
+                view=RouletteVariantSelectionView(self.user_id, self.user_gold),
+                ephemeral=True
+            )
+            return
+
+        if game_key.startswith("slot_machine:"):
+            variant_key = game_key.split(":")[1]
             game = GAMES["slot_machine"]["variants"][variant_key]
-            game_key = f"slot_machine:{variant_key}"
         else:
-            game_key = selection
             game = GAMES[game_key]
 
         min_bet = game.get("min_bet", 1)
-        suggestion = max(min_bet, min(100, self.user_gold // 10))
-
-        if DEBUG:
-            print(f"[DEBUG🎰] {interaction.user.display_name} selected {game_key}. Suggested bet: {suggestion}")
-
-        embed = Embed(
-            title=f"{game['emoji']} {game['name']}",
-            description=(
-                f"{game['description']}\n\n"
-                f"💰 Min Bet: **{min_bet}** gold\n"
-                f"🎯 Odds: **{int(game['odds'] * 100)}%**\n"
-                f"🏆 Payout: **x{game['payout']}**\n\n"
-                f"Use `/bet {game_key} <amount>` to continue — suggested: **{suggestion}** gold."
-            ),
-            color=discord.Color.red()
+        max_bet = 100000
+        await interaction.response.send_message(
+            f"💰 You've selected **{game['name']}**. Now choose your bet amount:",
+            view=BetAmountSelectionView(self.user_id, game_key, min_bet, max_bet),
+            ephemeral=True
         )
-        embed.set_footer(text=f"You have {self.user_gold} gold.")
-        await interaction.response.send_message(embed=embed, ephemeral=True)
+
+class RouletteVariantSelectionView(View):
+    def __init__(self, user_id, user_gold):
+        super().__init__(timeout=60)
+        self.user_id = user_id
+        self.user_gold = user_gold
+
+        options = [
+            discord.SelectOption(label=variant, value=variant,
+                description=f"{data['odds']*100:.1f}% chance, x{data['payout']} payout",
+                emoji=data.get("emoji", "🎯"))
+            for variant, data in GAMES["roulette"]["variants"].items()
+        ]
+
+        self.select = discord.ui.Select(
+            placeholder="Choose Red, Black, or a Number (0–36)...",
+            options=options
+        )
+        self.select.callback = self.select_callback
+        self.add_item(self.select)
+
+    async def select_callback(self, interaction: Interaction):
+        if interaction.user.id != self.user_id:
+            return await interaction.response.send_message("❌ Not your selection!", ephemeral=True)
+
+        variant_key = self.select.values[0]
+        full_game_key = f"roulette:{variant_key}"
+        variant = GAMES["roulette"]["variants"][variant_key]
+
+        await interaction.response.send_message(
+            f"🎯 Bet type: **{variant_key}**\n💰 Choose your wager:",
+            view=BetAmountSelectionView(self.user_id, full_game_key, min_bet=100, max_bet=10000),
+            ephemeral=True
+        )
+
+class BetAmountSelectionView(View):
+    def __init__(self, user_id, game_key, min_bet, max_bet):
+        super().__init__(timeout=60)
+        self.user_id = user_id
+        self.game_key = game_key
+        self.min_bet = min_bet
+        self.max_bet = max_bet
+        self.amount = min_bet
+
+        self.dropdown = BetAmountDropdown(self)
+        self.button = GamblingButtonView(user_id, game_key, self.amount)
+
+        self.add_item(self.dropdown)
+        self.add_item(self.button)
+        self.add_item(RefreshGoldButton(user_id))
+
+class RefreshGoldButton(discord.ui.Button):
+    def __init__(self, user_id):
+        super().__init__(label="Refresh Gold", emoji="🔄", style=discord.ButtonStyle.grey)
+        self.user_id = user_id
+
+    async def callback(self, interaction: Interaction):
+        if interaction.user.id != self.user_id:
+            return await interaction.response.send_message("❌ Not your session!", ephemeral=True)
+
+        user_data = get_user_data(self.user_id)
+        await interaction.response.send_message(
+            f"💰 You now have **{user_data['gold']}** gold.", ephemeral=True
+        )
+
+
+
+class BetAmountDropdown(discord.ui.Select):
+    def __init__(self, parent_view):
+        self.parent_view = parent_view
+        options = [
+            discord.SelectOption(label=str(x), value=str(x)) for x in [100, 500, 1000, 2500, 5000, 10000]
+            if parent_view.min_bet <= x <= parent_view.max_bet
+        ]
+        super().__init__(placeholder="💰 Choose your bet amount", options=options)
+
+    async def callback(self, interaction: Interaction):
+        if interaction.user.id != self.parent_view.user_id:
+            return await interaction.response.send_message("❌ Not your selection!", ephemeral=True)
+
+        self.parent_view.amount = int(self.values[0])
+        self.parent_view.button.amount = self.parent_view.amount  # ← THIS is key
+        await interaction.response.send_message(
+            f"✅ Bet amount set to **{self.values[0]} gold**. Press play when ready!",
+            ephemeral=True
+        )
+
+
 
 
 class GamblingGroup(commands.Cog):
@@ -187,7 +270,7 @@ class GamblingGroup(commands.Cog):
         view = GameSelectionView(interaction.user.id, user_data["gold"])
         embed = Embed(
             title="🎰 Welcome to the Gambling Hall",
-            description="Pick your game from the dropdown menu to begin betting!",
+            description="Pick your game to begin.",
             color=discord.Color.red()
         )
         embed.set_footer(text=f"🎲 Gold: {user_data['gold']}")
