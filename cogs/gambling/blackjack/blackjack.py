@@ -115,7 +115,7 @@ class BlackjackGameView(View):
             )
         self.clear_items()
         self.add_item(BackToGameButton(self.user_id, self.parent))
-        self.add_item(PlayAgainButton(self.user_id, self.parent))
+        self.add_item(PlayAgainButton(self.user_id, parent_view=self.parent, game_key="blackjack", bet=self.bet))
         await interaction.response.edit_message(embed=self.get_embed(reveal_dealer=True, final=True), view=self)
 
 class HitButton(Button):

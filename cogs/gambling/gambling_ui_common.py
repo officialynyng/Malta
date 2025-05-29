@@ -11,15 +11,40 @@ from cogs.gambling.play_button import GamblingPlayButton
 
 
 class PlayAgainButton(Button):
-    def __init__(self, user_id, parent_view):
+    def __init__(self, user_id, parent_view=None, game_key=None, bet=None):
         super().__init__(label="🔁 Play Again", style=discord.ButtonStyle.success)
         self.user_id = user_id
         self.parent = parent_view
+        self.game_key = game_key
+        self.bet = bet
 
     async def callback(self, interaction: Interaction):
         if interaction.user.id != self.user_id:
             return await interaction.response.send_message("❌ Not your session!", ephemeral=True)
-        await interaction.response.edit_message(content=None, embed=None, view=self.parent)
+
+        # Restart the same game (if specified)
+        if self.game_key == "blackjack":
+            from cogs.gambling.blackjack.blackjack import BlackjackGameView
+            await interaction.response.edit_message(
+                content="🃏 You've chosen **Blackjack**. Ready to draw your cards?",
+                embed=None,
+                view=BlackjackGameView(
+                    self.user_id,
+                    get_user_data(self.user_id)['gold'],
+                    self.parent,
+                    self.bet or 100
+                )
+            )
+            return
+
+        # Otherwise fallback to parent view (game selection)
+        if self.parent:
+            await interaction.response.edit_message(
+                content="🎲 Back to the Gambling Hall. Choose your game.",
+                embed=None,
+                view=self.parent
+            )
+
 
 class RefreshGoldButton(discord.ui.Button):
     def __init__(self, user_id):
