@@ -41,6 +41,7 @@ class GameSelectionView(View):
                     emoji=game.get("emoji", "🎰")
                 ))
 
+
         # ✅ Add Blackjack manually
         options.append(discord.SelectOption(
             label="Blackjack",
@@ -56,7 +57,7 @@ class GameSelectionView(View):
         )
         self.select.callback = self.select_callback
         self.add_item(self.select)
-        
+
     async def select_callback(self, interaction: Interaction):
         if interaction.user.id != self.user_id:
             return await interaction.response.send_message("❌ Not your selection!", ephemeral=True)
