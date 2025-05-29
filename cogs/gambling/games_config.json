@@ -7,11 +7,12 @@
     "description": "Choose heads or tails and try your luck!"
   },
   "roulette": {
-  "label": "🎡 Roulette",
+  "name": "Roulette",
+  "emoji": "🎡",
   "description": "Pick Red, Black, or a Number (0–36)",
   "min_bet": 10,
   "max_bet": 1000
-  },
+},
   "dice_roll": {
     "name": "Dice Roll (6-sided)",
     "emoji": "🎲",
