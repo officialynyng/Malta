@@ -56,9 +56,21 @@ class RefreshGoldButton(discord.ui.Button):
             return await interaction.response.send_message("❌ Not your session!", ephemeral=True)
 
         user_data = get_user_data(self.user_id)
-        await interaction.response.send_message(
-            f"💰 You now have **{user_data['gold']}** gold.", ephemeral=True
-        )
+
+        # Try to get the original embed and update it
+        original_message = interaction.message
+        embed = original_message.embeds[0] if original_message.embeds else discord.Embed()
+
+        # Remove any existing gold field
+        for i, field in enumerate(embed.fields):
+            if field.name == "💰 Gold":
+                embed.remove_field(i)
+                break
+
+        embed.add_field(name="💰 Gold", value=f"**{user_data['gold']}**", inline=False)
+
+        await interaction.response.edit_message(embed=embed)
+
 
 class BackToGameButton(Button):
     def __init__(self, user_id, parent):

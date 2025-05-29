@@ -47,6 +47,9 @@ class BlackjackGameView(View):
                 + (f"\n**Total: {hand_value(self.dealer_hand)}**" if reveal_dealer else ""),
             inline=False
         )
+        embed.add_field(
+            name="💰 Gold", value=f"**{get_user_data(self.user_id)['gold']}**", inline=False
+        )
 
         if final:
             embed.add_field(name="🎲 Result", value=self.evaluate_result(), inline=False)
