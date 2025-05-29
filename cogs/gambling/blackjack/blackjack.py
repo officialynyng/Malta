@@ -3,7 +3,7 @@ from discord.ui import View, Button
 from discord import Embed, Interaction
 from sqlalchemy import select, update, insert
 
-from cogs.gambling.gambling_ui_common import BackToGameButton, PlayAgainButton
+from cogs.gambling.gambling_ui_common import BackToGameButton, PlayAgainButton, RefreshGoldButton
 from cogs.exp_utils import get_user_data, update_user_gold
 from cogs.exp_config import EXP_CHANNEL_ID, engine
 
@@ -116,6 +116,7 @@ class BlackjackGameView(View):
         self.clear_items()
         self.add_item(BackToGameButton(self.user_id, self.parent))
         self.add_item(PlayAgainButton(self.user_id, parent_view=self.parent, game_key="blackjack", bet=self.bet))
+        self.add_item(RefreshGoldButton(self.user_id))
         await interaction.response.edit_message(embed=self.get_embed(reveal_dealer=True, final=True), view=self)
 
 class HitButton(Button):
@@ -165,6 +166,7 @@ class DrawCardsButton(discord.ui.Button):
         self.view_ref.add_item(HitButton(self.view_ref))
         self.view_ref.add_item(StandButton(self.view_ref))
         self.view_ref.add_item(BackToGameButton(self.view_ref.user_id, self.view_ref.parent))
+        self.view_ref.add_item(RefreshGoldButton(self.view_ref.user_id))
         self.disabled = True
         await interaction.response.edit_message(
             embed=self.view_ref.get_embed(),
