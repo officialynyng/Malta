@@ -7,7 +7,8 @@ from cogs.exp_utils import get_user_data, get_user_data
 from cogs.gambling.games_loader import GAMES
 from cogs.gambling.play_button import GamblingPlayButton
 from cogs.gambling.ui_common import BackToGameButton, PlayAgainButton
-
+from cogs.gambling.blackjack.blackjack import BlackjackGameView
+from cogs.gambling.roulette.roulette import RouletteView
 
 class GameSelectionView(View):
     def __init__(self, user_id, user_gold):
@@ -67,17 +68,15 @@ class GameSelectionView(View):
         game_key = self.select.values[0]
 
         if game_key == "blackjack":
-            from cogs.gambling.blackjack.blackjack import BlackjackView
             await interaction.response.edit_message(
                 content="🃏 You've chosen **Blackjack**. Ready to draw your cards?",
                 embed=None,
-                view=BlackjackView(self.user_id, self.user_gold, parent=self)
+                view=BlackjackGameView(self.user_id, self.user_gold, parent=self)
             )
             return
 
 
         if game_key == "roulette":
-            from cogs.gambling.roulette.roulette import RouletteView  # Adjust path as needed
             await interaction.response.edit_message(
                 content="🎯 Choose your roulette bet type:",
                 embed=None,
@@ -111,11 +110,41 @@ class BetAmountSelectionView(View):
         self.max_bet = max_bet
         self.amount = min_bet
         self.parent = parent
-        
 
+        extra_callback = None  # ← DEFINE THIS FIRST
+
+        if game_key == "roulette":
+            async def handle_roulette(interaction: Interaction, amount):
+                await interaction.response.send_message("🎯 Pick a number between 0–36 to bet on:", ephemeral=True)
+
+                def check(msg):
+                    return msg.author.id == user_id and msg.channel == interaction.channel
+
+                try:
+                    msg = await interaction.client.wait_for("message", timeout=30.0, check=check)
+                    number = msg.content.strip()
+
+                    if not number.isdigit() or not (0 <= int(number) <= 36):
+                        return await interaction.followup.send("❌ Invalid number. Please enter a number between 0–36.", ephemeral=True)
+
+                    user_data = get_user_data(user_id)
+                    from cogs.gambling.roulette import RouletteView
+
+                    await interaction.followup.send(
+                        content=f"🎡 You bet **{amount}** gold on Roulette number **{number}**!",
+                        embed=None,
+                        view=RouletteView(user_id, parent=parent, bet=amount, choice=number, bet_type="Number", user_gold=user_data['gold']),
+                        ephemeral=False
+                    )
+
+                except asyncio.TimeoutError:
+                    await interaction.followup.send("⌛ Timed out waiting for number selection.", ephemeral=True)
+
+            extra_callback = handle_roulette
+
+        # ✅ Now use the callback
         self.dropdown = BetAmountDropdown(self)
-        self.play_button = GamblingPlayButton(user_id, game_key, lambda: self.amount, parent=self.parent)
-
+        self.play_button = GamblingPlayButton(user_id, game_key, lambda: self.amount, parent=self.parent, extra_callback=extra_callback)
 
         self.add_item(self.dropdown)
         self.add_item(self.play_button)
