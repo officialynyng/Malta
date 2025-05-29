@@ -1,3 +1,4 @@
+import asyncio
 import discord
 from discord.ui import View, Button, Select
 from discord import Interaction, Embed
@@ -19,22 +20,34 @@ class RouletteView(View):
         self.payout_multiplier = payout(self.bet_type, self.choice, self.result)
         self.result_number, self.result_color = self.result
 
+        self.add_item(RoulettePlayButton(self))
+
     async def on_timeout(self):
         if hasattr(self, "message"):
             await self.message.edit(content="🕰️ Roulette session timed out.", view=None)
 
-    async def start_game(self, interaction: Interaction):
-        payout_amount = int(self.bet * self.payout_multiplier)
-        embed = Embed(title="🎡 Roulette Result")
-        embed.add_field(name="Result", value=f"**{self.result_number}** ({self.result_color})", inline=False)
+class RoulettePlayButton(Button):
+    def __init__(self, view: RouletteView):
+        super().__init__(label="🎰 Play", style=discord.ButtonStyle.danger)
+        self.view_ref = view
 
-        if self.payout_multiplier > 0:
+    async def callback(self, interaction: Interaction):
+        if interaction.user.id != self.view_ref.user_id:
+            return await interaction.response.send_message("❌ Not your session!", ephemeral=True)
+
+        payout_amount = int(self.view_ref.bet * self.view_ref.payout_multiplier)
+        embed = Embed(title="🎡 Roulette Result")
+        embed.add_field(name="🎯 Your Bet", value=f"**{self.view_ref.choice}** ({self.view_ref.bet_type})", inline=False)
+        embed.add_field(name="🎲 Result", value=f"**{self.view_ref.result_number}** ({self.view_ref.result_color})", inline=False)
+
+        if self.view_ref.payout_multiplier > 0:
             embed.add_field(name="🎉 Payout", value=f"You won **{payout_amount}** gold!", inline=False)
         else:
             embed.add_field(name="💀", value="You lost your bet.", inline=False)
 
-        await interaction.response.edit_message(embed=embed, view=None)
-
+        self.view_ref.clear_items()
+        self.view_ref.add_item(Button(label="🔁 Play Again", style=discord.ButtonStyle.success, disabled=True))
+        await interaction.response.edit_message(embed=embed, view=self.view_ref)
 
 class RouletteOptionView(View):
     def __init__(self, user_id, user_gold, parent):
@@ -82,6 +95,40 @@ class RouletteOptionView(View):
                     )
                 )
             )
+
         elif selection == "number":
-            # Implement a number picker flow next...
-            await interaction.response.send_message("🔢 Number betting not implemented yet.", ephemeral=True)
+            await interaction.response.edit_message(
+                content="🔢 Type a number between 0–36 to bet on.",
+                view=None
+            )
+
+            def check(msg):
+                return msg.author.id == self.user_id and msg.channel == interaction.channel
+
+            try:
+                msg = await interaction.client.wait_for("message", timeout=30.0, check=check)
+                if not msg.content.isdigit() or not (0 <= int(msg.content) <= 36):
+                    return await interaction.followup.send("❌ Invalid number.", ephemeral=True)
+
+                number_choice = int(msg.content)
+
+                await interaction.followup.send(
+                    content=f"You chose number **{number_choice}**. Now choose your bet amount.",
+                    view=BetAmountSelectionView(
+                        self.user_id,
+                        "roulette",
+                        min_bet=100,
+                        max_bet=10000,
+                        parent=self.parent,
+                        extra_callback=lambda bet: RouletteView(
+                            self.user_id,
+                            parent=self.parent,
+                            bet=bet,
+                            choice=str(number_choice),
+                            bet_type="Number",
+                            user_gold=self.user_gold
+                        )
+                    )
+                )
+            except asyncio.TimeoutError:
+                await interaction.followup.send("⌛ Timed out waiting for number.", ephemeral=True)

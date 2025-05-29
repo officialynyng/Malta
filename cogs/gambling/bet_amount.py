@@ -17,9 +17,7 @@ class BetAmountDropdown(discord.ui.Select):
 
         self.parent_view.amount = int(self.values[0])
         self.parent_view.play_button.amount = self.parent_view.amount # ← THIS is key
-        await interaction.response.send_message(
-            f"✅ Bet amount set to **{self.values[0]} gold**. Press play when ready!",
-            ephemeral=True
-        )
+        await interaction.response.edit_message(view=self.parent_view)
+
 
 
