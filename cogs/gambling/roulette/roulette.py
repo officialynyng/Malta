@@ -37,7 +37,13 @@ class RoulettePlayButton(Button):
 
         payout_amount = int(self.view_ref.bet * self.view_ref.payout_multiplier)
         embed = Embed(title="🎡 Roulette Result")
-        embed.add_field(name="🎯 Your Bet", value=f"**{self.view_ref.choice}** ({self.view_ref.bet_type})", inline=False)
+
+        embed.add_field(
+            name="🎯 Your Bet",
+            value=f"**{self.view_ref.bet}** gold on **{self.view_ref.choice}** ({self.view_ref.bet_type})",
+            inline=False
+        )
+        
         embed.add_field(name="🎲 Result", value=f"**{self.view_ref.result_number}** ({self.view_ref.result_color})", inline=False)
 
         if self.view_ref.payout_multiplier > 0:
@@ -82,7 +88,7 @@ class RouletteOptionView(View):
                 view=BetAmountSelectionView(
                     self.user_id,
                     "roulette",
-                    min_bet=100,
+                    min_bet=10,
                     max_bet=10000,
                     parent=self.parent,
                     extra_callback=lambda bet: RouletteView(
@@ -98,7 +104,7 @@ class RouletteOptionView(View):
 
         elif selection == "number":
             await interaction.response.edit_message(
-                content="🔢 Type a number between 0–36 to bet on.",
+                content="🔢 Pick a number between 0–36 to bet on:",
                 view=None
             )
 
@@ -108,12 +114,12 @@ class RouletteOptionView(View):
             try:
                 msg = await interaction.client.wait_for("message", timeout=30.0, check=check)
                 if not msg.content.isdigit() or not (0 <= int(msg.content) <= 36):
-                    return await interaction.followup.send("❌ Invalid number.", ephemeral=True)
+                    return await interaction.followup.send("❌ Invalid number. Please enter a value between 0 and 36.", ephemeral=True)
 
                 number_choice = int(msg.content)
 
-                await interaction.followup.send(
-                    content=f"You chose number **{number_choice}**. Now choose your bet amount.",
+                await interaction.edit_original_response(
+                    content=f"🎯 You chose **{number_choice}**. Now choose your bet amount:",
                     view=BetAmountSelectionView(
                         self.user_id,
                         "roulette",
@@ -131,4 +137,7 @@ class RouletteOptionView(View):
                     )
                 )
             except asyncio.TimeoutError:
-                await interaction.followup.send("⌛ Timed out waiting for number.", ephemeral=True)
+                await interaction.edit_original_response(
+                    content="⌛ Timed out waiting for number input.",
+                    view=None
+                )
