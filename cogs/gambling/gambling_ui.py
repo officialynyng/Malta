@@ -4,7 +4,7 @@ from discord import Interaction
 
 from cogs.exp_utils import get_user_data, get_user_data
 from cogs.gambling.games_loader import GAMES
-from cogs.gambling.ui_common import BetAmountSelectionView
+from cogs.gambling.x_ui_common import BetAmountSelectionView
 from cogs.gambling.blackjack.blackjack import BlackjackGameView
 from cogs.gambling.roulette.roulette import RouletteView
 
