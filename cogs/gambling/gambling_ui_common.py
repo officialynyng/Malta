@@ -94,7 +94,7 @@ class BackToGameButton(Button):
 
 
 class BetAmountSelectionView(View):
-    def __init__(self, user_id, game_key, min_bet, max_bet, parent=None):
+    def __init__(self, user_id, game_key, min_bet, max_bet, parent=None, extra_callback=None):
         super().__init__(timeout=60)
         self.user_id = user_id
         self.game_key = game_key
@@ -102,12 +102,16 @@ class BetAmountSelectionView(View):
         self.max_bet = max_bet
         self.amount = min_bet
         self.parent = parent
+        self.extra_callback = extra_callback  # ← KEEP THIS
 
-        extra_callback = None  # ← DEFINE THIS FIRST
-
-        # ✅ Now use the callback
         self.dropdown = BetAmountDropdown(self)
-        self.play_button = GamblingPlayButton(user_id, game_key, lambda: self.amount, parent=self.parent, extra_callback=extra_callback)
+        self.play_button = GamblingPlayButton(
+            user_id,
+            game_key,
+            lambda: self.amount,
+            parent=self.parent,
+            extra_callback=self.extra_callback  # ← PASS THIS IN
+        )
 
         self.add_item(self.dropdown)
         self.add_item(self.play_button)
