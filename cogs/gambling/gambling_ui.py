@@ -2,12 +2,10 @@ import discord
 from discord.ui import View
 from discord import Interaction
 
-from cogs.exp_utils import get_user_data, get_user_data
 from cogs.gambling.games_loader import GAMES
-from cogs.gambling.x_ui_common import BetAmountSelectionView
 from cogs.gambling.blackjack.blackjack import BlackjackGameView
 from cogs.gambling.roulette.roulette import RouletteView
-
+from cogs.gambling
 class GameSelectionView(View):
     def __init__(self, user_id, user_gold):
         super().__init__(timeout=60)
@@ -96,19 +94,4 @@ class GameSelectionView(View):
             content=f"💰 You've selected **{game['name']}**. Now choose your bet amount:",
             embed=None,
             view=BetAmountSelectionView(self.user_id, game_key, min_bet, max_bet, parent=self)
-        )
-
-
-class RefreshGoldButton(discord.ui.Button):
-    def __init__(self, user_id):
-        super().__init__(label="Refresh Gold View", emoji="🔄", style=discord.ButtonStyle.grey)
-        self.user_id = user_id
-
-    async def callback(self, interaction: Interaction):
-        if interaction.user.id != self.user_id:
-            return await interaction.response.send_message("❌ Not your session!", ephemeral=True)
-
-        user_data = get_user_data(self.user_id)
-        await interaction.response.send_message(
-            f"💰 You now have **{user_data['gold']}** gold.", ephemeral=True
         )
