@@ -38,7 +38,7 @@ class BetAmountSelectionView(View):
                         return await interaction.followup.send("❌ Invalid number. Please enter a number between 0–36.", ephemeral=True)
 
                     user_data = get_user_data(user_id)
-                    from cogs.gambling.roulette import RouletteView
+                    from cogs.gambling.roulette.roulette import RouletteView
 
                     await interaction.followup.send(
                         content=f"🎡 You bet **{amount}** gold on Roulette number **{number}**!",
