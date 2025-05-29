@@ -21,6 +21,9 @@ async def handle_gamble_result(interaction: Interaction, user_id: int, game_key:
     if game_key.startswith("slot_machine:"):
         variant = game_key.split(":")[1]
         game = GAMES["slot_machine"]["variants"].get(variant)
+        if not game or "odds" not in game or "payout" not in game:
+            await interaction.followup.send("❌ Invalid slot machine configuration. Odds or payout missing.", ephemeral=True)
+            return
     elif game_key.startswith("roulette:"):
         variant = game_key.split(":")[1]
         game = GAMES["roulette"]["variants"].get(variant)
@@ -40,16 +43,15 @@ async def handle_gamble_result(interaction: Interaction, user_id: int, game_key:
         return
 
     # Handle games with custom logic elsewhere
-    CUSTOM_HANDLED = {
-        "blackjack": lambda: __import__("cogs.gambling.blackjack.blackjack", fromlist=["start_blackjack_game"]).start_blackjack_game,
-        "roulette": None  # Already handled by UI
-    }
-
-    if game_key in CUSTOM_HANDLED:
-        handler = CUSTOM_HANDLED[game_key]
-        if handler:  # blackjack
-            await handler()(interaction, user_data, amount)
+    if game_key == "blackjack":
+        from cogs.gambling.blackjack.blackjack import start_blackjack_game
+        await start_blackjack_game(interaction, user_data, amount)
         return
+
+    if game_key.startswith("roulette"):
+        # All roulette logic is handled through UI and extra_callback – skip logic here
+        return
+
 
 
     # Calculate win/loss
@@ -76,7 +78,11 @@ async def handle_gamble_result(interaction: Interaction, user_id: int, game_key:
             conn.execute(insert(gambling_stats).values(user_id=user_id, **values))
 
     # Final message suppressed (no ephemeral)
-    await interaction.response.defer()
+    try:
+        if not interaction.response.is_done():
+            await interaction.response.defer()
+    except Exception:
+        pass
 
     # Public broadcast of all results
     exp_channel = interaction.client.get_channel(EXP_CHANNEL_ID)
