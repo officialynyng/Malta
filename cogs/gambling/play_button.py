@@ -14,19 +14,20 @@ class GamblingPlayButton(discord.ui.Button):
         self.extra_callback = extra_callback
 
     async def callback(self, interaction: Interaction):
+        await interaction.response.defer()
         if interaction.user.id != self.user_id:
-            return await interaction.response.send_message("❌ Not your session!", ephemeral=True)
+            return await interaction.followup.send("❌ Not your session!", ephemeral=True)
 
         amount = self.get_amount()
         if amount <= 0:
-            return await interaction.response.send_message("❌ Invalid bet amount.", ephemeral=True)
+            return await interaction.followup.send("❌ Invalid bet amount.", ephemeral=True)
 
         user_data = get_user_data(self.user_id)
 
         # ✅ Import here to avoid circular import error
         if self.game_key == "blackjack":
             from cogs.gambling.blackjack.blackjack import BlackjackGameView
-            await interaction.response.edit_message(
+            await interaction.edit_original_response(
                 content=f"🃏 You bet **{amount}** gold on Blackjack!",
                 embed=None,
                 view=BlackjackGameView(self.user_id, user_data['gold'], parent=self.parent, bet=amount)
