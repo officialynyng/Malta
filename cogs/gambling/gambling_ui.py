@@ -124,13 +124,15 @@ class RouletteVariantSelectionView(View):
 
 
 class BetAmountSelectionView(View):
-    def __init__(self, user_id, game_key, min_bet, max_bet):
+    def __init__(self, user_id, game_key, min_bet, max_bet, parent=None):
         super().__init__(timeout=60)
         self.user_id = user_id
         self.game_key = game_key
         self.min_bet = min_bet
         self.max_bet = max_bet
         self.amount = min_bet
+        self.parent = parent
+        
 
         self.dropdown = BetAmountDropdown(self)
         self.play_button = GamblingPlayButton(user_id, game_key, lambda: self.amount)
@@ -138,6 +140,8 @@ class BetAmountSelectionView(View):
         self.add_item(self.dropdown)
         self.add_item(self.play_button)
         self.add_item(RefreshGoldButton(user_id))
+        if self.parent:
+            self.add_item(BackToGameButton(user_id, self.parent))
 
 
 class RefreshGoldButton(discord.ui.Button):
