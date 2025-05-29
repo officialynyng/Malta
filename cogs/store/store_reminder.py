@@ -4,6 +4,7 @@ import random
 from cogs.exp_config import EXP_CHANNEL_ID
 import datetime
 import asyncio
+import pytz
 
 SHOP_REMINDER_VARIANTS = [
     {
@@ -31,30 +32,36 @@ SHOP_REMINDER_VARIANTS = [
 class ShopReminder(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.hourly_shop_reminder.before_loop(self.bot.wait_until_ready)
-        self.hourly_shop_reminder.start()
+        self.bot.loop.create_task(self.shop_reminder_loop())
 
-    def cog_unload(self):
-        self.hourly_shop_reminder.cancel()
+    async def shop_reminder_loop(self):
+        await self.bot.wait_until_ready()
 
-    @tasks.loop(hours=6)
-    async def hourly_shop_reminder(self):
-        print(f"[SHOP DEBUG] Hourly shop reminder triggered at {datetime.datetime.utcnow()}")
-        channel = self.bot.get_channel(EXP_CHANNEL_ID)
-        if not channel:
-            return
+        while not self.bot.is_closed():
+            now = datetime.datetime.now(pytz.timezone("America/Chicago"))
+            should_post = now.minute == 0 and now.hour % 6 == 0
 
-        variant = random.choice(SHOP_REMINDER_VARIANTS)
+            if should_post:
+                print(f"[SHOP DEBUG] Posting shop reminder at {now.isoformat()}")
+                channel = self.bot.get_channel(EXP_CHANNEL_ID)
+                if channel:
+                    variant = random.choice(SHOP_REMINDER_VARIANTS)
 
-        embed = discord.Embed(
-            title="🍯🛒 MALTAS DISCORD CRPG SHOP",
-            description="**Use** `/shop open` to browse the wares.\n**Use** `/help` for further details.",
-            color=discord.Color.gold()
-        )
-        embed.set_image(url=variant["img"])
-        embed.set_footer(text="The market is always open! Trails are out and functional! Take a look!")
+                    embed = discord.Embed(
+                        title="🍯🛒 MALTAS DISCORD CRPG SHOP",
+                        description="**Use** `/shop open` to browse the wares.\n**Use** `/help` for further details.",
+                        color=discord.Color.gold()
+                    )
+                    embed.set_image(url=variant["img"])
+                    embed.set_footer(text="The market is always open! Trails are out and functional! Take a look!")
 
-        await channel.send(content=variant["line"], embed=embed)
+                    await channel.send(content=variant["line"], embed=embed)
+
+            # Sleep until the next top-of-hour
+            next_hour = (now + datetime.timedelta(hours=1)).replace(minute=0, second=0, microsecond=0)
+            sleep_seconds = (next_hour - now).total_seconds()
+            await asyncio.sleep(sleep_seconds)
+
 
 async def setup(bot):
     print("[SHOP DEBUG] ShopReminder cog loaded")

@@ -4,13 +4,18 @@ import discord
 from discord import app_commands, Interaction, Embed
 from discord.ext import commands, tasks
 from sqlalchemy import select, insert, update, func
-from datetime import datetime
+from sqlalchemy.dialects.postgresql import insert as pg_insert
+from datetime import datetime, timedelta
 import pytz
+import time
+from collections import defaultdict
 
 from cogs.exp_utils import get_user_data, update_user_gold
 from cogs.exp_config import engine, EXP_CHANNEL_ID
 from cogs.database.lottery_entries_table import lottery_entries
+from cogs.database.lottery_history_table import lottery_history
 
+lottery_group = app_commands.Group(name="lottery", description="🎟️ Malta's Weekly Lottery")
 
 DEBUG = True
 TICKET_COST = 100
@@ -26,19 +31,30 @@ def get_central_now():
 class LotteryGroup(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.cooldowns = defaultdict(lambda: 0)
         self.run_lottery_check.start()
 
     def cog_unload(self):
         self.run_lottery_check.cancel()
 
-    @app_commands.command(name="lottery", description="🎟️ Buy tickets for the weekly lottery (100 gold each)")
-    @app_commands.describe(amount="How many tickets you want to buy (1–99)")
+
+    @lottery_group.command(name="buy", description="🎟️ - 💰 Buy tickets for the weekly lottery (100 gold each)")
+    @app_commands.describe(amount="How many tickets you want to buy")
     async def buy_tickets(self, interaction: Interaction, amount: int):
         user_id = interaction.user.id
         username = interaction.user.display_name
+        now = int(time.time())
+        if now - self.cooldowns[user_id] < 30:
+            remaining = 30 - (now - self.cooldowns[user_id])
+            await interaction.response.send_message(
+                f"⏳ Please wait **{remaining}** more seconds before buying more tickets.", ephemeral=True
+            )
+            return
 
-        if amount <= 0 or amount > MAX_TICKETS:
-            await interaction.response.send_message(f"❌ Invalid amount. Enter between 1 and {MAX_TICKETS}.", ephemeral=True)
+        self.cooldowns[user_id] = now
+
+        if amount <= 0:
+            await interaction.response.send_message("❌ You must buy at least 1 ticket.", ephemeral=True)
             return
 
         user_data = get_user_data(user_id)
@@ -55,23 +71,150 @@ class LotteryGroup(commands.Cog):
         update_user_gold(user_id, new_gold)
 
         with engine.begin() as conn:
-            for _ in range(amount):
-                conn.execute(insert(lottery_entries).values(
+            conn.execute(
+                pg_insert(lottery_entries)
+                .values(
                     user_id=user_id,
                     user_name=username,
-                    gold_spent=TICKET_COST,
+                    tickets=amount,
+                    gold_spent=total_cost,
                     winnings=0,
                     timestamp=int(time.time())
-                ))
+                )
+                .on_conflict_do_update(
+                    index_elements=['user_id'],
+                    set_={
+                        "tickets": lottery_entries.c.tickets + amount,
+                        "gold_spent": lottery_entries.c.gold_spent + total_cost,
+                        "timestamp": int(time.time())
+                    }
+                )
+            )
 
-        exp_channel = interaction.client.get_channel(EXP_CHANNEL_ID)
-        if exp_channel:
-            await exp_channel.send(f"🎟️ **{username}** entered the weekly lottery with **{amount} tickets** (💰 {total_cost} gold)!")
+
+            # Total live stats
+            total_tickets = conn.execute(
+                select(func.count()).select_from(lottery_entries)
+            ).scalar_one_or_none() or 0
+
+            jackpot = total_tickets * TICKET_COST
+
+
+        if amount >= 0:  # Only announce big purchases
+            exp_channel = interaction.client.get_channel(EXP_CHANNEL_ID)
+            if exp_channel:
+                await exp_channel.send(
+                    f"🎟️ **{username}** bought **{amount}** ticket{'s' if amount > 1 else ''} "
+                    f"for 💰 {total_cost} gold!\n"
+                    f"💰 Current jackpot: **{jackpot}** gold with **{total_tickets}** total tickets sold!"
+                )
 
         await interaction.response.send_message(f"🎟️ Bought **{amount}** tickets for 💰 {total_cost} gold!", ephemeral=True)
 
         if DEBUG:
             print(f"🎟️ [DEBUG] {username} ({user_id}) bought {amount} ticket(s) for {total_cost} gold. Remaining gold: {new_gold}")
+    
+    ##
+    @lottery_group.command(name="stats", description="🎟️ - 📊 View your current ticket count, jackpot, and odds")
+    async def lottery_stats(self, interaction: Interaction):
+        user_id = interaction.user.id
+        user_data = get_user_data(user_id)
+
+        if not user_data:
+            await interaction.response.send_message("❌ Could not fetch user data.", ephemeral=True)
+            return
+
+        with engine.begin() as conn:
+            total_tickets = conn.execute(select(func.sum(lottery_entries.c.tickets))).scalar_one_or_none() or 0
+            user_tickets = conn.execute(
+                select(func.sum(lottery_entries.c.tickets))
+                .where(lottery_entries.c.user_id == user_id)
+            ).scalar_one_or_none() or 0
+
+        odds = (user_tickets / total_tickets * 100) if total_tickets else 0
+        jackpot = total_tickets * TICKET_COST
+
+        embed = Embed(title="🎟️ Your Lottery Stats", color=discord.Color.gold())
+        embed.add_field(name="Tickets Bought", value=f"**{user_tickets}**", inline=True)
+        embed.add_field(name="Current Jackpot", value=f"**{jackpot}** gold", inline=True)
+        embed.add_field(name="Your Odds", value=f"{odds:.2f}%", inline=True)
+
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+
+    ##
+    @lottery_group.command(name="leaderboard", description="🎟️ - 🏆 See who holds the most tickets this round")
+    async def lottery_leaderboard(self, interaction: Interaction):
+        with engine.begin() as conn:
+            rows = conn.execute(
+                select(lottery_entries.c.user_name, func.sum(lottery_entries.c.tickets).label("total"))
+                .group_by(lottery_entries.c.user_name)
+                .order_by(func.sum(lottery_entries.c.tickets).desc())
+                .limit(10)
+            ).fetchall()
+
+        if not rows:
+            await interaction.response.send_message("No tickets have been purchased yet.", ephemeral=True)
+            return
+
+        desc = "\n".join([f"`{i+1}.` **{row.user_name}** — 🎟️ {row.total}" for i, row in enumerate(rows)])
+        embed = Embed(title="🏆 Top Ticket Holders", description=desc, color=discord.Color.purple())
+        await interaction.response.send_message(embed=embed, ephemeral=False)
+
+    #
+    @lottery_group.command(name="history", description="🎟️ - 📜 View the last few lottery winners")
+    async def lottery_history_cmd(self, interaction: Interaction):
+        with engine.begin() as conn:
+            rows = conn.execute(
+                select(lottery_history.c.draw_time, lottery_history.c.winner_name, lottery_history.c.jackpot)
+                .order_by(lottery_history.c.draw_time.desc())
+                .limit(5)
+            ).fetchall()
+
+        if not rows:
+            await interaction.response.send_message("❌ No lottery draws have been recorded yet.", ephemeral=True)
+            return
+
+        desc = ""
+        for row in rows:
+            time_str = datetime.fromtimestamp(row.draw_time, CENTRAL_TZ).strftime("%b %d, %Y %I:%M %p")
+            desc += f"**{row.winner_name}** won 💰 **{row.jackpot}** gold — *{time_str}*\n"
+
+        embed = Embed(title="📜 Recent Lottery Winners", description=desc, color=discord.Color.dark_gold())
+        await interaction.response.send_message(embed=embed, ephemeral=False)
+
+    @lottery_group.command(name="nextdraw", description="🎟️ - 🕰️ Time until the next lottery draw")
+    async def lottery_nextdraw(self, interaction: Interaction):
+        now = get_central_now()
+        days_ahead = (DRAW_WEEKDAY - now.weekday()) % 7
+        next_draw = (now + timedelta(days=days_ahead)).replace(hour=DRAW_HOUR, minute=0, second=0, microsecond=0)
+
+        time_left = next_draw - now
+        hours, remainder = divmod(int(time_left.total_seconds()), 3600)
+        minutes = remainder // 60
+
+        await interaction.response.send_message(
+            f"🕰️ Next draw in **{hours} hours, {minutes} minutes** (Sunday 6 PM CST)", ephemeral=True
+        )
+
+    @lottery_group.command(name="help", description="🎟️ - ❓ Learn how Malta's weekly lottery works")
+    async def lottery_help(self, interaction: Interaction):
+        embed = discord.Embed(
+            title="🎟️ How the Malta Lottery Works",
+            description=(
+                "**Buy Tickets:** Use `/lottery buy` to purchase entries (100 gold each).\n"
+                "**Draw Time:** Every Sunday at 6 PM CST.\n"
+                "**Jackpot:** Grows with every ticket bought.\n"
+                "**Winner:** One player is randomly chosen based on ticket weight.\n"
+                "**Cooldown:** 30s between purchases.\n\n"
+                "🏆 View stats with `/lottery stats`, top holders with `/lottery leaderboard`, "
+                "previous winners with `/lottery history`, and next draw time with `/lottery nextdraw`."
+            ),
+            color=discord.Color.purple()
+        )
+        embed.set_footer(text="Good luck! The next draw might crown you champion. 🎉")
+        await interaction.response.send_message(embed=embed)
+
+
 
     @tasks.loop(minutes=10)
     async def run_lottery_check(self):
@@ -89,17 +232,42 @@ class LotteryGroup(commands.Cog):
                     print("🎟️ [DEBUG] No entries found for this week's draw.")
                 return
 
-            pot = len(results) * TICKET_COST
-            winner_entry = random.choice(results)
+            tickets_sold = sum(row.tickets for row in results)
+            pot = tickets_sold * TICKET_COST
+            # Expand entries by ticket count
+            weighted_pool = [
+                row for row in results for _ in range(row.tickets)
+            ]
+
+            if not weighted_pool:
+                if DEBUG:
+                    print("🎟️ [DEBUG] No tickets found.")
+                return
+
+            winner_entry = random.choice(weighted_pool)
             winner_id = winner_entry.user_id
             winner_name = winner_entry.user_name
 
+
+            # Award winnings
             conn.execute(
                 update(lottery_entries)
                 .where(lottery_entries.c.user_id == winner_id)
                 .values(winnings=pot)
             )
 
+            # Record history
+            conn.execute(
+                insert(lottery_history).values(
+                    draw_time=int(get_central_now().timestamp()),
+                    winner_id=winner_id,
+                    winner_name=winner_name,
+                    jackpot=pot,
+                    tickets_sold=tickets_sold
+                )
+            )
+
+            # Update user's gold
             user_data = get_user_data(winner_id)
             if user_data:
                 update_user_gold(winner_id, user_data["gold"] + pot)
@@ -126,3 +294,4 @@ class LotteryGroup(commands.Cog):
 
 async def setup(bot):
     await bot.add_cog(LotteryGroup(bot))
+    bot.tree.add_command(lottery_group)

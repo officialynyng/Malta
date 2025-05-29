@@ -61,9 +61,8 @@ async def handle_gamble_result(interaction: Interaction, user_id: int, game_key:
         else:
             conn.execute(insert(gambling_stats).values(user_id=user_id, **values))
 
-    # Final message
-    outcome = f"✅ You won {payout} gold!" if win else f"💀 You lost {amount} gold."
-    await interaction.response.send_message(outcome, ephemeral=True)
+    # Final message suppressed (no ephemeral)
+    await interaction.response.defer()
 
     # Public broadcast of all results
     exp_channel = interaction.client.get_channel(EXP_CHANNEL_ID)
