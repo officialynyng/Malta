@@ -30,6 +30,7 @@ class BlackjackGameView(View):
         self.add_item(BetAmountDropdown(self))
         self.add_item(self.play_button)
         self.add_item(BackToGameButton(user_id, self.parent))
+        self.add_item(RefreshGoldButton(user_id))
         self.message = None
 
     def get_embed(self, reveal_dealer=False, final=False):
@@ -166,7 +167,6 @@ class DrawCardsButton(discord.ui.Button):
         self.view_ref.add_item(HitButton(self.view_ref))
         self.view_ref.add_item(StandButton(self.view_ref))
         self.view_ref.add_item(BackToGameButton(self.view_ref.user_id, self.view_ref.parent))
-        self.view_ref.add_item(RefreshGoldButton(self.view_ref.user_id))
         self.disabled = True
         await interaction.response.edit_message(
             embed=self.view_ref.get_embed(),
