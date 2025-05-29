@@ -50,6 +50,8 @@ class RoulettePlayButton(Button):
             embed.add_field(name="🎉 Payout", value=f"You won **{payout_amount}** gold!", inline=False)
         else:
             embed.add_field(name="💀", value="You lost your bet.", inline=False)
+            
+        embed.set_footer(text=f"💰 Gold: {self.view_ref.user_gold} | Bet: {self.view_ref.bet}")
 
         self.view_ref.clear_items()
         self.view_ref.add_item(Button(label="🔁 Play Again", style=discord.ButtonStyle.success, disabled=True))
@@ -114,7 +116,12 @@ class RouletteOptionView(View):
             try:
                 msg = await interaction.client.wait_for("message", timeout=30.0, check=check)
                 if not msg.content.isdigit() or not (0 <= int(msg.content) <= 36):
-                    return await interaction.followup.send("❌ Invalid number. Please enter a value between 0 and 36.", ephemeral=True)
+                    await interaction.edit_original_response(
+                        content="❌ Invalid number. Please enter a value between 0 and 36.",
+                        view=None
+                    )
+                    return
+
 
                 number_choice = int(msg.content)
 
