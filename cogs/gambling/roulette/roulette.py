@@ -109,17 +109,20 @@ class RouletteOptionView(View):
                     min_bet=10,
                     max_bet=10000,
                     parent=self.parent,
-                    extra_callback=lambda bet: RouletteView(
-                        self.user_id,
-                        parent=self.parent,
-                        bet=bet,
-                        choice=color,
-                        bet_type="Color",
-                        user_gold=self.user_gold
+                    extra_callback=lambda interaction, bet: interaction.edit_original_response(
+                        content="🎡 Spinning...",
+                        embed=None,
+                        view=RouletteView(
+                            self.user_id,
+                            parent=self.parent,
+                            bet=bet,
+                            choice=color,  # or str(number_choice)
+                            bet_type="Color",  # or "Number"
+                            user_gold=self.user_gold
+                        )
                     )
                 )
             )
-
         elif selection == "number":
             await interaction.response.edit_message(
                 content="🔢 Pick a number between 0–36 to bet on:",
@@ -149,16 +152,21 @@ class RouletteOptionView(View):
                         min_bet=100,
                         max_bet=10000,
                         parent=self.parent,
-                        extra_callback=lambda bet: RouletteView(
-                            self.user_id,
-                            parent=self.parent,
-                            bet=bet,
-                            choice=str(number_choice),
-                            bet_type="Number",
-                            user_gold=self.user_gold
+                        extra_callback=lambda interaction, bet: interaction.edit_original_response(
+                            content=f"🎡 Spinning...",
+                            embed=None,
+                            view=RouletteView(
+                                self.user_id,
+                                parent=self.parent,
+                                bet=bet,
+                                choice=str(number_choice),
+                                bet_type="Number",
+                                user_gold=self.user_gold
+                            )
                         )
                     )
                 )
+
             except asyncio.TimeoutError:
                 await interaction.edit_original_response(
                     content="⌛ Timed out waiting for number input.",
