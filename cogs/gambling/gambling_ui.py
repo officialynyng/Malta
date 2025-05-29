@@ -5,7 +5,7 @@ from discord import Interaction
 from cogs.gambling.games_loader import GAMES
 from cogs.gambling.blackjack.blackjack import BlackjackGameView
 from cogs.gambling.roulette.roulette import RouletteView
-from cogs.gambling
+from cogs.gambling.gambling_ui_common import BetAmountSelectionView
 class GameSelectionView(View):
     def __init__(self, user_id, user_gold):
         super().__init__(timeout=60)

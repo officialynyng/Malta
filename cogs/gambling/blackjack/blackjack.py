@@ -3,8 +3,7 @@ from discord.ui import View, Button
 from discord import Embed, Interaction
 from sqlalchemy import select, update, insert
 
-from cogs.gambling import BackToGameButton
-from cogs.gambling. import PlayAgainButton
+from cogs.gambling.gambling_ui_common import BackToGameButton, PlayAgainButton
 from cogs.exp_utils import get_user_data, update_user_gold
 from cogs.exp_config import EXP_CHANNEL_ID, engine
 
