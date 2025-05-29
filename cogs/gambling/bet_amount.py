@@ -6,7 +6,7 @@ class BetAmountDropdown(discord.ui.Select):
     def __init__(self, parent_view):
         self.parent_view = parent_view
         options = [
-            discord.SelectOption(label=str(x), value=str(x)) for x in [50, 100, 200, 250, 300, 500, 750, 1000, 2000, 2500, 3500, 5000]
+            discord.SelectOption(label=str(x), value=str(x)) for x in [1, 5, 10, 25, 50, 100, 200, 250, 300, 500, 750, 1000, 2000, 2500, 3500, 5000]
             if parent_view.min_bet <= x <= parent_view.max_bet
         ]
         super().__init__(placeholder="💰 Choose your bet amount", options=options)
