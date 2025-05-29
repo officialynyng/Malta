@@ -39,6 +39,7 @@ class ShopReminder(commands.Cog):
 
     @tasks.loop(hours=6)
     async def hourly_shop_reminder(self):
+        print(f"[SHOP DEBUG] Hourly shop reminder triggered at {datetime.datetime.utcnow()}")
         channel = self.bot.get_channel(EXP_CHANNEL_ID)
         if not channel:
             return
@@ -56,4 +57,5 @@ class ShopReminder(commands.Cog):
         await channel.send(content=variant["line"], embed=embed)
 
 async def setup(bot):
+    print("[SHOP DEBUG] ShopReminder cog loaded")
     await bot.add_cog(ShopReminder(bot))
