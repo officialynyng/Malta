@@ -24,7 +24,6 @@ class BlackjackGameView(View):
 
         self.add_item(DrawCardsButton(self))
         self.add_item(BackToGameButton(user_id, self.parent))
-        self.add_item(PlayAgainButton(self.user_id, self.parent))
         self.message = None
 
     def get_embed(self, reveal_dealer=False, final=False):
@@ -108,7 +107,9 @@ class BlackjackGameView(View):
                 f"{'won 🎉' if delta > 0 else 'lost 💀' if delta < 0 else 'tied 🤝'} "
                 f"**{abs(delta)}** gold!"
             )
-
+        self.clear_items()
+        self.add_item(BackToGameButton(self.user_id, self.parent))
+        self.add_item(PlayAgainButton(self.user_id, self.parent))
         await interaction.response.edit_message(embed=self.get_embed(reveal_dealer=True, final=True), view=None)
 
 
@@ -158,8 +159,7 @@ class DrawCardsButton(discord.ui.Button):
         self.view_ref.add_item(HitButton(self.view_ref))
         self.view_ref.add_item(StandButton(self.view_ref))
         self.view_ref.add_item(BackToGameButton(self.view_ref.user_id, self.view_ref.parent))
-        self.view_ref.add_item(PlayAgainButton(self.view_ref.user_id, self.view_ref.parent))
-
+        self.disabled = True
         await interaction.response.edit_message(
             embed=self.view_ref.get_embed(),
             view=self.view_ref
