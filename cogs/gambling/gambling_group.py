@@ -6,7 +6,7 @@ from sqlalchemy import select
 from cogs.exp_config import engine
 from cogs.database.gambling_stats_table import gambling_stats
 from cogs.exp_utils import get_user_data
-from cogs.gambling.game_selection import GameSelectionView
+from cogs.gambling.gambling_ui import GameSelectionView
 
 DEBUG = True
 
