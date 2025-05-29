@@ -28,6 +28,10 @@ async def handle_gamble_result(interaction: Interaction, user_id: int, game_key:
         variant = game_key.split(":")[1]
         game = GAMES["roulette"]["variants"].get(variant)
     else:
+        if game_key == "blackjack":
+            from cogs.gambling.blackjack.blackjack import start_blackjack_game
+            await start_blackjack_game(interaction, user_data, amount)
+            return
         game = GAMES[game_key]
 
     if not game:

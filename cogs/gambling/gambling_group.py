@@ -1,6 +1,7 @@
 import json
 import discord
 from discord import app_commands, Interaction, Embed
+from discord.app_commands import Group
 from discord.ext import commands
 from sqlalchemy import select
 from cogs.exp_config import engine
@@ -8,14 +9,15 @@ from cogs.database.gambling_stats_table import gambling_stats
 from cogs.exp_utils import get_user_data
 from cogs.gambling.gambling_ui import GameSelectionView
 
+gamble_group = Group(name="gamble", description="🎰 Enter the gambling hall and play games!")
 DEBUG = True
 
 class GamblingGroup(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="gamble", description="♠️ ♥️ ♦️ ♣️ Open the gambling hall and choose your game!")
-    async def gamble(self, interaction: Interaction):
+    @gamble_group.command(name="play", description="♠️ ♥️ ♦️ ♣️ Open the gambling hall and choose your game!")
+    async def gamble_play(interaction: Interaction):
         user_data = get_user_data(interaction.user.id)
         if not user_data:
             await interaction.response.send_message("❌ Could not fetch user data.", ephemeral=True)
@@ -29,10 +31,11 @@ class GamblingGroup(commands.Cog):
         )
         embed.set_footer(text=f"🎲 Gold: {user_data['gold']}")
         await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+        view.message = await interaction.original_response()
 
 
-    @app_commands.command(name="gamble_stats", description="🎰 - 📊 View your gambling history and performance")
-    async def gamble_stats(self, interaction: Interaction):
+    @gamble_group.command(name="stats", description="📊 View your gambling history and performance")
+    async def gamble_stats(interaction: Interaction):
         user_id = interaction.user.id
         with engine.begin() as conn:
             result = conn.execute(select(gambling_stats).where(gambling_stats.c.user_id == user_id)).fetchone()
@@ -52,4 +55,4 @@ class GamblingGroup(commands.Cog):
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
 async def setup(bot):
-    await bot.add_cog(GamblingGroup(bot))
+    bot.tree.add_command(gamble_group)

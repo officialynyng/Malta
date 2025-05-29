@@ -6,34 +6,11 @@
     "payout": 2,
     "description": "Choose heads or tails and try your luck!"
   },
-  "blackjack": {
-    "name": "Blackjack",
-    "emoji": "🃏",
-    "odds": 0.42,
-    "payout": 2,
-    "description": "Beat the dealer without going over 21!"
-  },
   "roulette": {
-    "name": "Roulette",
-    "emoji": "🎡",
-    "description": "Classic roulette with red, black, or number bets.",
-    "variants": {
-      "Red": {
-        "emoji": "🔴",
-        "odds": 0.486,
-        "payout": 2.14
-      },
-      "Black": {
-        "emoji": "⚫",
-        "odds": 0.486,
-        "payout": 2.14
-      },
-      "Number (0–36)": {
-        "emoji": "🎯",
-        "odds": 0.027,
-        "payout": 36
-      }
-    }
+  "label": "🎡 Roulette",
+  "description": "Pick Red, Black, or a Number (0–36)",
+  "min_bet": 10,
+  "max_bet": 1000
   },
   "dice_roll": {
     "name": "Dice Roll (6-sided)",
@@ -49,6 +26,12 @@
     "payout": 2,
     "description": "Guess whether the next number (1–100) will be higher or lower than 50."
   },
+  "blackjack": {
+  "name": "Blackjack",
+  "description": "Try to beat the dealer without going over 21!",
+  "emoji": "🃏"
+  },
+
   "slot_machine": {
   "name": "Slot Machine",
   "emoji": "🎰",

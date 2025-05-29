@@ -2,9 +2,10 @@ import discord
 from discord.ui import View, Button
 from discord import Interaction, Embed, ButtonStyle
 
-from cogs.gambling.bet_amount import BetAmountDropdown, GamblingPlayButton
+from cogs.gambling.bet_amount import BetAmountDropdown
 from cogs.exp_utils import get_user_data, get_user_data
 from cogs.gambling.games_loader import GAMES
+from cogs.gambling.play_button import GamblingPlayButton
 
 
 class GameSelectionView(View):
@@ -24,6 +25,13 @@ class GameSelectionView(View):
                         description=variant["description"][:100],
                         emoji=variant.get("emoji", "🎰")
                     ))
+            elif key == "roulette":
+                options.append(discord.SelectOption(
+                    label=game["name"],
+                    value=key,
+                    description=game["description"][:100],
+                    emoji=game.get("emoji", "🎯")
+                ))
             else:
                 options.append(discord.SelectOption(
                     label=game["name"],
@@ -32,18 +40,30 @@ class GameSelectionView(View):
                     emoji=game.get("emoji", "🎰")
                 ))
 
-        self.select = discord.ui.Select(
-            placeholder="🎲 Choose a gambling game...",
-            options=options
-        )
-        self.select.callback = self.select_callback
-        self.add_item(self.select)
+        # ✅ Add Blackjack manually
+        options.append(discord.SelectOption(
+            label="Blackjack",
+            value="blackjack",
+            description="Play a real-time game of Blackjack against the dealer.",
+            emoji="🃏"
+        ))
+
 
     async def select_callback(self, interaction: Interaction):
         if interaction.user.id != self.user_id:
             return await interaction.response.send_message("❌ Not your selection!", ephemeral=True)
 
         game_key = self.select.values[0]
+
+        if game_key == "blackjack":
+            from cogs.gambling.blackjack.blackjack import BlackjackView
+            await interaction.response.edit_message(
+                content="🃏 You've chosen **Blackjack**. Ready to draw your cards?",
+                embed=None,
+                view=BlackjackView(self.user_id, self.user_gold, parent=self)
+            )
+            return
+
 
         if game_key == "roulette":
             await interaction.response.send_message(
@@ -56,6 +76,7 @@ class GameSelectionView(View):
         if game_key.startswith("slot_machine:"):
             variant_key = game_key.split(":")[1]
             game = GAMES["slot_machine"]["variants"][variant_key]
+
         else:
             game = GAMES[game_key]
 
@@ -67,6 +88,17 @@ class GameSelectionView(View):
             view=BetAmountSelectionView(self.user_id, game_key, min_bet, max_bet, parent=self)
         )
 
+class PlayAgainButton(Button):
+    def __init__(self, user_id, parent_view):
+        super().__init__(label="🔁 Play Again", style=discord.ButtonStyle.success)
+        self.user_id = user_id
+        self.parent = parent_view
+
+    async def callback(self, interaction: Interaction):
+        if interaction.user.id != self.user_id:
+            return await interaction.response.send_message("❌ Not your session!", ephemeral=True)
+
+        await interaction.response.edit_message(embed=None, view=self.parent)
 
 class BackToGameButton(Button):
     def __init__(self, user_id, parent_view):
@@ -135,7 +167,8 @@ class BetAmountSelectionView(View):
         
 
         self.dropdown = BetAmountDropdown(self)
-        self.play_button = GamblingPlayButton(user_id, game_key, lambda: self.amount)
+        self.play_button = GamblingPlayButton(user_id, game_key, lambda: self.amount, parent=self.parent)
+
 
         self.add_item(self.dropdown)
         self.add_item(self.play_button)
