@@ -6,11 +6,8 @@ from sqlalchemy import select, insert, update
 from cogs.exp_config import engine, EXP_CHANNEL_ID
 from cogs.exp_utils import get_user_data, update_user_gold
 from cogs.database.gambling_stats_table import gambling_stats
+from cogs.gambling.games_loader import GAMES
 
-import os, json
-CONFIG_PATH = os.path.join(os.path.dirname(__file__), "games_config.json")
-with open(CONFIG_PATH) as f:
-    GAMES = json.load(f)
 
 async def handle_gamble_result(interaction: Interaction, user_id: int, game_key: str, amount: int):
     user_data = get_user_data(user_id)
@@ -41,6 +38,19 @@ async def handle_gamble_result(interaction: Interaction, user_id: int, game_key:
     if user_data["gold"] < amount:
         await interaction.response.send_message(f"❌ You need at least {amount} gold to play.", ephemeral=True)
         return
+
+    # Handle games with custom logic elsewhere
+    CUSTOM_HANDLED = {
+        "blackjack": lambda: __import__("cogs.gambling.blackjack.blackjack", fromlist=["start_blackjack_game"]).start_blackjack_game,
+        "roulette": None  # Already handled by UI
+    }
+
+    if game_key in CUSTOM_HANDLED:
+        handler = CUSTOM_HANDLED[game_key]
+        if handler:  # blackjack
+            await handler()(interaction, user_data, amount)
+        return
+
 
     # Calculate win/loss
     win = random.random() < game["odds"]
