@@ -35,6 +35,8 @@ class RoulettePlayButton(Button):
         if interaction.user.id != self.view_ref.user_id:
             return await interaction.response.send_message("❌ Not your session!", ephemeral=True)
 
+        await interaction.response.defer()
+
         payout_amount = int(self.view_ref.bet * self.view_ref.payout_multiplier)
         embed = Embed(title="🎡 Roulette Result")
 
@@ -43,19 +45,33 @@ class RoulettePlayButton(Button):
             value=f"**{self.view_ref.bet}** gold on **{self.view_ref.choice}** ({self.view_ref.bet_type})",
             inline=False
         )
-        
-        embed.add_field(name="🎲 Result", value=f"**{self.view_ref.result_number}** ({self.view_ref.result_color})", inline=False)
+        embed.add_field(
+            name="🎲 Result",
+            value=f"**{self.view_ref.result_number}** ({self.view_ref.result_color})",
+            inline=False
+        )
 
         if self.view_ref.payout_multiplier > 0:
-            embed.add_field(name="🎉 Payout", value=f"You won **{payout_amount}** gold!", inline=False)
+            embed.add_field(
+                name="🎉 Payout",
+                value=f"You won **{payout_amount}** gold!",
+                inline=False
+            )
         else:
-            embed.add_field(name="💀", value="You lost your bet.", inline=False)
-            
-        embed.set_footer(text=f"💰 Gold: {self.view_ref.user_gold} | Bet: {self.view_ref.bet}")
+            embed.add_field(
+                name="💀",
+                value="You lost your bet.",
+                inline=False
+            )
+
+        embed.set_footer(
+            text=f"💰 Gold: {self.view_ref.user_gold} | Bet: {self.view_ref.bet}"
+        )
 
         self.view_ref.clear_items()
         self.view_ref.add_item(Button(label="🔁 Play Again", style=discord.ButtonStyle.success, disabled=True))
-        await interaction.response.edit_message(embed=embed, view=self.view_ref)
+
+        await interaction.edit_original_response(embed=embed, view=self.view_ref)
 
 class RouletteOptionView(View):
     def __init__(self, user_id, user_gold, parent):
