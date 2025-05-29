@@ -5,7 +5,6 @@ from discord import Interaction
 from discord.ui import Button, View
 
 from cogs.exp_utils import get_user_data, get_user_data
-from cogs.exp_utils import get_user_data, get_user_data
 from cogs.gambling.bet_amount import BetAmountDropdown
 from cogs.gambling.play_button import GamblingPlayButton
 
@@ -22,28 +21,38 @@ class PlayAgainButton(Button):
         if interaction.user.id != self.user_id:
             return await interaction.response.send_message("❌ Not your session!", ephemeral=True)
 
-        # Restart the same game (if specified)
-        if self.game_key == "blackjack":
-            from cogs.gambling.blackjack.blackjack import BlackjackGameView
-            await interaction.response.edit_message(
-                content="🃏 You've chosen **Blackjack**. Ready to draw your cards?",
-                embed=None,
-                view=BlackjackGameView(
-                    self.user_id,
-                    get_user_data(self.user_id)['gold'],
-                    self.parent,
-                    self.bet or 100
+        user_data = get_user_data(self.user_id)
+        gold = user_data.get('gold', 0)
+        try:
+            if self.game_key == "blackjack":
+                from cogs.gambling.blackjack.blackjack import BlackjackGameView
+                await interaction.response.edit_message(
+                    content="🃏 You've chosen **Blackjack**. Ready to draw your cards?",
+                    embed=None,
+                    view=BlackjackGameView(self.user_id, gold, self.parent, self.bet or 100)
                 )
-            )
-            return
+                return
 
-        # Otherwise fallback to parent view (game selection)
+            elif self.game_key == "roulette":
+                from cogs.gambling.roulette.roulette import RouletteOptionView
+                await interaction.response.edit_message(
+                    content="🎡 Choose your Roulette type:",
+                    embed=None,
+                    view=RouletteOptionView(self.user_id, gold, self.parent)
+                )
+                return
+
+        except Exception as e:
+            print(f"PlayAgain fallback error: {e}")
+
+        # Fallback to game hall
         if self.parent:
             await interaction.response.edit_message(
                 content="🎲 Back to the Gambling Hall. Choose your game.",
                 embed=None,
                 view=self.parent
             )
+
 
 
 class RefreshGoldButton(discord.ui.Button):
