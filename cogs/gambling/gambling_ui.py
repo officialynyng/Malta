@@ -6,6 +6,7 @@ from cogs.gambling.bet_amount import BetAmountDropdown
 from cogs.exp_utils import get_user_data, get_user_data
 from cogs.gambling.games_loader import GAMES
 from cogs.gambling.play_button import GamblingPlayButton
+from cogs.gambling.ui_common import BackToGameButton, PlayAgainButton
 
 
 class GameSelectionView(View):
@@ -87,39 +88,7 @@ class GameSelectionView(View):
             embed=None,
             view=BetAmountSelectionView(self.user_id, game_key, min_bet, max_bet, parent=self)
         )
-
-class PlayAgainButton(Button):
-    def __init__(self, user_id, parent_view):
-        super().__init__(label="🔁 Play Again", style=discord.ButtonStyle.success)
-        self.user_id = user_id
-        self.parent = parent_view
-
-    async def callback(self, interaction: Interaction):
-        if interaction.user.id != self.user_id:
-            return await interaction.response.send_message("❌ Not your session!", ephemeral=True)
-
-        await interaction.response.edit_message(embed=None, view=self.parent)
-
-class BackToGameButton(Button):
-    def __init__(self, user_id, parent_view):
-        super().__init__(label="⬅️ Back", style=ButtonStyle.blurple)
-        self.user_id = user_id
-        self.parent_view = parent_view
-
-    async def callback(self, interaction: Interaction):
-        if interaction.user.id != self.user_id:
-            return await interaction.response.send_message("❌ Not your session!", ephemeral=True)
-
-        await interaction.response.edit_message(
-            content=None,
-            embed=Embed(
-                title="🎰 Welcome back to the Gambling Hall",
-                description="Pick your game to begin.",
-                color=discord.Color.red()
-            ),
-            view=self.parent_view
-        )
-
+        
 class RouletteVariantSelectionView(View):
     def __init__(self, user_id, user_gold):
         super().__init__(timeout=60)

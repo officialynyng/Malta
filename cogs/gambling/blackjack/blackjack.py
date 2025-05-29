@@ -2,7 +2,7 @@ import discord
 from discord.ui import View, Button
 from discord import Embed, Interaction
 import random
-from cogs.gambling.gambling_ui import BackToGameButton, PlayAgainButton
+from cogs.gambling.ui_common import BackToGameButton, PlayAgainButton
 from cogs.exp_utils import get_user_data, update_user_gold
 from cogs.exp_config import EXP_CHANNEL_ID, engine
 from sqlalchemy import select, update, insert
