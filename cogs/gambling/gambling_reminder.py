@@ -2,7 +2,6 @@
 import discord
 from discord.ext import tasks, commands
 import datetime
-import asyncio
 import pytz
 import random
 from cogs.exp_config import EXP_CHANNEL_ID
