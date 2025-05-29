@@ -6,13 +6,24 @@ RANKS = {
     8: "8", 9: "9", 10: "10", 11: "J", 12: "Q", 13: "K"
 }
 
-def create_deck():
-    return [(v, s) for v in range(1, 14) for s in SUITS]
+def create_shoe(decks=6):
+    single_deck = [(v, s) for v in range(1, 14) for s in SUITS]
+    shoe = single_deck * decks
+    random.shuffle(shoe)
+    return shoe
 
-def draw_card(deck):
-    if len(deck) < 10:
-        deck[:] = create_deck()
-    return deck.pop(random.randint(0, len(deck) - 1))
+# To be assigned once in BlackjackGameView.shared_shoe = create_shoe()
+def draw_from_shoe(shoe, reshuffle_callback=None):
+    if len(shoe) < 15:
+        if reshuffle_callback:
+            reshuffle_callback()
+    return shoe.pop()
+
+def draw_card():
+    from cogs.gambling.blackjack.blackjack import BlackjackGameView
+    if len(BlackjackGameView.shared_shoe) < 15:
+        BlackjackGameView.shared_shoe = create_shoe()
+    return BlackjackGameView.shared_shoe.pop()
 
 
 def hand_value(hand):

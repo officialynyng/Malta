@@ -7,23 +7,22 @@ from cogs.gambling.gambling_ui_common import BackToGameButton, PlayAgainButton
 from cogs.exp_utils import get_user_data, update_user_gold
 from cogs.exp_config import EXP_CHANNEL_ID, engine
 
-from cogs.gambling.blackjack.blackjack_utils import create_deck, draw_card, hand_value, card_to_emoji, format_hand
+from cogs.gambling.blackjack.blackjack_utils import create_shoe, draw_card, format_hand, hand_value
 from cogs.database.gambling_stats_table import gambling_stats
 import time
 
 class BlackjackGameView(View):
+    shared_shoe = create_shoe()
     def __init__(self, user_id, user_gold, parent, bet):
         super().__init__(timeout=120)
         self.user_id = user_id
         self.user_gold = user_gold
         self.parent = parent
         self.bet = bet
-        self.deck = create_deck()
-        self.player_hand = [draw_card(self.deck), draw_card(self.deck)]
-        self.dealer_hand = [draw_card(self.deck), draw_card(self.deck)]
+        self.player_hand = []
+        self.dealer_hand = []
 
-        self.add_item(HitButton(self))
-        self.add_item(StandButton(self))
+        self.add_item(DrawCardsButton(self))
         self.add_item(BackToGameButton(user_id, self.parent))
         self.add_item(PlayAgainButton(self.user_id, self.parent))
         self.message = None
@@ -32,7 +31,7 @@ class BlackjackGameView(View):
         embed = Embed(title="🃏 Blackjack", color=discord.Color.red())
         embed.add_field(
             name="Your Hand",
-            value=f"{format_hand(self.player_hand)}\n**Total: {hand_value(self.player_hand)}**",
+            value=f"{format_hand(self.player_hand)}\n**Total: {hand_value(self.player_hand)}**" if self.player_hand else "No cards yet.",
             inline=False
         )
 
@@ -122,8 +121,8 @@ class HitButton(Button):
         if interaction.user.id != self.game.user_id:
             return await interaction.response.send_message("❌ Not your session!", ephemeral=True)
 
-        self.game.player_hand.append(draw_card(self.game.deck))
-        if self.game.hand_value(self.game.player_hand) > 21:
+        self.game.player_hand.append(draw_card())
+        if hand_value(self.game.player_hand) > 21:
             await self.game.finalize_game(interaction)
         else:
             await interaction.response.edit_message(embed=self.game.get_embed(), view=self.game)
@@ -138,7 +137,30 @@ class StandButton(Button):
         if interaction.user.id != self.game.user_id:
             return await interaction.response.send_message("❌ Not your session!", ephemeral=True)
 
-        while self.game.hand_value(self.game.dealer_hand) < 17:
-            self.game.dealer_hand.append(draw_card(self.game.deck))
+        while hand_value(self.game.dealer_hand) < 17:
+            self.game.dealer_hand.append(draw_card())
 
         await self.game.finalize_game(interaction)
+
+class DrawCardsButton(discord.ui.Button):
+    def __init__(self, view: BlackjackGameView):
+        super().__init__(label="Draw Cards", emoji="🃏", style=discord.ButtonStyle.green)
+        self.view_ref = view
+
+    async def callback(self, interaction: Interaction):
+        if interaction.user.id != self.view_ref.user_id:
+            return await interaction.response.send_message("❌ Not your session!", ephemeral=True)
+
+        self.view_ref.player_hand = [draw_card(), draw_card()]
+        self.view_ref.dealer_hand = [draw_card(), draw_card()]
+
+        self.view_ref.clear_items()
+        self.view_ref.add_item(HitButton(self.view_ref))
+        self.view_ref.add_item(StandButton(self.view_ref))
+        self.view_ref.add_item(BackToGameButton(self.view_ref.user_id, self.view_ref.parent))
+        self.view_ref.add_item(PlayAgainButton(self.view_ref.user_id, self.view_ref.parent))
+
+        await interaction.response.edit_message(
+            embed=self.view_ref.get_embed(),
+            view=self.view_ref
+        )
