@@ -8,6 +8,7 @@ from cogs.exp_utils import get_user_data, update_user_gold
 from cogs.exp_config import EXP_CHANNEL_ID, engine
 
 from cogs.gambling.blackjack.blackjack_utils import create_shoe, draw_card, format_hand, hand_value
+from cogs.gambling.bet_amount import BetAmountDropdown
 from cogs.database.gambling_stats_table import gambling_stats
 import time
 
@@ -19,10 +20,15 @@ class BlackjackGameView(View):
         self.user_gold = user_gold
         self.parent = parent
         self.bet = bet
+        self.min_bet = 1
+        self.max_bet = 5000
+        self.amount = 100  # default bet
         self.player_hand = []
         self.dealer_hand = []
 
-        self.add_item(DrawCardsButton(self))
+        self.play_button = DrawCardsButton(self)
+        self.add_item(BetAmountDropdown(self))
+        self.add_item(self.play_button)
         self.add_item(BackToGameButton(user_id, self.parent))
         self.message = None
 
@@ -110,8 +116,7 @@ class BlackjackGameView(View):
         self.clear_items()
         self.add_item(BackToGameButton(self.user_id, self.parent))
         self.add_item(PlayAgainButton(self.user_id, self.parent))
-        await interaction.response.edit_message(embed=self.get_embed(reveal_dealer=True, final=True), view=None)
-
+        await interaction.response.edit_message(embed=self.get_embed(reveal_dealer=True, final=True), view=self)
 
 class HitButton(Button):
     def __init__(self, game: BlackjackGameView):
@@ -155,6 +160,7 @@ class DrawCardsButton(discord.ui.Button):
         self.view_ref.player_hand = [draw_card(), draw_card()]
         self.view_ref.dealer_hand = [draw_card(), draw_card()]
 
+        self.view_ref.bet = getattr(self.view_ref, "amount", 100)
         self.view_ref.clear_items()
         self.view_ref.add_item(HitButton(self.view_ref))
         self.view_ref.add_item(StandButton(self.view_ref))
