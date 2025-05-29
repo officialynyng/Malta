@@ -49,7 +49,14 @@ class GameSelectionView(View):
             emoji="🃏"
         ))
 
-
+        # ✅ Create and add the select menu
+        self.select = discord.ui.Select(
+            placeholder="🎲 Choose a gambling game...",
+            options=options
+        )
+        self.select.callback = self.select_callback
+        self.add_item(self.select)
+        
     async def select_callback(self, interaction: Interaction):
         if interaction.user.id != self.user_id:
             return await interaction.response.send_message("❌ Not your selection!", ephemeral=True)
@@ -67,12 +74,14 @@ class GameSelectionView(View):
 
 
         if game_key == "roulette":
-            await interaction.response.send_message(
-                "🎡 Choose your roulette bet type:",
-                view=RouletteVariantSelectionView(self.user_id, self.user_gold),
-                ephemeral=True
+            from cogs.gambling.roulette.roulette import RouletteView  # Adjust path as needed
+            await interaction.response.edit_message(
+                content="🎯 Choose your roulette bet type:",
+                embed=None,
+                view=RouletteView(self.user_id, parent=self, bet=100, user_gold=self.user_gold)
             )
             return
+
 
         if game_key.startswith("slot_machine:"):
             variant_key = game_key.split(":")[1]
@@ -87,40 +96,6 @@ class GameSelectionView(View):
             content=f"💰 You've selected **{game['name']}**. Now choose your bet amount:",
             embed=None,
             view=BetAmountSelectionView(self.user_id, game_key, min_bet, max_bet, parent=self)
-        )
-        
-class RouletteVariantSelectionView(View):
-    def __init__(self, user_id, user_gold):
-        super().__init__(timeout=60)
-        self.user_id = user_id
-        self.user_gold = user_gold
-
-        options = [
-            discord.SelectOption(label=variant, value=variant,
-                description=f"{data['odds']*100:.1f}% chance, x{data['payout']} payout",
-                emoji=data.get("emoji", "🎯"))
-            for variant, data in GAMES["roulette"]["variants"].items()
-        ]
-
-        self.select = discord.ui.Select(
-            placeholder="Choose Red, Black, or a Number (0–36)...",
-            options=options
-        )
-        self.select.callback = self.select_callback
-        self.add_item(self.select)
-
-    async def select_callback(self, interaction: Interaction):
-        if interaction.user.id != self.user_id:
-            return await interaction.response.send_message("❌ Not your selection!", ephemeral=True)
-
-        variant_key = self.select.values[0]
-        full_game_key = f"roulette:{variant_key}"
-        variant = GAMES["roulette"]["variants"][variant_key]
-
-        await interaction.response.send_message(
-            f"🎯 Bet type: **{variant_key}**\n💰 Choose your wager:",
-            view=BetAmountSelectionView(self.user_id, full_game_key, min_bet=100, max_bet=10000),
-            ephemeral=True
         )
 
 
