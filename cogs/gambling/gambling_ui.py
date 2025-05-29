@@ -42,13 +42,15 @@ class GameSelectionView(View):
                 ))
 
 
-        # ✅ Add Blackjack manually
-        options.append(discord.SelectOption(
-            label="Blackjack",
-            value="blackjack",
-            description="Play a real-time game of Blackjack against the dealer.",
-            emoji="🃏"
-        ))
+        # ✅ Add Blackjack manually if not in GAMES already
+        if "blackjack" not in GAMES:
+            options.append(discord.SelectOption(
+                label="Blackjack",
+                value="blackjack",
+                description="Play a real-time game of Blackjack against the dealer.",
+                emoji="🃏"
+            ))
+
 
         # ✅ Create and add the select menu
         self.select = discord.ui.Select(
