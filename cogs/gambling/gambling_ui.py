@@ -67,18 +67,23 @@ class GameSelectionView(View):
             await interaction.response.edit_message(
                 content="🃏 You've chosen **Blackjack**. Ready to draw your cards?",
                 embed=None,
-                view=BlackjackGameView(self.user_id, self.user_gold, parent=self)
+                view=BlackjackGameView(self.user_id, self.user_gold, parent=self, bet=100)  # ← fix
             )
             return
 
 
         if game_key == "roulette":
+            game = GAMES["roulette"]
+            min_bet = game.get("min_bet", 1)
+            max_bet = 5000
             await interaction.response.edit_message(
-                content="🎯 Choose your roulette bet type:",
+                content="🎯 You've chosen **Roulette**. Now choose your bet amount:",
                 embed=None,
-                view=RouletteView(self.user_id, parent=self, bet=100, user_gold=self.user_gold)
+                view=BetAmountSelectionView(self.user_id, "roulette", min_bet, max_bet, parent=self)
             )
             return
+
+
 
 
         if game_key.startswith("slot_machine:"):
