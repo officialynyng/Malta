@@ -55,4 +55,5 @@ class GamblingGroup(commands.Cog):
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
 async def setup(bot):
+    await bot.add_cog(GamblingGroup(bot))
     bot.tree.add_command(gamble_group)
