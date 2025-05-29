@@ -25,7 +25,7 @@ class GamblingPlayButton(discord.ui.Button):
 
         user_data = get_user_data(self.user_id)
 
-        # Special handling for blackjack
+        # ✅ BLACKJACK (custom view-based game)
         if self.game_key == "blackjack":
             from cogs.gambling.blackjack.blackjack import BlackjackGameView
             await interaction.edit_original_response(
@@ -40,15 +40,14 @@ class GamblingPlayButton(discord.ui.Button):
             )
             return
 
-        # Special callback from parent (e.g. roulette, slots, etc.)
+        # ✅ EXTRA CALLBACK for custom games
         if self.extra_callback:
-            result = self.extra_callback
-            try:
-                # Check if it's a coroutine that takes (interaction, amount)
-                await result(interaction, amount)
-            except TypeError:
-                # Otherwise assume it just returns a View (e.g. from lambda)
-                view = result(amount)
+            # If it's a coroutine (async def), assume it takes interaction & amount
+            if asyncio.iscoroutinefunction(self.extra_callback):
+                await self.extra_callback(interaction, amount)
+            else:
+                # If it's a lambda or returns a View (like slots), just show it
+                view = self.extra_callback(amount)
                 await interaction.edit_original_response(
                     content=f"🎲 You bet **{amount}** gold on {self.game_key.title()}!",
                     embed=None,
@@ -56,6 +55,6 @@ class GamblingPlayButton(discord.ui.Button):
                 )
             return
 
-        # Fallback to generic game handler
+        # ✅ DEFAULT fallback handler (e.g., odds-based games)
         from cogs.gambling.gambling_logic import handle_gamble_result
         await handle_gamble_result(interaction, self.user_id, self.game_key, amount)
