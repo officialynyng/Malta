@@ -1,5 +1,4 @@
 from cogs.gambling.gambling_logic import handle_gamble_result
-from cogs.gambling.blackjack.blackjack import BlackjackGameView
 from cogs.exp_utils import get_user_data
 
 import discord
@@ -24,7 +23,9 @@ class GamblingPlayButton(discord.ui.Button):
 
         user_data = get_user_data(self.user_id)
 
+        # ✅ Import here to avoid circular import error
         if self.game_key == "blackjack":
+            from cogs.gambling.blackjack.blackjack import BlackjackGameView
             await interaction.response.edit_message(
                 content=f"🃏 You bet **{amount}** gold on Blackjack!",
                 embed=None,
@@ -38,4 +39,5 @@ class GamblingPlayButton(discord.ui.Button):
             return
 
         # ✅ Fallback for games that use generic handler
+        from cogs.gambling.gambling_logic import handle_gamble_result
         await handle_gamble_result(interaction, self.user_id, self.game_key, amount)
