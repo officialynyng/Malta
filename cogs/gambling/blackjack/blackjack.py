@@ -1,11 +1,12 @@
 import discord
 from discord.ui import View, Button
 from discord import Embed, Interaction
-import random
-from cogs.gambling.ui_common import BackToGameButton, PlayAgainButton
+from sqlalchemy import select, update, insert
+
+from cogs.gambling.x_back_buttons import BackToGameButton
+from cogs.gambling.x_play_again_button import PlayAgainButton
 from cogs.exp_utils import get_user_data, update_user_gold
 from cogs.exp_config import EXP_CHANNEL_ID, engine
-from sqlalchemy import select, update, insert
 
 from cogs.gambling.blackjack.blackjack_utils import create_deck, draw_card, hand_value, card_to_emoji, format_hand
 from cogs.database.gambling_stats_table import gambling_stats

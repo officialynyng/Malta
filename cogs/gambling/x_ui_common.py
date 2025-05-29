@@ -5,33 +5,12 @@ from discord import Interaction
 from discord.ui import View, Button
 import asyncio
 
+
 from cogs.exp_utils import get_user_data, get_user_data
 from cogs.gambling.bet_amount import BetAmountDropdown
 from cogs.gambling.gambling_ui import RefreshGoldButton
 from cogs.gambling.play_button import GamblingPlayButton
-
-class BackToGameButton(Button):
-    def __init__(self, user_id, parent):
-        super().__init__(label="⬅️ Back", style=discord.ButtonStyle.secondary)
-        self.user_id = user_id
-        self.parent = parent
-
-    async def callback(self, interaction: Interaction):
-        if interaction.user.id != self.user_id:
-            return await interaction.response.send_message("❌ Not your session!", ephemeral=True)
-        await interaction.response.edit_message(content=None, embed=None, view=self.parent)
-
-
-class PlayAgainButton(Button):
-    def __init__(self, user_id, parent_view):
-        super().__init__(label="🔁 Play Again", style=discord.ButtonStyle.success)
-        self.user_id = user_id
-        self.parent = parent_view
-
-    async def callback(self, interaction: Interaction):
-        if interaction.user.id != self.user_id:
-            return await interaction.response.send_message("❌ Not your session!", ephemeral=True)
-        await interaction.response.edit_message(content=None, embed=None, view=self.parent)
+from cogs.gambling.x_back_buttons import BackToGameButton
 
 class BetAmountSelectionView(View):
     def __init__(self, user_id, game_key, min_bet, max_bet, parent=None):
