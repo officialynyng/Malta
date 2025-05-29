@@ -44,11 +44,11 @@ class GambleReminder(commands.Cog):
             variant = random.choice(REMINDER_VARIANTS)
             embed = discord.Embed(
                 title="🎰 Feeling lucky?",
-                description="**Use** `/gamble` to play Blackjack, Coin Flip, or Roulette.\nTake a risk — and maybe take the pot.",
+                description="**Use** `/gamble play` to play an assortment of games.\nTake a risk — and maybe take the pot.",
                 color=discord.Color.green()
             )
             embed.set_thumbnail(url=variant["img"])
-            embed.set_footer(text="Games are available all day — don't miss your shot!")
+            embed.set_footer(text="Games are available all day - don't miss your chance!")
 
             await channel.send(content=variant["line"], embed=embed)
 

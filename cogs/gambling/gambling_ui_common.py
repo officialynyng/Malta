@@ -96,35 +96,6 @@ class BetAmountSelectionView(View):
 
         extra_callback = None  # ← DEFINE THIS FIRST
 
-        if game_key == "roulette":
-            async def handle_roulette(interaction: Interaction, amount):
-                await interaction.response.send_message("🎯 Pick a number between 0–36 to bet on:", ephemeral=True)
-
-                def check(msg):
-                    return msg.author.id == user_id and msg.channel == interaction.channel
-
-                try:
-                    msg = await interaction.client.wait_for("message", timeout=30.0, check=check)
-                    number = msg.content.strip()
-
-                    if not number.isdigit() or not (0 <= int(number) <= 36):
-                        return await interaction.followup.send("❌ Invalid number. Please enter a number between 0–36.", ephemeral=True)
-
-                    user_data = get_user_data(user_id)
-                    from cogs.gambling.roulette.roulette import RouletteView
-
-                    await interaction.followup.send(
-                        content=f"🎡 You bet **{amount}** gold on Roulette number **{number}**!",
-                        embed=None,
-                        view=RouletteView(user_id, parent=parent, bet=amount, choice=number, bet_type="Number", user_gold=user_data['gold']),
-                        ephemeral=False
-                    )
-
-                except asyncio.TimeoutError:
-                    await interaction.followup.send("⌛ Timed out waiting for number selection.", ephemeral=True)
-
-            extra_callback = handle_roulette
-
         # ✅ Now use the callback
         self.dropdown = BetAmountDropdown(self)
         self.play_button = GamblingPlayButton(user_id, game_key, lambda: self.amount, parent=self.parent, extra_callback=extra_callback)
