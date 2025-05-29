@@ -3,7 +3,8 @@ import discord
 from discord.ui import View, Button, Select
 from discord import Interaction, Embed
 
-
+from cogs.exp_utils import update_user_gold
+from cogs.exp_config import EXP_CHANNEL_ID
 from cogs.gambling.roulette.roulette_utils import spin_roulette, payout
 from cogs.gambling.gambling_ui_common import BetAmountSelectionView
 
@@ -38,35 +39,30 @@ class RoulettePlayButton(Button):
         await interaction.response.defer()
 
         payout_amount = int(self.view_ref.bet * self.view_ref.payout_multiplier)
+        net_change = payout_amount - self.view_ref.bet
+
+        # ✅ Update user gold
+        self.view_ref.user_gold += net_change
+        update_user_gold(self.view_ref.user_id, self.view_ref.user_gold)
+
+        # ✅ Broadcast result to EXP_CHANNEL_ID
+        exp_channel = interaction.client.get_channel(EXP_CHANNEL_ID)
+        if exp_channel:
+            await exp_channel.send(
+                f"🎡 **{interaction.user.display_name}** bet **{self.view_ref.bet}** gold on **{self.view_ref.choice}** "
+                f"({self.view_ref.bet_type}) and "
+                f"{'won 🎉' if self.view_ref.payout_multiplier > 0 else 'lost 💀'} **{abs(net_change)}** gold!"
+            )
+
+        # 🎯 Result embed
         embed = Embed(title="🎡 Roulette Result")
-
-        embed.add_field(
-            name="🎯 Your Bet",
-            value=f"**{self.view_ref.bet}** gold on **{self.view_ref.choice}** ({self.view_ref.bet_type})",
-            inline=False
-        )
-        embed.add_field(
-            name="🎲 Result",
-            value=f"**{self.view_ref.result_number}** ({self.view_ref.result_color})",
-            inline=False
-        )
-
+        embed.add_field(name="🎯 Your Bet", value=f"**{self.view_ref.bet}** gold on **{self.view_ref.choice}** ({self.view_ref.bet_type})", inline=False)
+        embed.add_field(name="🎲 Result", value=f"**{self.view_ref.result_number}** ({self.view_ref.result_color})", inline=False)
         if self.view_ref.payout_multiplier > 0:
-            embed.add_field(
-                name="🎉 Payout",
-                value=f"You won **{payout_amount}** gold!",
-                inline=False
-            )
+            embed.add_field(name="🎉 Payout", value=f"You won **{payout_amount}** gold!", inline=False)
         else:
-            embed.add_field(
-                name="💀",
-                value="You lost your bet.",
-                inline=False
-            )
-
-        embed.set_footer(
-            text=f"💰 Gold: {self.view_ref.user_gold} | Bet: {self.view_ref.bet}"
-        )
+            embed.add_field(name="💀", value="You lost your bet.", inline=False)
+        embed.set_footer(text=f"💰 Gold: {self.view_ref.user_gold} | Bet: {self.view_ref.bet}")
 
         self.view_ref.clear_items()
         self.view_ref.add_item(Button(label="🔁 Play Again", style=discord.ButtonStyle.success, disabled=True))
@@ -101,6 +97,21 @@ class RouletteOptionView(View):
 
         if selection.startswith("color:"):
             color = selection.split(":")[1]
+
+            async def roulette_color_callback(interaction: Interaction, bet: int):
+                await interaction.edit_original_response(
+                    content=f"🎡 Spinning for **{bet}** gold on **{color}**!",
+                    embed=None,
+                    view=RouletteView(
+                        self.user_id,
+                        parent=self.parent,
+                        bet=bet,
+                        choice=color,
+                        bet_type="Color",
+                        user_gold=self.user_gold
+                    )
+                )
+
             await interaction.response.edit_message(
                 content=f"🎯 You selected **{color}**. Now choose your bet.",
                 view=BetAmountSelectionView(
@@ -109,20 +120,10 @@ class RouletteOptionView(View):
                     min_bet=10,
                     max_bet=10000,
                     parent=self.parent,
-                    extra_callback=lambda interaction, bet: interaction.edit_original_response(
-                        content="🎡 Spinning...",
-                        embed=None,
-                        view=RouletteView(
-                            self.user_id,
-                            parent=self.parent,
-                            bet=bet,
-                            choice=color,  # or str(number_choice)
-                            bet_type="Color",  # or "Number"
-                            user_gold=self.user_gold
-                        )
-                    )
+                    extra_callback=roulette_color_callback
                 )
             )
+
         elif selection == "number":
             await interaction.response.edit_message(
                 content="🔢 Pick a number between 0–36 to bet on:",
@@ -144,6 +145,20 @@ class RouletteOptionView(View):
 
                 number_choice = int(msg.content)
 
+                async def roulette_number_callback(interaction: Interaction, bet: int):
+                    await interaction.edit_original_response(
+                        content=f"🎡 Spinning for **{bet}** gold on **{number_choice}**!",
+                        embed=None,
+                        view=RouletteView(
+                            self.user_id,
+                            parent=self.parent,
+                            bet=bet,
+                            choice=str(number_choice),
+                            bet_type="Number",
+                            user_gold=self.user_gold
+                        )
+                    )
+
                 await interaction.edit_original_response(
                     content=f"🎯 You chose **{number_choice}**. Now choose your bet amount:",
                     view=BetAmountSelectionView(
@@ -152,18 +167,7 @@ class RouletteOptionView(View):
                         min_bet=100,
                         max_bet=10000,
                         parent=self.parent,
-                        extra_callback=lambda interaction, bet: interaction.edit_original_response(
-                            content=f"🎡 Spinning...",
-                            embed=None,
-                            view=RouletteView(
-                                self.user_id,
-                                parent=self.parent,
-                                bet=bet,
-                                choice=str(number_choice),
-                                bet_type="Number",
-                                user_gold=self.user_gold
-                            )
-                        )
+                        extra_callback=roulette_number_callback
                     )
                 )
 
