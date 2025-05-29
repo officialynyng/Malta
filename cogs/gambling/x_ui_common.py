@@ -1,5 +1,4 @@
 # ui_common.py
-import discord
 from discord.ui import Button
 from discord import Interaction
 from discord.ui import View, Button

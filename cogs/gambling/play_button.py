@@ -2,7 +2,6 @@ from cogs.gambling.gambling_logic import handle_gamble_result
 from cogs.gambling.blackjack.blackjack import BlackjackGameView
 from cogs.exp_utils import get_user_data
 
-import asyncio
 import discord
 from discord import Interaction
 
