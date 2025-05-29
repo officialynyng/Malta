@@ -4,7 +4,7 @@ from discord import Interaction, Embed
 
 
 from cogs.gambling.roulette.roulette_utils import spin_roulette, payout
-from cogs.gambling.x_ui_common import BetAmountSelectionView
+from cogs.gambling.gambling_ui_common import BetAmountSelectionView
 
 class RouletteView(View):
     def __init__(self, user_id, parent, bet, choice, bet_type, user_gold):
