@@ -42,7 +42,7 @@ class GambleReminder(commands.Cog):
 
             variant = random.choice(REMINDER_VARIANTS)
             embed = discord.Embed(
-                title="🎰 Feeling lucky?",
+                title="♠️ ♥️ ♦️ ♣️  Feeling lucky?",
                 description="**Use** `/gamble play` to play an assortment of games.\nTake a risk — and maybe take the pot.",
                 color=discord.Color.green()
             )
