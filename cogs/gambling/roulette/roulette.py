@@ -6,7 +6,7 @@ from discord import Interaction, Embed
 from cogs.exp_utils import update_user_gold
 from cogs.exp_config import EXP_CHANNEL_ID
 from cogs.gambling.roulette.roulette_utils import spin_roulette, payout
-from cogs.gambling.gambling_ui_common import BetAmountSelectionView, PlayAgainButton
+from cogs.gambling.gambling_ui_common import BetAmountSelectionView, PlayAgainButton, BackToGameButton, RefreshGoldButton
 
 class RouletteView(View):
     def __init__(self, user_id, parent, bet, choice, bet_type, user_gold):
@@ -22,6 +22,10 @@ class RouletteView(View):
         self.result_number, self.result_color = self.result
 
         self.add_item(RoulettePlayButton(self))
+        self.add_item(RefreshGoldButton(user_id))
+        self.add_item(BackToRouletteOptionsButton(user_id, user_gold, self.parent))
+        self.add_item(BackToGameButton(self.user_id, parent=self.parent))
+
 
     async def on_timeout(self):
         if hasattr(self, "message"):
@@ -235,4 +239,25 @@ class RouletteNumberModal(Modal):
                 extra_callback=roulette_number_callback
             ),
             ephemeral=False
+        )
+
+
+class BackToRouletteOptionsButton(Button):
+    def __init__(self, user_id, user_gold, parent):
+        super().__init__(label="🎯 Back to Roulette Options", style=discord.ButtonStyle.secondary)
+        self.user_id = user_id
+        self.user_gold = user_gold
+        self.parent = parent  # should be GameSelectionView or similar
+
+    async def callback(self, interaction: Interaction):
+        if interaction.user.id != self.user_id:
+            await interaction.response.send_message("❌ Not your session!", ephemeral=True)
+            return
+
+        from cogs.gambling.roulette.roulette import RouletteOptionView
+
+        await interaction.response.edit_message(
+            content="🎯 Pick Red, Black, or a Number:",
+            embed=None,
+            view=RouletteOptionView(self.user_id, self.user_gold, parent=self.parent)
         )
