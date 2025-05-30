@@ -4,7 +4,7 @@ from discord import Interaction
 
 from cogs.gambling.games_loader import GAMES
 from cogs.gambling.blackjack.blackjack import BlackjackGameView
-from cogs.gambling.roulette.roulette import RouletteView
+from cogs.gambling.roulette.roulette import RouletteOptionView
 from cogs.gambling.gambling_ui_common import BetAmountSelectionView
 class GameSelectionView(View):
     def __init__(self, user_id, user_gold):
@@ -72,16 +72,14 @@ class GameSelectionView(View):
             return
 
 
-        if game_key == "roulette":
-            game = GAMES["roulette"]
-            min_bet = game.get("min_bet", 1)
-            max_bet = 5000
+        if if game_key == "roulette":
             await interaction.response.edit_message(
-                content="🎯 You've chosen **Roulette**. Now choose your bet amount:",
+                content="🎯 You've chosen **Roulette**. Pick Red, Black, or a Number:",
                 embed=None,
-                view=BetAmountSelectionView(self.user_id, "roulette", min_bet, max_bet, parent=self)
+                view=RouletteOptionView(self.user_id, self.user_gold, parent=self)
             )
             return
+
 
 
 
