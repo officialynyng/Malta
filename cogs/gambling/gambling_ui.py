@@ -17,7 +17,7 @@ class GameSelectionView(View):
         options = []
 
         for key, game in GAMES.items():
-            if key == "slot_machine" and "variants" in game:
+            if key == "slot_machine" and "variants" in game and game["variants"]:
                 for variant_key, variant in game["variants"].items():
                     options.append(discord.SelectOption(
                         label=variant['name'],
@@ -50,6 +50,14 @@ class GameSelectionView(View):
                 emoji="🃏"
             ))
 
+        # ✅ Fallback if nothing was added
+        if not options:
+            options.append(discord.SelectOption(
+                label="No games available.",
+                value="none",
+                description="No available games to play at this time.",
+                emoji="❌"
+            ))
 
         # ✅ Create and add the select menu
         self.select = discord.ui.Select(
