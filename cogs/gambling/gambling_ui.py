@@ -86,7 +86,7 @@ class GameSelectionView(View):
             embed = discord.Embed(
                 title="🎯 Roulette",
                 description="Pick Red, Black, or a Number. Will luck be on your side?",
-                color=discord.Color.red()
+                color=discord.Color.green()
             )
             embed.set_image(url="http://theknightsofmalta.net/wp-content/uploads/2025/05/roulette.png")  # 🎡 replace with your roulette image
             embed.set_footer(text=f"💰 Gold: {self.user_gold}")
