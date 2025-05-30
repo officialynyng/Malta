@@ -102,6 +102,7 @@ class BackToGameButton(Button):
             description="Pick your game to begin.",
             color=discord.Color.red()
         )
+        embed.set_image(url="http://theknightsofmalta.net/wp-content/uploads/2025/05/Gold-Casino.png")
         embed.set_footer(text=f"💰 Gold: {gold}")
 
         await interaction.response.edit_message(
