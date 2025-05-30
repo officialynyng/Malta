@@ -6,6 +6,8 @@ from cogs.gambling.games_loader import GAMES
 from cogs.gambling.blackjack.blackjack import BlackjackGameView
 from cogs.gambling.roulette.roulette import RouletteOptionView
 from cogs.gambling.gambling_ui_common import BetAmountSelectionView
+
+
 class GameSelectionView(View):
     def __init__(self, user_id, user_gold):
         super().__init__(timeout=60)
@@ -113,16 +115,6 @@ class GameSelectionView(View):
 
         min_bet = game.get("min_bet", 1)
         max_bet = 5000
-        embed = discord.Embed(
-            title=f"{game.get('emoji', '🎰')} {game['name']}",
-            description=game["description"],
-            color=discord.Color.gold()
-        )
-
-        if "image_url" in game:
-            embed.set_image(url=game["image_url"])
-
-        embed.set_footer(text=f"💰 Gold: {self.user_gold}")
 
         embed = discord.Embed(
             title=f"{game.get('emoji', '🎰')} {game['name']}",
@@ -140,4 +132,5 @@ class GameSelectionView(View):
             embed=embed,
             view=BetAmountSelectionView(self.user_id, game_key, min_bet, max_bet, parent=self)
         )
+
 
