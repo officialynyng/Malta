@@ -33,7 +33,7 @@ class RouletteView(View):
 
 class RoulettePlayButton(Button):
     def __init__(self, view: RouletteView):
-        super().__init__(label="🎰 Play", style=discord.ButtonStyle.danger)
+        super().__init__(label="🎡 Play", style=discord.ButtonStyle.danger)
         self.view_ref = view
 
     async def callback(self, interaction: Interaction):
@@ -134,7 +134,7 @@ class RouletteOptionView(View):
                 description="Choose your bet amount below.",
                 color=discord.Color.green()
             )
-            embed.set_image(url="http://theknightsofmalta.net/wp-content/uploads/2025/05/roulette.png")  # ⬅️ Replace with your actual roulette banner
+            embed.set_image(url="https://theknightsofmalta.net/wp-content/uploads/2025/05/roulette.png")  # ⬅️ Replace with your actual roulette banner
             embed.set_footer(text=f"💰 Gold: {self.user_gold}")
 
             await interaction.response.edit_message(
@@ -253,7 +253,7 @@ class RouletteNumberModal(Modal):
             description="Choose your bet amount below.",
             color=discord.Color.green()
         )
-        embed.set_image(url="http://theknightsofmalta.net/wp-content/uploads/2025/05/roulette.png")  # ⬅️ Replace with your roulette art
+        embed.set_image(url="https://theknightsofmalta.net/wp-content/uploads/2025/05/roulette.png")  # ⬅️ Replace with your roulette art
         embed.set_footer(text=f"💰 Gold: {self.user_gold}")
 
         await interaction.followup.send(

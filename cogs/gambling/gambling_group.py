@@ -27,7 +27,7 @@ async def gamble_play(interaction: Interaction):
         description="Pick your game to begin.",
         color=discord.Color.green()
     )
-    embed.set_image(url="http://theknightsofmalta.net/wp-content/uploads/2025/05/Gold-Casino.png")
+    embed.set_image(url="https://theknightsofmalta.net/wp-content/uploads/2025/05/Gold-Casino.png")
     embed.set_footer(text=f"🎲 Gold: {user_data['gold']}")
     await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
     view.message = await interaction.original_response()

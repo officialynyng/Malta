@@ -51,7 +51,7 @@ class BlackjackGameView(View):
         if final:
             embed.add_field(name="🎲 Result", value=self.evaluate_result(), inline=False)
 
-        embed.set_image(url="http://theknightsofmalta.net/wp-content/uploads/2025/05/blackjack.png")  # replace with your themed blackjack banner
+        embed.set_image(url="https://theknightsofmalta.net/wp-content/uploads/2025/05/blackjack.png")  # replace with your themed blackjack banner
         embed.add_field(name="💰 Gold", value=f"**{get_user_data(self.user_id)['gold']}**", inline=False)
         
         return embed

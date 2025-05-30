@@ -49,7 +49,7 @@ class StoreGroup(commands.Cog):
             embed.description = "Select a category below to view items."
 
             # Embed an image (must be a public direct image URL)
-            embed.set_image(url="http://ynyng.org/wp-content/uploads/2025/03/ynyng_malta__hospitaller_very_organized_and_open_medieval_shop__26cf32ee-fe4e-405e-ba6c-b306edae40e6-1.png")
+            embed.set_image(url="https://ynyng.org/wp-content/uploads/2025/03/ynyng_malta__hospitaller_very_organized_and_open_medieval_shop__26cf32ee-fe4e-405e-ba6c-b306edae40e6-1.png")
 
             await interaction.response.send_message(embed=embed, view=CategoryView(interaction, self.show_items_by_category), ephemeral=True)
 
@@ -325,7 +325,7 @@ class StoreGroup(commands.Cog):
     async def send_category_selection(self, interaction):
         embed = discord.Embed(title="🍯 Malta's CRPG Item Shop", color=discord.Color.gold())
         embed.description = "Select a category below to view items."
-        embed.set_image(url="http://ynyng.org/wp-content/uploads/2025/03/ynyng_malta__hospitaller_very_organized_and_open_medieval_shop__26cf32ee-fe4e-405e-ba6c-b306edae40e6-1.png")
+        embed.set_image(url="https://ynyng.org/wp-content/uploads/2025/03/ynyng_malta__hospitaller_very_organized_and_open_medieval_shop__26cf32ee-fe4e-405e-ba6c-b306edae40e6-1.png")
 
         await interaction.response.edit_message(embed=embed, view=CategoryView(interaction, self.show_items_by_category))
 

@@ -23,7 +23,7 @@ class EXPReminder(commands.Cog):
             description="**Use** `/crpg retire` to continue your legacy, and earn additional  (🧬) generational multipliers. (Up to 1.48) \n**Use** `/help` for more commands.",
             color=discord.Color.red()
         )
-        embed.set_image(url="http://theknightsofmalta.net/wp-content/uploads/2025/05/officialretire.png")
+        embed.set_image(url="https://theknightsofmalta.net/wp-content/uploads/2025/05/officialretire.png")
         embed.set_footer(text="Retirement unlocks heirloom points starting at level 31.")
 
         await channel.send(content="", embed=embed)

@@ -71,7 +71,7 @@ class GameSelectionView(View):
                 description="Play a real-time game of Blackjack against the dealer.",
                 color=discord.Color.green()
             )
-            embed.set_image(url="http://theknightsofmalta.net/wp-content/uploads/2025/05/blackjack.png")  # 🎴 replace with your blackjack image
+            embed.set_image(url="https://theknightsofmalta.net/wp-content/uploads/2025/05/blackjack.png")  # 🎴 replace with your blackjack image
             embed.set_footer(text=f"💰 Gold: {self.user_gold}")
 
             await interaction.response.edit_message(
@@ -84,11 +84,11 @@ class GameSelectionView(View):
 
         if game_key == "roulette":
             embed = discord.Embed(
-                title="🎯 Roulette",
+                title="🎡 Roulette",
                 description="Pick Red, Black, or a Number. Will luck be on your side?",
                 color=discord.Color.green()
             )
-            embed.set_image(url="http://theknightsofmalta.net/wp-content/uploads/2025/05/roulette.png")  # 🎡 replace with your roulette image
+            embed.set_image(url="https://theknightsofmalta.net/wp-content/uploads/2025/05/roulette.png")  # 🎡 replace with your roulette image
             embed.set_footer(text=f"💰 Gold: {self.user_gold}")
 
             await interaction.response.edit_message(

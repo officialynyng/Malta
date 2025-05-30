@@ -16,11 +16,11 @@ REMINDER_VARIANTS = [
     },
     {
         "line": "",
-        "img": "http://theknightsofmalta.net/wp-content/uploads/2025/05/Casino-1.png"
+        "img": "https://theknightsofmalta.net/wp-content/uploads/2025/05/Casino-1.png"
     },
     {
         "line": "",
-        "img": "http://theknightsofmalta.net/wp-content/uploads/2025/05/Casino-4.png"
+        "img": "https://theknightsofmalta.net/wp-content/uploads/2025/05/Casino-4.png"
     },
 ]
 
