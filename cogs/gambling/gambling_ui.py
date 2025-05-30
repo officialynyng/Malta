@@ -51,7 +51,7 @@ class GameSelectionView(View):
 
         # ✅ Create and add the select menu
         self.select = discord.ui.Select(
-            placeholder="🎲 Choose a gambling game...",
+            placeholder="♠️ ♥️ ♦️ ♣️ What do you wish to play?",
             options=options
         )
         self.select.callback = self.select_callback
@@ -88,13 +88,56 @@ class GameSelectionView(View):
             variant_key = game_key.split(":")[1]
             game = GAMES["slot_machine"]["variants"][variant_key]
 
+            min_bet = game.get("min_bet", 1)
+            max_bet = 5000
+
+            embed = discord.Embed(
+                title=f"{game.get('emoji', '🎰')} {game['name']}",
+                description=game["description"],
+                color=discord.Color.gold()
+            )
+            if "image_url" in game:
+                embed.set_image(url=game["image_url"])
+            embed.set_footer(text=f"💰 Gold: {self.user_gold}")
+
+            await interaction.response.edit_message(
+                content=None,
+                embed=embed,
+                view=BetAmountSelectionView(self.user_id, f"slot_machine:{variant_key}", min_bet, max_bet, parent=self)
+            )
+            return
+
+
         else:
             game = GAMES[game_key]
 
         min_bet = game.get("min_bet", 1)
         max_bet = 5000
+        embed = discord.Embed(
+            title=f"{game.get('emoji', '🎰')} {game['name']}",
+            description=game["description"],
+            color=discord.Color.gold()
+        )
+
+        if "image_url" in game:
+            embed.set_image(url=game["image_url"])
+
+        embed.set_footer(text=f"💰 Gold: {self.user_gold}")
+
+        embed = discord.Embed(
+            title=f"{game.get('emoji', '🎰')} {game['name']}",
+            description=game["description"],
+            color=discord.Color.gold()
+        )
+
+        if "image_url" in game:
+            embed.set_image(url=game["image_url"])
+
+        embed.set_footer(text=f"💰 Gold: {self.user_gold}")
+
         await interaction.response.edit_message(
-            content=f"💰 You've selected **{game['name']}**. Now choose your bet amount:",
-            embed=None,
+            content=None,
+            embed=embed,
             view=BetAmountSelectionView(self.user_id, game_key, min_bet, max_bet, parent=self)
         )
+
