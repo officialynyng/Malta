@@ -52,11 +52,18 @@ class RoulettePlayButton(Button):
         # ✅ Broadcast result to EXP_CHANNEL_ID
         exp_channel = interaction.client.get_channel(EXP_CHANNEL_ID)
         if exp_channel:
-            await exp_channel.send(
-                f"🎡 **{interaction.user.display_name}** bet **{self.view_ref.bet}** gold on **{self.view_ref.choice}** "
-                f"({self.view_ref.bet_type}) and "
-                f"{'won 🎉' if self.view_ref.payout_multiplier > 0 else 'lost 💀'} **{abs(net_change)}** gold!"
-            )
+            if self.view_ref.payout_multiplier > 0:
+                net_gain = int(self.view_ref.bet * (self.view_ref.payout_multiplier - 1))
+                await exp_channel.send(
+                    f"🎡 **{interaction.user.display_name}** bet **{self.view_ref.bet}** gold on **{self.view_ref.choice}** "
+                    f"({self.view_ref.bet_type}) and won 🎉 **+{net_gain}**!"
+                )
+            else:
+                await exp_channel.send(
+                    f"🎡 **{interaction.user.display_name}** bet **{self.view_ref.bet}** gold on **{self.view_ref.choice}** "
+                    f"({self.view_ref.bet_type}) and lost 💀"
+                )
+
 
         # 🎯 Result embed
         embed = Embed(title="🎡 Roulette Result")

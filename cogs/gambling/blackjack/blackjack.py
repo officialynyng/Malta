@@ -112,11 +112,19 @@ class BlackjackGameView(View):
         # Public result message
         exp_channel = interaction.client.get_channel(EXP_CHANNEL_ID)
         if exp_channel:
-            await exp_channel.send(
-                f"🃏 **{interaction.user.display_name}** played Blackjack and "
-                f"{'won 🎉' if delta > 0 else 'lost 💀' if delta < 0 else 'tied 🤝'} "
-                f"**{abs(delta)}** gold!"
-            )
+            if delta > 0:
+                await exp_channel.send(
+                    f"🃏 **{interaction.user.display_name}** played Blackjack and won 🎉 **+{delta}**!"
+                )
+            elif delta < 0:
+                await exp_channel.send(
+                    f"🃏 **{interaction.user.display_name}** played Blackjack and lost 💀 **{abs(delta)}**"
+                )
+            else:
+                await exp_channel.send(
+                    f"🃏 **{interaction.user.display_name}** played Blackjack and tied 🤝"
+                )
+
         self.clear_items()
         self.add_item(BackToGameButton(self.user_id, self.parent))
         self.add_item(PlayAgainButton(self.user_id, parent_view=self.parent, game_key="blackjack", bet=self.bet))
