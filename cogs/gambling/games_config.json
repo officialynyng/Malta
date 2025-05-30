@@ -33,9 +33,9 @@
   },
   "blackjack": {
   "name": "Blackjack",
-  "description": "http://theknightsofmalta.net/wp-content/uploads/2025/05/blackjack.png",
+  "description": "A simple game of blackjack.",
   "emoji": "🃏",
-  "image_url": "https://yourcdn.com/images/roulette_table.png"
+  "image_url": "http://theknightsofmalta.net/wp-content/uploads/2025/05/blackjack.png"
   },
 
   "slot_machine": {
