@@ -97,6 +97,8 @@ class RouletteOptionView(View):
         self.select.callback = self.select_callback
         self.add_item(self.select)
 
+        self.add_item(BackToGameButton(self.user_id, self.parent))
+
     async def select_callback(self, interaction: Interaction):
         if interaction.user.id != self.user_id:
             return await interaction.response.send_message("❌ Not your selection!", ephemeral=True)
