@@ -8,13 +8,13 @@
     "image_url": "https://theknightsofmalta.net/wp-content/uploads/2025/05/coin_flip.png"
   },
   "roulette": {
-  "name": "Roulette",
-  "emoji": "🎡",
-  "description": "Pick Red, Black, or a Number (0–36)",
-  "min_bet": 10,
-  "max_bet": 5000,
-  "image_url": "https://theknightsofmalta.net/wp-content/uploads/2025/05/roulette.png"
-},
+    "name": "Roulette",
+    "emoji": "🎡",
+    "description": "Pick Red, Black, or a Number (0–36)",
+    "min_bet": 10,
+    "max_bet": 5000,
+    "image_url": "https://theknightsofmalta.net/wp-content/uploads/2025/05/roulette.png"
+  },
   "dice_roll": {
     "name": "Dice Roll (6-sided)",
     "emoji": "🎲",
@@ -32,74 +32,73 @@
     "image_url": "https://theknightsofmalta.net/wp-content/uploads/2025/05/high-low.png"
   },
   "blackjack": {
-  "name": "Blackjack",
-  "description": "A simple game of blackjack.",
-  "emoji": "🃏",
-  "image_url": "https://theknightsofmalta.net/wp-content/uploads/2025/05/blackjack.png"
+    "name": "Blackjack",
+    "description": "A simple game of blackjack.",
+    "emoji": "🃏",
+    "image_url": "https://theknightsofmalta.net/wp-content/uploads/2025/05/blackjack.png"
   },
-
   "slot_machine": {
-  "name": "Slot Machine",
-  "emoji": "🎰",
-  "description": "Spin the reels and try your luck on a themed slot machine.",
-  "variants": {
-    "dragons_breath": {
-      "name": "Dragon's Breath",
-      "emoji": "🐉",
-      "odds": 0.08,
-      "payout": 12,
-      "description": "Spin for glory with blazing dragon reels!",
-      "image_url": "https://theknightsofmalta.net/wp-content/uploads/2025/05/dragons_breath.png"
-    },
-    "yeti_mountain": {
-      "name": "Yeti Mountain",
-      "emoji": "🧊",
-      "odds": 0.12,
-      "payout": 8,
-      "description": "Spin the frozen reels of the mysterious mountain beast.",
-      "image_url": "https://theknightsofmalta.net/wp-content/uploads/2025/05/yeti_mountain.png"
-    },
-    "israelis_killer_slots": {
-      "name": "Israeli's Killer Slots",
-      "emoji": "🇮🇱",
-      "odds": 0.1,
-      "payout": 10,
-      "description": "Try your luck under the Star of David!",
-      "image_url": "https://theknightsofmalta.net/wp-content/uploads/2025/05/israelis_killer_slots.png"
-    },
-    "vlads_castle": {
-      "name": "Vlad's Castle",
-      "emoji": "🦇",
-      "odds": 0.07,
-      "payout": 14,
-      "description": "A blood-curdling slot adventure in a vampire’s lair.",
-      "image_url": "https://theknightsofmalta.net/wp-content/uploads/2025/05/vlads_castle.png"
-    },
-    "palestinian_bomber": {
-      "name": "Palestinian Bomber",
-      "emoji": "🇵🇸",
-      "odds": 0.06,
-      "payout": 16,
-      "description": "High-risk, high-reward. One wrong move and it’s gone.",
-      "image_url": "https://theknightsofmalta.net/wp-content/uploads/2025/05/palestinian_bomber.png"
-    },
-    "hell": {
-      "name": "HELL",
-      "emoji": "🌋",
-      "odds": 0.09,
-      "payout": 11,
-      "description": "If you're not active, you can't escape it.",
-      "image_url": "https://theknightsofmalta.net/wp-content/uploads/2025/05/hell_slots.png"
+    "name": "Slot Machine",
+    "emoji": "🎰",
+    "description": "Spin the reels and try your luck on a themed slot machine.",
+    "variants": {
+      "dragons_breath": {
+        "name": "Dragon's Breath",
+        "emoji": "🐉",
+        "odds": 0.08,
+        "payout": 12,
+        "description": "Spin for glory with blazing dragon reels!",
+        "image_url": "https://theknightsofmalta.net/wp-content/uploads/2025/05/dragons_breath.png"
+      },
+      "yeti_mountain": {
+        "name": "Yeti Mountain",
+        "emoji": "🧊",
+        "odds": 0.12,
+        "payout": 8,
+        "description": "Spin the frozen reels of the mysterious mountain beast.",
+        "image_url": "https://theknightsofmalta.net/wp-content/uploads/2025/05/yeti_mountain.png"
+      },
+      "israelis_killer_slots": {
+        "name": "Israeli's Killer Slots",
+        "emoji": "🇮🇱",
+        "odds": 0.1,
+        "payout": 10,
+        "description": "Try your luck under the Star of David!",
+        "image_url": "https://theknightsofmalta.net/wp-content/uploads/2025/05/israelis_killer_slots.png"
+      },
+      "vlads_castle": {
+        "name": "Vlad's Castle",
+        "emoji": "🦇",
+        "odds": 0.07,
+        "payout": 14,
+        "description": "A blood-curdling slot adventure in a vampire’s lair.",
+        "image_url": "https://theknightsofmalta.net/wp-content/uploads/2025/05/vlads_castle.png"
+      },
+      "palestinian_bomber": {
+        "name": "Palestinian Bomber",
+        "emoji": "🇵🇸",
+        "odds": 0.06,
+        "payout": 16,
+        "description": "High-risk, high-reward. One wrong move and it’s gone.",
+        "image_url": "https://theknightsofmalta.net/wp-content/uploads/2025/05/palestinian_bomber.png"
+      },
+      "hell": {
+        "name": "HELL",
+        "emoji": "🌋",
+        "odds": 0.09,
+        "payout": 11,
+        "description": "If you're not active, you can't escape it.",
+        "image_url": "https://theknightsofmalta.net/wp-content/uploads/2025/05/hell_slots.png"
+      },
+      "big_spender": {
+        "name": "Big Spender",
+        "emoji": "💰",
+        "odds": 0.05,
+        "payout": 20,
+        "description": "Bet 10,000 gold for a slim shot at massive returns. Only the bold win big.",
+        "min_bet": 10000,
+        "image_url": "https://theknightsofmalta.net/wp-content/uploads/2025/05/big_spender_official.png"
+      }
     }
-  }
-},
-  "big_spender": {
-    "name": "Big Spender",
-    "emoji": "💰",
-    "odds": 0.05,
-    "payout": 20,
-    "description": "Bet 10,000 gold for a slim shot at massive returns. Only the bold win big.",
-    "min_bet": 10000,
-    "image_url": "https://theknightsofmalta.net/wp-content/uploads/2025/05/big_spender_official.png"
   }
 }
