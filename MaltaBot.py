@@ -116,9 +116,8 @@ async def help_command(interaction: discord.Interaction):
         "⚗️🏔️ `/crpg multipliers` — View your daily and generational multipliers.\n\n"
 
         "## __[GAMBLING]__\n\n"
-        "♠️♥️♦️♣️ `/gamble` — Open the gambling hall and choose a game via dropdown.\n"
-        "🎰 `/bet <game> <amount>` — Place a gold bet on a selected game.\n"
-        "📊 `/gamble_stats` — View your gambling history and performance.\n\n"
+        "♠️♥️♦️♣️ `/gamble play` — Open the gambling hall and choose a game via dropdown.\n"
+        "♠️♥️♦️♣️ - 📊 `/gamble_stats` — View your gambling history and performance.\n\n"
 
         "## __[LOTTERY]__\n\n"
         "🎟️ `/lottery <amount>` — Buy weekly lottery tickets (100 gold each).\n"
