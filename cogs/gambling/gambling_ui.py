@@ -16,7 +16,11 @@ class GameSelectionView(View):
 
         options = []
 
+        # ✅ Load everything from GAMES except big_spender (we'll add manually)
         for key, game in GAMES.items():
+            if key == "big_spender":
+                continue
+
             if key == "slot_machine" and "variants" in game and game["variants"]:
                 for variant_key, variant in game["variants"].items():
                     options.append(discord.SelectOption(
@@ -25,13 +29,6 @@ class GameSelectionView(View):
                         description=variant["description"][:100],
                         emoji=variant.get("emoji", "🎰")
                     ))
-            elif key == "roulette":
-                options.append(discord.SelectOption(
-                    label=game["name"],
-                    value=key,
-                    description=game["description"][:100],
-                    emoji=game.get("emoji", "🎯")
-                ))
             else:
                 options.append(discord.SelectOption(
                     label=game["name"],
@@ -40,19 +37,16 @@ class GameSelectionView(View):
                     emoji=game.get("emoji", "🎰")
                 ))
 
-        
-        # ✅ Add Big Spender manually if not already included
-        if "big_spender" not in [opt.value for opt in options]:
-            options.append(discord.SelectOption(
-                label="Big Spender",
-                value="big_spender",
-                description="Bet 10,000 gold for a slim shot at massive returns.",
-                emoji="💰"
-            ))
-
+        # ✅ Add Big Spender manually
+        options.append(discord.SelectOption(
+            label="Big Spender",
+            value="big_spender",
+            description="Bet 10,000 gold for a slim shot at massive returns.",
+            emoji="💰"
+        ))
 
         # ✅ Add Blackjack manually if not in GAMES already
-        if "blackjack" not in GAMES:
+        if "blackjack" not in GAMES and "blackjack" not in [opt.value for opt in options]:
             options.append(discord.SelectOption(
                 label="Blackjack",
                 value="blackjack",
@@ -60,7 +54,7 @@ class GameSelectionView(View):
                 emoji="🃏"
             ))
 
-        # ✅ Fallback if nothing was added
+        # ✅ Fallback if somehow empty (should never happen now)
         if not options:
             options.append(discord.SelectOption(
                 label="No games available.",
@@ -68,6 +62,7 @@ class GameSelectionView(View):
                 description="No available games to play at this time.",
                 emoji="❌"
             ))
+
 
         # ✅ Create and add the select menu
         self.select = discord.ui.Select(
