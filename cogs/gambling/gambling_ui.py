@@ -120,9 +120,13 @@ class GameSelectionView(View):
                 description=game["description"],
                 color=discord.Color.green()
             )
-            if "image_url" in game:
+
+            # ✅ Ensure image is set properly
+            if "image_url" in game and game["image_url"]:
                 embed.set_image(url=game["image_url"])
+
             embed.set_footer(text=f"💰 Gold: {self.user_gold}")
+
 
             await interaction.response.edit_message(
                 content=None,
