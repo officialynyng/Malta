@@ -112,7 +112,7 @@ class GameSelectionView(View):
             embed = discord.Embed(
                 title=f"{game.get('emoji', '🎰')} {game['name']}",
                 description=game["description"],
-                color=discord.Color.gold()
+                color=discord.Color.green()
             )
             if "image_url" in game:
                 embed.set_image(url=game["image_url"])
@@ -135,7 +135,7 @@ class GameSelectionView(View):
         embed = discord.Embed(
             title=f"{game.get('emoji', '🎰')} {game['name']}",
             description=game["description"],
-            color=discord.Color.gold()
+            color=discord.Color.green()
         )
 
         if "image_url" in game:
