@@ -111,9 +111,25 @@ class GameSelectionView(View):
             )
             return
 
+        if game_key == "big_spender":
+            game = GAMES[game_key]
+            bet = game.get("min_bet", 10000)
 
+            embed = discord.Embed(
+                title=f"{game.get('emoji', '🎰')} {game['name']}",
+                description=game["description"],
+                color=discord.Color.green()
+            )
+            if "image_url" in game:
+                embed.set_image(url=game["image_url"])
+            embed.set_footer(text=f"💰 Gold: {self.user_gold}")
 
-
+            await interaction.response.edit_message(
+                content=None,
+                embed=embed,
+                view=BetAmountSelectionView(self.user_id, game_key, bet, bet, parent=self)
+            )
+            return
 
         if game_key.startswith("slot_machine:"):
             variant_key = game_key.split(":")[1]
@@ -137,29 +153,6 @@ class GameSelectionView(View):
                 view=BetAmountSelectionView(self.user_id, f"slot_machine:{variant_key}", min_bet, max_bet, parent=self)
             )
             return
-        
-        if game_key == "big_spender":
-            game = GAMES[game_key]
-            bet = game.get("min_bet", 10000)
-
-            embed = discord.Embed(
-                title=f"{game.get('emoji', '🎰')} {game['name']}",
-                description=game["description"],
-                color=discord.Color.green()
-            )
-            if "image_url" in game:
-                embed.set_image(url=game["image_url"])
-            embed.set_footer(text=f"💰 Gold: {self.user_gold}")
-
-            # 🔁 Swap this with the view that should handle Big Spender (if you have one)
-            await interaction.response.edit_message(
-                content=None,
-                embed=embed,
-                view=BetAmountSelectionView(self.user_id, game_key, bet, bet, parent=self)
-            )
-            return
-
-
 
         else:
             game = GAMES[game_key]
