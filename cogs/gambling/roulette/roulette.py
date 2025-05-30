@@ -134,7 +134,7 @@ class RouletteOptionView(View):
                 description="Choose your bet amount below.",
                 color=discord.Color.green()
             )
-            embed.set_image(url="https://i.imgur.com/J5qv1kN.png")  # ⬅️ Replace with your actual roulette banner
+            embed.set_image(url="http://theknightsofmalta.net/wp-content/uploads/2025/05/roulette.png")  # ⬅️ Replace with your actual roulette banner
             embed.set_footer(text=f"💰 Gold: {self.user_gold}")
 
             await interaction.response.edit_message(
@@ -253,7 +253,7 @@ class RouletteNumberModal(Modal):
             description="Choose your bet amount below.",
             color=discord.Color.green()
         )
-        embed.set_image(url="https://i.imgur.com/J5qv1kN.png")  # ⬅️ Replace with your roulette art
+        embed.set_image(url="http://theknightsofmalta.net/wp-content/uploads/2025/05/roulette.png")  # ⬅️ Replace with your roulette art
         embed.set_footer(text=f"💰 Gold: {self.user_gold}")
 
         await interaction.followup.send(
