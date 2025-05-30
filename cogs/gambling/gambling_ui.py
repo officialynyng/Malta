@@ -122,8 +122,7 @@ class GameSelectionView(View):
             )
 
             # ✅ Ensure image is set properly
-            if "image_url" in game and game["image_url"]:
-                embed.set_image(url=game["image_url"])
+            embed.set_image(url="https://theknightsofmalta.net/wp-content/uploads/2025/05/big_spender_official.png")
 
             embed.set_footer(text=f"💰 Gold: {self.user_gold}")
 
@@ -147,7 +146,8 @@ class GameSelectionView(View):
                 description=game["description"],
                 color=discord.Color.green()
             )
-            embed.set_image(url="https://theknightsofmalta.net/wp-content/uploads/2025/05/big_spender_official.png")
+            if "image_url" in game:
+                embed.set_image(url=game["image_url"])
             embed.set_footer(text=f"💰 Gold: {self.user_gold}")
 
             await interaction.response.edit_message(
