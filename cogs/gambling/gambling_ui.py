@@ -66,18 +66,34 @@ class GameSelectionView(View):
         game_key = self.select.values[0]
 
         if game_key == "blackjack":
+            embed = discord.Embed(
+                title="🃏 Blackjack",
+                description="Play a real-time game of Blackjack against the dealer.",
+                color=discord.Color.green()
+            )
+            embed.set_image(url="http://theknightsofmalta.net/wp-content/uploads/2025/05/blackjack.png")  # 🎴 replace with your blackjack image
+            embed.set_footer(text=f"💰 Gold: {self.user_gold}")
+
             await interaction.response.edit_message(
-                content="🃏 You've chosen **Blackjack**. Ready to draw your cards?",
-                embed=None,
-                view=BlackjackGameView(self.user_id, self.user_gold, parent=self, bet=100)  # ← fix
+                content=None,
+                embed=embed,
+                view=BlackjackGameView(self.user_id, self.user_gold, parent=self, bet=100)
             )
             return
 
 
         if game_key == "roulette":
+            embed = discord.Embed(
+                title="🎯 Roulette",
+                description="Pick Red, Black, or a Number. Will luck be on your side?",
+                color=discord.Color.red()
+            )
+            embed.set_image(url="http://theknightsofmalta.net/wp-content/uploads/2025/05/roulette.png")  # 🎡 replace with your roulette image
+            embed.set_footer(text=f"💰 Gold: {self.user_gold}")
+
             await interaction.response.edit_message(
-                content="🎡 You've chosen **Roulette**. Pick Red, Black, or a Number:",
-                embed=None,
+                content=None,
+                embed=embed,
                 view=RouletteOptionView(self.user_id, self.user_gold, parent=self)
             )
             return
