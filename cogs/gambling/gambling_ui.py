@@ -40,6 +40,16 @@ class GameSelectionView(View):
                     emoji=game.get("emoji", "🎰")
                 ))
 
+        
+        # ✅ Add Big Spender manually if not already included
+        if "big_spender" not in [opt.value for opt in options]:
+            options.append(discord.SelectOption(
+                label="Big Spender",
+                value="big_spender",
+                description="Bet 10,000 gold for a slim shot at massive returns.",
+                emoji="💰"
+            ))
+
 
         # ✅ Add Blackjack manually if not in GAMES already
         if "blackjack" not in GAMES:
