@@ -1,6 +1,6 @@
 import asyncio
 import discord
-from discord.ui import View, Button, Select
+from discord.ui import View, Button, Modal, TextInput
 from discord import Interaction, Embed
 
 from cogs.exp_utils import update_user_gold
@@ -129,9 +129,8 @@ class RouletteOptionView(View):
             )
 
         elif selection == "number":
-            await interaction.response.edit_message(
-                content="🔢 Pick a number between 0–36 to bet on:",
-                view=None
+            await interaction.response.send_modal(
+                RouletteNumberModal(self.user_id, self.user_gold, self.parent)
             )
 
             def check(msg):
@@ -180,3 +179,60 @@ class RouletteOptionView(View):
                     content="⌛ Timed out waiting for number input.",
                     view=None
                 )
+
+
+class RouletteNumberModal(Modal):
+    def __init__(self, user_id, user_gold, parent):
+        super().__init__(title="🎯 Enter a Number (0–36)")
+        self.user_id = user_id
+        self.user_gold = user_gold
+        self.parent = parent
+
+        self.number_input = TextInput(
+            label="Pick a number to bet on",
+            placeholder="0 to 36",
+            max_length=2,
+            required=True
+        )
+        self.add_item(self.number_input)
+
+    async def on_submit(self, interaction: discord.Interaction):
+        if interaction.user.id != self.user_id:
+            await interaction.response.send_message("❌ Not your modal.", ephemeral=True)
+            return
+
+        try:
+            number_choice = int(self.number_input.value)
+            if not 0 <= number_choice <= 36:
+                raise ValueError("Invalid range")
+
+        except Exception:
+            await interaction.response.send_message("❌ Please enter a valid number between 0–36.", ephemeral=True)
+            return
+
+        async def roulette_number_callback(interaction: discord.Interaction, bet: int):
+            await interaction.edit_original_response(
+                content=f"🎡 Spinning for **{bet}** gold on **{number_choice}**!",
+                embed=None,
+                view=RouletteView(
+                    self.user_id,
+                    parent=self.parent,
+                    bet=bet,
+                    choice=str(number_choice),
+                    bet_type="Number",
+                    user_gold=self.user_gold
+                )
+            )
+
+        await interaction.response.send_message(
+            content=f"🎯 You chose **{number_choice}**. Now choose your bet amount:",
+            view=BetAmountSelectionView(
+                self.user_id,
+                "roulette",
+                min_bet=100,
+                max_bet=10000,
+                parent=self.parent,
+                extra_callback=roulette_number_callback
+            ),
+            ephemeral=False
+        )
