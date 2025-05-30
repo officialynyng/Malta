@@ -6,7 +6,7 @@ from discord import Interaction, Embed
 from cogs.exp_utils import update_user_gold
 from cogs.exp_config import EXP_CHANNEL_ID
 from cogs.gambling.roulette.roulette_utils import spin_roulette, payout
-from cogs.gambling.gambling_ui_common import BetAmountSelectionView
+from cogs.gambling.gambling_ui_common import BetAmountSelectionView, PlayAgainButton
 
 class RouletteView(View):
     def __init__(self, user_id, parent, bet, choice, bet_type, user_gold):
@@ -65,8 +65,12 @@ class RoulettePlayButton(Button):
         embed.set_footer(text=f"💰 Gold: {self.view_ref.user_gold} | Bet: {self.view_ref.bet}")
 
         self.view_ref.clear_items()
-        self.view_ref.add_item(Button(label="🔁 Play Again", style=discord.ButtonStyle.success, disabled=True))
-
+        self.view_ref.add_item(PlayAgainButton(
+            user_id=self.view_ref.user_id,
+            game_key="roulette",
+            parent=self.view_ref.parent,
+            bet=self.view_ref.bet
+        ))
         await interaction.edit_original_response(embed=embed, view=self.view_ref)
 
 class RouletteOptionView(View):
