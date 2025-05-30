@@ -97,6 +97,7 @@
         "payout": 20,
         "description": "Bet 10,000 gold for a slim shot at massive returns. Only the bold win big.",
         "min_bet": 10000,
+        "max_bet": 10000,
         "image_url": "https://theknightsofmalta.net/wp-content/uploads/2025/05/big_spender_official.png"
       }
     }
