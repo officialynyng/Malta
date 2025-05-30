@@ -7,6 +7,7 @@ from discord.ui import Button, View
 from cogs.exp_utils import get_user_data, get_user_data
 from cogs.gambling.bet_amount import BetAmountDropdown
 from cogs.gambling.play_button import GamblingPlayButton
+from gambling_ui import GameSelectionView
 
 
 class PlayAgainButton(Button):
@@ -90,8 +91,25 @@ class BackToGameButton(Button):
     async def callback(self, interaction: Interaction):
         if interaction.user.id != self.user_id:
             return await interaction.response.send_message("❌ Not your session!", ephemeral=True)
-        await interaction.response.edit_message(content=None, embed=None, view=self.parent)
 
+        user_data = get_user_data(self.user_id)
+        gold = user_data.get("gold", 0)
+
+        embed = discord.Embed(
+            title="🎰 Welcome to the Gambling Hall",
+            description="Pick your game to begin.",
+            color=discord.Color.red()
+        )
+        embed.set_footer(text=f"💰 Gold: {gold}")
+
+        # Optional: add your banner image
+        # embed.set_image(url="https://yourcdn.com/path/to/banner.png")
+
+        await interaction.response.edit_message(
+            content=None,
+            embed=embed,
+            view=GameSelectionView(self.user_id, gold)
+        )
 
 class BetAmountSelectionView(View):
     def __init__(self, user_id, game_key, min_bet, max_bet, parent=None, extra_callback=None):
