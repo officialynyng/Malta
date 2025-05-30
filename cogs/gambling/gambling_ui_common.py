@@ -100,7 +100,7 @@ class BackToGameButton(Button):
         embed = discord.Embed(
             title="🎰 Welcome to the Gambling Hall",
             description="Pick your game to begin.",
-            color=discord.Color.red()
+            color=discord.Color.green()
         )
         embed.set_image(url="http://theknightsofmalta.net/wp-content/uploads/2025/05/Gold-Casino.png")
         embed.set_footer(text=f"💰 Gold: {gold}")

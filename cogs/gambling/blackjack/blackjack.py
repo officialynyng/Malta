@@ -34,7 +34,7 @@ class BlackjackGameView(View):
         self.message = None
 
     def get_embed(self, reveal_dealer=False, final=False):
-        embed = Embed(title="🃏 Blackjack", color=discord.Color.red())
+        embed = Embed(title="🃏 Blackjack", color=discord.Color.green())
         embed.add_field(
             name="Your Hand",
             value=f"{format_hand(self.player_hand)}\n**Total: {hand_value(self.player_hand)}**" if self.player_hand else "No cards yet.",

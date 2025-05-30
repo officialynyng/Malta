@@ -25,7 +25,7 @@ async def gamble_play(interaction: Interaction):
     embed = Embed(
         title="🎰 Welcome to the Gambling Hall",
         description="Pick your game to begin.",
-        color=discord.Color.red()
+        color=discord.Color.green()
     )
     embed.set_image(url="http://theknightsofmalta.net/wp-content/uploads/2025/05/Gold-Casino.png")
     embed.set_footer(text=f"🎲 Gold: {user_data['gold']}")
@@ -45,7 +45,7 @@ async def gamble_stats(interaction: Interaction):
 
     embed = Embed(
         title=f"🎰 Gambling Stats for {interaction.user.display_name}",
-        color=discord.Color.red()
+        color=discord.Color.green()
     )
     embed.add_field(name="Total Bets", value=result.total_bets, inline=True)
     embed.add_field(name="Total Won", value=result.total_won, inline=True)
