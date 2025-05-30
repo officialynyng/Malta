@@ -171,8 +171,8 @@ class RouletteOptionView(View):
                     view=BetAmountSelectionView(
                         self.user_id,
                         "roulette",
-                        min_bet=100,
-                        max_bet=10000,
+                        min_bet=10,
+                        max_bet=5000,
                         parent=self.parent,
                         extra_callback=roulette_number_callback
                     )
