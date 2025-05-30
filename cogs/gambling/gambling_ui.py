@@ -74,7 +74,7 @@ class GameSelectionView(View):
 
         if game_key == "roulette":
             await interaction.response.edit_message(
-                content="🎯 You've chosen **Roulette**. Pick Red, Black, or a Number:",
+                content="🎡 You've chosen **Roulette**. Pick Red, Black, or a Number:",
                 embed=None,
                 view=RouletteOptionView(self.user_id, self.user_gold, parent=self)
             )
