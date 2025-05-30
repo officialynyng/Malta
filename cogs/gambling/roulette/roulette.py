@@ -129,8 +129,17 @@ class RouletteOptionView(View):
                     )
                 )
 
+            embed = Embed(
+                title=f"🎯 Roulette — Bet on {color}",
+                description="Choose your bet amount below.",
+                color=discord.Color.green()
+            )
+            embed.set_image(url="https://i.imgur.com/J5qv1kN.png")  # ⬅️ Replace with your actual roulette banner
+            embed.set_footer(text=f"💰 Gold: {self.user_gold}")
+
             await interaction.response.edit_message(
-                content=f"🎯 You selected **{color}**. Now choose your bet.",
+                content=None,
+                embed=embed,
                 view=BetAmountSelectionView(
                     self.user_id,
                     "roulette",
@@ -140,6 +149,7 @@ class RouletteOptionView(View):
                     extra_callback=roulette_color_callback
                 )
             )
+
 
         elif selection == "number":
             await interaction.response.send_modal(
@@ -238,8 +248,16 @@ class RouletteNumberModal(Modal):
             )
 
         await interaction.response.defer()  # acknowledges the modal submit to prevent "This interaction failed"
+        embed = Embed(
+            title=f"🎯 Roulette — Number {number_choice}",
+            description="Choose your bet amount below.",
+            color=discord.Color.green()
+        )
+        embed.set_image(url="https://i.imgur.com/J5qv1kN.png")  # ⬅️ Replace with your roulette art
+        embed.set_footer(text=f"💰 Gold: {self.user_gold}")
+
         await interaction.followup.send(
-            content=f"🎯 You chose **{number_choice}**. Now choose your bet amount:",
+            embed=embed,
             view=BetAmountSelectionView(
                 self.user_id,
                 "roulette",
@@ -250,6 +268,7 @@ class RouletteNumberModal(Modal):
             ),
             ephemeral=True
         )
+
 
 
 class BackToRouletteOptionsButton(Button):
