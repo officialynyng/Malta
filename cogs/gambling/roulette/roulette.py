@@ -65,9 +65,9 @@ class RoulettePlayButton(Button):
                 )
 
 
-        # 🎯 Result embed
+        # 🎡 Result embed
         embed = Embed(title="🎡 Roulette Result")
-        embed.add_field(name="🎯 Your Bet", value=f"**{self.view_ref.bet}** gold on **{self.view_ref.choice}** ({self.view_ref.bet_type})", inline=False)
+        embed.add_field(name="🎡 Your Bet", value=f"**{self.view_ref.bet}** gold on **{self.view_ref.choice}** ({self.view_ref.bet_type})", inline=False)
         embed.add_field(name="🎲 Result", value=f"**{self.view_ref.result_number}** ({self.view_ref.result_color})", inline=False)
         if self.view_ref.payout_multiplier > 0:
             embed.add_field(name="🎉 Payout", value=f"You won **{payout_amount}** gold!", inline=False)
@@ -98,7 +98,7 @@ class RouletteOptionView(View):
         ]
 
         self.select = discord.ui.Select(
-            placeholder="🎯 Choose Red, Black, or a Number...",
+            placeholder="🎡 Choose Red, Black, or a Number...",
             options=options
         )
         self.select.callback = self.select_callback
@@ -130,7 +130,7 @@ class RouletteOptionView(View):
                 )
 
             embed = Embed(
-                title=f"🎯 Roulette — Bet on {color}",
+                title=f"🎡 Roulette — Bet on {color}",
                 description="Choose your bet amount below.",
                 color=discord.Color.green()
             )
@@ -186,7 +186,7 @@ class RouletteOptionView(View):
                     )
 
                 await interaction.edit_original_response(
-                    content=f"🎯 You chose **{number_choice}**. Now choose your bet amount:",
+                    content=f"🎡 You chose **{number_choice}**. Now choose your bet amount:",
                     view=BetAmountSelectionView(
                         self.user_id,
                         "roulette",
@@ -206,7 +206,7 @@ class RouletteOptionView(View):
 
 class RouletteNumberModal(Modal):
     def __init__(self, user_id, user_gold, parent):
-        super().__init__(title="🎯 Enter a Number (0–36)")
+        super().__init__(title="🎡 Enter a Number (0–36)")
         self.user_id = user_id
         self.user_gold = user_gold
         self.parent = parent
@@ -249,7 +249,7 @@ class RouletteNumberModal(Modal):
 
         await interaction.response.defer()  # acknowledges the modal submit to prevent "This interaction failed"
         embed = Embed(
-            title=f"🎯 Roulette — Number {number_choice}",
+            title=f"🎡 Roulette — Number {number_choice}",
             description="Choose your bet amount below.",
             color=discord.Color.green()
         )
@@ -273,7 +273,7 @@ class RouletteNumberModal(Modal):
 
 class BackToRouletteOptionsButton(Button):
     def __init__(self, user_id, user_gold, parent):
-        super().__init__(label="🎯 Back to Roulette Options", style=discord.ButtonStyle.secondary)
+        super().__init__(label="🎡 Back to Roulette Options", style=discord.ButtonStyle.secondary)
         self.user_id = user_id
         self.user_gold = user_gold
         self.parent = parent  # should be GameSelectionView or similar
@@ -286,7 +286,7 @@ class BackToRouletteOptionsButton(Button):
         from cogs.gambling.roulette.roulette import RouletteOptionView
 
         await interaction.response.edit_message(
-            content="🎯 Pick Red, Black, or a Number:",
+            content="🎡 Pick Red, Black, or a Number:",
             embed=None,
             view=RouletteOptionView(self.user_id, self.user_gold, parent=self.parent)
         )
