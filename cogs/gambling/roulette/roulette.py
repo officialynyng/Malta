@@ -228,7 +228,8 @@ class RouletteNumberModal(Modal):
                 )
             )
 
-        await interaction.response.send_message(
+        await interaction.response.defer()  # acknowledges the modal submit to prevent "This interaction failed"
+        await interaction.followup.send(
             content=f"🎯 You chose **{number_choice}**. Now choose your bet amount:",
             view=BetAmountSelectionView(
                 self.user_id,
