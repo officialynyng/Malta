@@ -1,13 +1,11 @@
 import asyncio
 import discord
-from discord.ui import Button
 from discord import Interaction
 from discord.ui import Button, View
 
 from cogs.exp_utils import get_user_data, get_user_data
 from cogs.gambling.bet_amount import BetAmountDropdown
 from cogs.gambling.play_button import GamblingPlayButton
-from cogs.gambling.gambling_ui import GameSelectionView
 
 
 class PlayAgainButton(Button):
@@ -92,6 +90,10 @@ class BackToGameButton(Button):
         if interaction.user.id != self.user_id:
             return await interaction.response.send_message("❌ Not your session!", ephemeral=True)
 
+        # ✅ Lazy imports to prevent circular dependency
+        from cogs.gambling.gambling_ui import GameSelectionView
+        from cogs.exp_utils import get_user_data
+
         user_data = get_user_data(self.user_id)
         gold = user_data.get("gold", 0)
 
@@ -102,14 +104,12 @@ class BackToGameButton(Button):
         )
         embed.set_footer(text=f"💰 Gold: {gold}")
 
-        # Optional: add your banner image
-        # embed.set_image(url="https://yourcdn.com/path/to/banner.png")
-
         await interaction.response.edit_message(
             content=None,
             embed=embed,
             view=GameSelectionView(self.user_id, gold)
         )
+
 
 class BetAmountSelectionView(View):
     def __init__(self, user_id, game_key, min_bet, max_bet, parent=None, extra_callback=None):
