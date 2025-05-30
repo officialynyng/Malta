@@ -72,7 +72,7 @@ class GameSelectionView(View):
             return
 
 
-        if if game_key == "roulette":
+        if game_key == "roulette":
             await interaction.response.edit_message(
                 content="🎯 You've chosen **Roulette**. Pick Red, Black, or a Number:",
                 embed=None,
