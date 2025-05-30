@@ -233,12 +233,12 @@ class RouletteNumberModal(Modal):
             view=BetAmountSelectionView(
                 self.user_id,
                 "roulette",
-                min_bet=100,
+                min_bet=10,
                 max_bet=10000,
                 parent=self.parent,
                 extra_callback=roulette_number_callback
             ),
-            ephemeral=False
+            ephemeral=True
         )
 
 
