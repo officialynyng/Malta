@@ -71,7 +71,6 @@ class NextPageButton(Button):
 class Wallet(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.bot.tree.add_command(self.wallet)
     @app_commands.command(name="wallet", description="💼 Check your gold and recent transactions")
     async def wallet(self, interaction: discord.Interaction):
         user_id = interaction.user.id
