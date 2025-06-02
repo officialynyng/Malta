@@ -15,7 +15,6 @@ class PlayAgainButton(Button):
         self.parent = parent_view
         self.game_key = game_key
         self.bet = bet
-        self.parent = parent_view
 
     async def callback(self, interaction: Interaction):
         if interaction.user.id != self.user_id:
