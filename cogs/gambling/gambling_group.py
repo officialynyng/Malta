@@ -33,7 +33,8 @@ async def gamble_menu(interaction: Interaction):
     )
     embed.set_image(url="https://theknightsofmalta.net/wp-content/uploads/2025/05/Gold-Casino.png")
     embed.set_footer(text=f"💰 Gold: {user_data['gold']}")
-    await interaction.response.send_message(embed=embed, view=view)
+    await interaction.response.defer()
+    await interaction.followup.send(embed=embed, view=view)
 
 async def setup(bot):
     bot.tree.add_command(gamble_group)
