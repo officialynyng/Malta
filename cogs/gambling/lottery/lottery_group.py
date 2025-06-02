@@ -247,13 +247,19 @@ class LotteryGroup(commands.Cog):
             await channel.send("🧹 All lottery entries have been cleared for the next round. Good luck next week!")
 
 @lottery_group.command(name="menu", description="🎟️ Open the full lottery menu")
+@app_commands.checks.has_permissions(administrator=True)
 async def lottery_menu(interaction: Interaction):
     cog = interaction.client.get_cog("LotteryGroup")
     if cog:
         view = LotteryMainView(cog)
-        embed = await cog.build_stats_embed(interaction.user)  # default first screen
-        await interaction.response.send_message(embed=embed, view=view, ephemeral=False)
+        embed = await cog.build_stats_embed(interaction.user)
+        await interaction.response.send_message(embed=embed, view=view)
+
 
 async def setup(bot):
-    await bot.add_cog(LotteryGroup(bot))
+    cog = LotteryGroup(bot)
+    await bot.add_cog(cog)
     bot.tree.add_command(lottery_group)
+
+    # ✅ Register persistent view with the bot so it works after restart
+    bot.add_view(LotteryMainView(cog))
