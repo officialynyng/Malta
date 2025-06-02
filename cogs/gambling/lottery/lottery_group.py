@@ -11,6 +11,7 @@ from collections import defaultdict
 
 from cogs.exp_utils import get_user_data, update_user_gold
 from cogs.gambling.lottery.lottery_menu_UI import LotteryMainView
+from cogs.gambling.lottery.lottery_halloffame_UI import HallOfFameView
 from cogs.exp_config import engine, EXP_CHANNEL_ID
 from cogs.database.lottery_entries_table import lottery_entries
 from cogs.database.lottery_history_table import lottery_history
@@ -266,3 +267,4 @@ async def setup(bot):
     
     # ✅ Register persistent view with the bot so it works after restart
     bot.add_view(LotteryMainView(cog))
+    bot.add_view(HallOfFameView(cog))
