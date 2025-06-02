@@ -2,6 +2,7 @@ import discord
 from discord.ui import View, Button
 from discord import Interaction, ButtonStyle, Embed
 
+from cogs.exp_utils import get_user_data
 from cogs.gambling.gambling_ui import GameSelectionView
 
 class GamblingMenuView(View):
@@ -11,7 +12,11 @@ class GamblingMenuView(View):
 
     @discord.ui.button(label="🎲 Games", style=ButtonStyle.primary, custom_id="gamble_games")
     async def games(self, interaction: Interaction, button: Button):
-        view = GameSelectionView(self.cog)
+        user_id = interaction.user.id
+        user_data = get_user_data(user_id)
+        user_gold = user_data["gold"] if user_data else 0
+
+        view = GameSelectionView(user_id, user_gold)
         embed = Embed(
             title="🎲 Choose a Game",
             description="Pick which game you'd like to play.",
