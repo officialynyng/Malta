@@ -1,6 +1,8 @@
 from cogs.gambling.lottery.lottery_halloffame_UI import HallOfFameView
-from discord.ui import View, button, Button
-from discord import ButtonStyle, Interaction
+
+import discord
+from discord.ui import View, Button
+from discord import ButtonStyle
 
 class LotteryMainView(View):
     def __init__(self, cog):
@@ -15,33 +17,32 @@ class LotteryMainView(View):
         self.add_item(Button(label="👑 Hall of Fame", style=ButtonStyle.success, custom_id="lottery_halloffame"))
         self.add_item(Button(label="ℹ️ Help", style=ButtonStyle.secondary, custom_id="lottery_help"))
 
-    @View.button_callback(custom_id="lottery_stats")
-    async def stats(self, interaction: Interaction):
+    @discord.ui.button(label="🎟️ Stats", style=discord.ButtonStyle.primary, custom_id="lottery_stats")
+    async def stats(self, interaction: discord.Interaction, button: Button):
         embed = await self.cog.build_stats_embed(interaction.user)
         await interaction.response.edit_message(embed=embed, view=self)
 
-    @View.button_callback(custom_id="lottery_leaderboard")
-    async def leaderboard(self, interaction: Interaction):
+    @discord.ui.button(label="🏆 Leaderboard", style=discord.ButtonStyle.secondary, custom_id="lottery_leaderboard")
+    async def leaderboard(self, interaction: discord.Interaction, button: Button):
         embed = await self.cog.build_leaderboard_embed()
         await interaction.response.edit_message(embed=embed, view=self)
 
-    @View.button_callback(custom_id="lottery_history")
-    async def history(self, interaction: Interaction):
+    @discord.ui.button(label="📜 History", style=discord.ButtonStyle.secondary, custom_id="lottery_history")
+    async def history(self, interaction: discord.Interaction, button: Button):
         embed = await self.cog.build_history_embed()
         await interaction.response.edit_message(embed=embed, view=self)
 
-    @View.button_callback(custom_id="lottery_nextdraw")
-    async def nextdraw(self, interaction: Interaction):
+    @discord.ui.button(label="🕰️ Next Draw", style=discord.ButtonStyle.secondary, custom_id="lottery_nextdraw")
+    async def nextdraw(self, interaction: discord.Interaction, button: Button):
         embed = await self.cog.build_nextdraw_embed()
         await interaction.response.edit_message(embed=embed, view=self)
 
-    @View.button_callback(custom_id="lottery_halloffame")
-    async def halloffame(self, interaction: Interaction):
-        view = HallOfFameView(self.cog, interaction)
-        embed = await self.cog.build_halloffame_embed("all")
-        await interaction.response.edit_message(embed=embed, view=view)
+    @discord.ui.button(label="🏅 Hall of Fame", style=discord.ButtonStyle.success, custom_id="lottery_halloffame")
+    async def halloffame(self, interaction: discord.Interaction, button: Button):
+        embed = await self.cog.build_halloffame_embed()
+        await interaction.response.edit_message(embed=embed, view=self)
 
-    @View.button_callback(custom_id="lottery_help")
-    async def help(self, interaction: Interaction):
+    @discord.ui.button(label="❓ Help", style=discord.ButtonStyle.secondary, custom_id="lottery_help")
+    async def help(self, interaction: discord.Interaction, button: Button):
         embed = await self.cog.build_help_embed()
         await interaction.response.edit_message(embed=embed, view=self)

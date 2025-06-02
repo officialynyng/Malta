@@ -43,7 +43,7 @@ class LotteryGroup(commands.Cog):
         user_data = get_user_data(user_id)
 
         if not user_data:
-            return Embed(title="❌ User not found", color=discord.Color.red())
+            return Embed(title="❌ User not found", color=discord.Color.blue())
 
         with engine.begin() as conn:
             total_tickets = conn.execute(select(func.sum(lottery_entries.c.tickets))).scalar_one_or_none() or 0
@@ -55,7 +55,7 @@ class LotteryGroup(commands.Cog):
         odds = (user_tickets / total_tickets * 100) if total_tickets else 0
         jackpot = total_tickets * TICKET_COST
 
-        embed = Embed(title="🎟️ Your Lottery Stats", color=discord.Color.gold())
+        embed = Embed(title="🎟️ Your Lottery Stats", color=discord.Color.blue())
         embed.add_field(name="Tickets Bought", value=f"**{user_tickets}**", inline=True)
         embed.add_field(name="Current Jackpot", value=f"**{jackpot}** gold", inline=True)
         embed.add_field(name="Your Odds", value=f"{odds:.2f}%", inline=True)
@@ -71,7 +71,7 @@ class LotteryGroup(commands.Cog):
             ).fetchall()
 
         if not rows:
-            return Embed(title="No ticket purchases yet.", color=discord.Color.red())
+            return Embed(title="No ticket purchases yet.", color=discord.Color.blue())
 
         desc = "\n".join([f"`{i+1}.` **{row.user_name}** — 🎟️ {row.total}" for i, row in enumerate(rows)])
         embed = Embed(title="🏆 Top Ticket Holders", description=desc, color=discord.Color.purple())
@@ -86,14 +86,14 @@ class LotteryGroup(commands.Cog):
             ).fetchall()
 
         if not rows:
-            return Embed(title="❌ No lottery draws yet.", color=discord.Color.red())
+            return Embed(title="❌ No lottery draws yet.", color=discord.Color.blue())
 
         desc = ""
         for row in rows:
             time_str = datetime.fromtimestamp(row.draw_time, CENTRAL_TZ).strftime("%b %d, %Y %I:%M %p")
             desc += f"**{row.winner_name}** won 💰 **{row.jackpot}** gold — *{time_str}*\n"
 
-        embed = Embed(title="📜 Recent Lottery Winners", description=desc, color=discord.Color.dark_gold())
+        embed = Embed(title="📜 Recent Lottery Winners", description=desc, color=discord.Color.blue())
         return embed
 
     async def build_nextdraw_embed(self):
@@ -108,7 +108,7 @@ class LotteryGroup(commands.Cog):
         embed = Embed(
             title="🕰️ Next Lottery Draw",
             description=f"Next draw in **{hours} hours, {minutes} minutes**\n(Sunday 6 PM CST)",
-            color=discord.Color.teal()
+            color=discord.Color.blue()
         )
         return embed
 
@@ -123,7 +123,7 @@ class LotteryGroup(commands.Cog):
                 "**Cooldown:** 30s between purchases.\n\n"
                 "🏆 View stats, top holders, winners, draw time, and Hall of Fame — all in one place!"
             ),
-            color=discord.Color.purple()
+            color=discord.Color.blue()
         )
         embed.set_footer(text="Good luck! The next draw might crown you champion. 🎉")
         return embed
@@ -156,7 +156,7 @@ class LotteryGroup(commands.Cog):
             rows = conn.execute(query).fetchall()
 
         if not rows:
-            return Embed(title="❌ No results for this timeframe.", color=discord.Color.red())
+            return Embed(title="❌ No results for this timeframe.", color=discord.Color.blue())
 
         desc = ""
         for i, row in enumerate(rows):
@@ -260,6 +260,6 @@ async def setup(bot):
     cog = LotteryGroup(bot)
     await bot.add_cog(cog)
     bot.tree.add_command(lottery_group)
-
+    
     # ✅ Register persistent view with the bot so it works after restart
     bot.add_view(LotteryMainView(cog))
