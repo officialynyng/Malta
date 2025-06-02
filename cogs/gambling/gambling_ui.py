@@ -1,7 +1,8 @@
 import discord
 from discord.ui import View
-from discord import Interaction
+from discord import Interaction, Embed
 
+from cogs.exp_utils import get_user_data
 from cogs.gambling.games_loader import GAMES
 from cogs.gambling.blackjack.blackjack import BlackjackGameView
 from cogs.gambling.roulette.roulette import RouletteOptionView
@@ -193,12 +194,12 @@ class BackToGamblingMenuButton(discord.ui.Button):
     async def callback(self, interaction: Interaction):
         if interaction.user.id != self.user_id:
             return await interaction.response.send_message("❌ Not your menu!", ephemeral=True)
-
+        from cogs.gambling.UI_MainMenu import GamblingMenuView 
         view = GamblingMenuView(self.cog)
         embed = Embed(
             title="🎰 Welcome to the Gambling Hall",
             description="Pick your game to begin.",
-            color=discord.Color.red()
+            color=discord.Color.green()
         )
 
         user_data = get_user_data(self.user_id)
