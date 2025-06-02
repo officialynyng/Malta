@@ -26,7 +26,13 @@ class LotteryMainView(View):
         super().__init__(timeout=None)  # persistent
         self.cog = cog
 
-    @discord.ui.button(label="🎟️ Stats", style=discord.ButtonStyle.primary, custom_id="lottery_stats")
+    @discord.ui.button(label="🎟️ Buy Tickets", style=ButtonStyle.success, custom_id="lottery_buy")
+    async def buy_tickets_button(self, interaction: Interaction, button: Button):
+        # Open your BuyTicketsModal when clicked
+        modal = BuyTicketsModal(self.cog, interaction.user)
+        await interaction.response.send_modal(modal)
+
+    @discord.ui.button(label="📊 Stats", style=discord.ButtonStyle.primary, custom_id="lottery_stats")
     async def stats(self, interaction: discord.Interaction, button: Button):
         embed = await self.cog.build_stats_embed(interaction.user)
         await interaction.response.edit_message(embed=embed, view=self)

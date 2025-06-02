@@ -247,13 +247,16 @@ class LotteryGroup(commands.Cog):
             await channel.send("🧹 All lottery entries have been cleared for the next round. Good luck next week!")
 
 @lottery_group.command(name="menu", description="🎟️ Open the full lottery menu")
-@app_commands.checks.has_permissions(administrator=True)
 async def lottery_menu(interaction: Interaction):
     cog = interaction.client.get_cog("LotteryGroup")
     if cog:
         view = LotteryMainView(cog)
         embed = await cog.build_stats_embed(interaction.user)
-        await interaction.response.send_message(embed=embed, view=view)
+
+        await interaction.response.defer()  # Acknowledge silently (no visible response)
+
+        channel = interaction.channel
+        await channel.send(embed=embed, view=view)  # Send embed as a new message
 
 
 async def setup(bot):
