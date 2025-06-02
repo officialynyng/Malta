@@ -204,6 +204,6 @@ class BackToGamblingMenuButton(discord.ui.Button):
 
         user_data = get_user_data(self.user_id)
         gold = user_data["gold"] if user_data else 0
-        embed.set_footer(text=f"🎲 Gold: {gold}")
+        embed.set_footer(text=f"💰 Gold: {gold}")
 
         await interaction.response.edit_message(embed=embed, view=view)
