@@ -6,6 +6,7 @@ from cogs.gambling.games_loader import GAMES
 from cogs.gambling.blackjack.blackjack import BlackjackGameView
 from cogs.gambling.roulette.roulette import RouletteOptionView
 from cogs.gambling.gambling_ui_common import BetAmountSelectionView
+from UI_MainMenu import BackToGamblingMenuButton
 
 
 class GameSelectionView(View):
@@ -14,6 +15,8 @@ class GameSelectionView(View):
         self.user_id = user_id
         self.user_gold = user_gold
         self.cog = cog
+        self.add_item(BackToGamblingMenuButton(self.user_id, self.cog))
+
 
         options = []
 
