@@ -116,12 +116,12 @@ class LotteryGroup(commands.Cog):
         embed = discord.Embed(
             title="🎟️ How the Malta Lottery Works",
             description=(
-                "**Buy Tickets:** Use `/lottery buy` to purchase entries (100 gold each).\n"
+                "**Buy Tickets:** Use the **Buy Tickets** button below to purchase entries (100 gold each).\n"
                 "**Draw Time:** Every Sunday at 6 PM CST.\n"
                 "**Jackpot:** Grows with every ticket bought.\n"
                 "**Winner:** One player is randomly chosen based on ticket weight.\n"
                 "**Cooldown:** 30s between purchases.\n\n"
-                "🏆 View stats, top holders, winners, draw time, and Hall of Fame — all in one place!"
+                "🏆 Use the buttons to view stats, top holders, winners, draw time, Hall of Fame, and help—all here in this menu!"
             ),
             color=discord.Color.blue()
         )

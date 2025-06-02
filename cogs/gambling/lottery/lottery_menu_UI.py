@@ -1,8 +1,25 @@
 from cogs.gambling.lottery.lottery_halloffame_UI import HallOfFameView
 
 import discord
-from discord.ui import View, Button
-from discord import ButtonStyle
+from discord.ui import View, Button, Modal, TextInput
+from discord import ui, ButtonStyle, Interaction, Embed
+
+
+class BuyTicketsModal(Modal):
+    tickets = TextInput(label="Number of tickets", placeholder="Enter amount", min_length=1, max_length=5)
+
+    def __init__(self, cog, user):
+        super().__init__(title="Buy Lottery Tickets")
+        self.cog = cog
+        self.user = user
+
+    async def on_submit(self, interaction: Interaction):
+        amount = int(self.tickets.value)
+        await self.cog.buy_tickets(interaction, amount)
+        # After buying, send them back to main menu embed:
+        embed = await self.cog.build_stats_embed(self.user)
+        view = LotteryMainView(self.cog)
+        await interaction.response.edit_message(embed=embed, view=view)
 
 class LotteryMainView(View):
     def __init__(self, cog):
