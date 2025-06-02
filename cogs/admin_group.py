@@ -544,10 +544,11 @@ class AdminGroup(app_commands.Group):
             "🔒🛜 /admin ping - Check if the bot is online and responsive.\n\n"
             "🔒📁 /admin structure - View the current filestructure of the bot.\n\n"
             "🔒⏪ /admin restart - Restart the bot.\n\n"
+            "🔒📝 /admin forum_post <forum_channel_id> <post_title> <post_content> — Create a new forum post (thread).\n\n"
             "🔒🧪🌀 /admin crpg_multi_check — Force a multiplier check for all users.\n\n"
             "🔒🧪🏔️ /admin crpg_adjust_daily_multiplier <users> <action> [value] [all] - Manually increase, decrease, or set the daily multiplier for one or more users, or apply to all users in the system.\n\n"
             "🔒🧪💬 /admin crpg_trigger_activity_check — Manually process recent user activity from the database.\n\n"
-            "🔒🧪📢 /admin crpg_trigger_voice_check — Manually process all active users in voice channels.\n\n"
+            "🔒🧪📢 /admin crpg_trigger_voice_check — Manually process all active users in voice channels.\n\n"   
         )
         await interaction.response.send_message(help_text, ephemeral=True)
 
