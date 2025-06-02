@@ -128,7 +128,7 @@ class LotteryGroup(commands.Cog):
             channel = self.bot.get_channel(EXP_CHANNEL_ID)
             if channel:
                 await channel.send(
-                    f"🎟️ {interaction.user.mention} just bought **{amount}** ticket{'s' if amount != 1 else ''} for this week's Malta Lottery!"
+                    f"🎟️ {interaction.user.display_name} just bought **{amount}** ticket{'s' if amount != 1 else ''} for this week's Malta Lottery!"
                 )
             # If this is the 3rd announcement, block further ones for 20 minutes
             if counter["count"] == 3:
