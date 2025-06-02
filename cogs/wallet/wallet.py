@@ -15,10 +15,11 @@ SHOW_EPHEMERAL = True  # Set to False to make wallet public
 
 
 class TransactionView(View):
-    def __init__(self, user_id, transactions, page=0):
+    def __init__(self, user_id, transactions, gold, page=0):
         super().__init__(timeout=60)
         self.user_id = user_id
         self.transactions = transactions
+        self.gold = gold
         self.page = page
         self.update_buttons()
 
@@ -26,6 +27,7 @@ class TransactionView(View):
         self.clear_items()
         self.add_item(PrevPageButton(self))
         self.add_item(NextPageButton(self))
+        self.add_item(BackToWalletButton(self))
 
     def get_embed(self):
         embed = Embed(title=f"💼 Recent Transactions", color=discord.Color.from_rgb(0, 0, 0))
@@ -73,6 +75,37 @@ class NextPageButton(Button):
         self.view_ref.update_buttons()
         await interaction.response.edit_message(embed=self.view_ref.get_embed(), view=self.view_ref)
 
+class BackToWalletButton(Button):
+    def __init__(self, view):
+        super().__init__(style=ButtonStyle.danger, label="Back", emoji="↩️")
+        self.view_ref = view
+
+    async def callback(self, interaction: Interaction):
+        if interaction.user.id != self.view_ref.user_id:
+            return await interaction.response.send_message("❌ Not your wallet.", ephemeral=True)
+
+        embed = Embed(
+            title=f"{WALLET_EMOJI} Your Wallet",
+            description=f"**Gold:** {self.view_ref.gold:,} 💰\n\nClick below to view your recent transactions.",
+            color=discord.Color.from_rgb(0, 0, 0)
+        )
+
+        async def show_transactions_callback(inner_interaction):
+            new_view = TransactionView(
+                self.view_ref.user_id,
+                self.view_ref.transactions,
+                self.view_ref.gold
+            )
+            await inner_interaction.response.edit_message(embed=new_view.get_embed(), view=new_view)
+
+        view = View()
+        show_button = Button(label="View Transactions", style=ButtonStyle.primary)
+        show_button.callback = show_transactions_callback
+        view.add_item(show_button)
+
+        await interaction.response.edit_message(embed=embed, view=view)
+
+
 class Wallet(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -108,7 +141,7 @@ class Wallet(commands.Cog):
 
         # Button to open transaction view
         async def show_transactions_callback(interaction):
-            view = TransactionView(user_id, all_results)
+            view = TransactionView(user_id, all_results, gold)
             await interaction.response.edit_message(embed=view.get_embed(), view=view)
 
         view = View()
@@ -117,6 +150,8 @@ class Wallet(commands.Cog):
         view.add_item(show_button)
 
         await interaction.response.send_message(embed=main_embed, view=view, ephemeral=SHOW_EPHEMERAL)
+
+
 
 async def setup(bot):
     await bot.add_cog(Wallet(bot))
