@@ -32,7 +32,7 @@ class LotteryMainView(View):
         modal = BuyTicketsModal(self.cog, interaction.user)
         await interaction.response.send_modal(modal)
 
-    @discord.ui.button(label="📊 Stats", style=discord.ButtonStyle.link, custom_id="lottery_stats")
+    @discord.ui.button(label="📊 Stats", style=discord.ButtonStyle.secondary, custom_id="lottery_stats")
     async def stats(self, interaction: discord.Interaction, button: Button):
         embed = await self.cog.build_stats_embed(interaction.user)
         await interaction.response.edit_message(embed=embed, view=self)
