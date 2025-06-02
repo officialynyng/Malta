@@ -33,6 +33,7 @@ class LotteryGroup(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.cooldowns = defaultdict(lambda: 0)
+        self.announcement_counters = defaultdict(lambda: {"count": 0, "first_ts": 0, "blocked_until": 0})
         self.last_halloffame_ts = 0
         self.run_lottery_check.start()
 
@@ -107,6 +108,35 @@ class LotteryGroup(commands.Cog):
                 }
             )
             conn.execute(stmt)
+
+        user_id = interaction.user.id
+        now = time.time()
+        counter = self.announcement_counters[user_id]
+
+        # Reset counter if last buy was more than 20 minutes ago
+        if now > counter["blocked_until"]:
+            counter["count"] = 0
+            counter["first_ts"] = now
+
+        # Block announcements if in cooldown window
+        if now < counter["blocked_until"]:
+            return  # Skip announcement
+
+        counter["count"] += 1
+
+        if counter["count"] <= 3:
+            channel = self.bot.get_channel(EXP_CHANNEL_ID)
+            if channel:
+                await channel.send(
+                    f"🎟️ {interaction.user.mention} just bought **{amount}** ticket{'s' if amount != 1 else ''} for this week's Malta Lottery!"
+                )
+            # If this is the 3rd announcement, block further ones for 20 minutes
+            if counter["count"] == 3:
+                counter["blocked_until"] = now + 20 * 60  # 20 minutes
+        else:
+            # Do nothing, user is now rate limited
+            pass
+
         # Optionally send a silent ephemeral confirmation or update the UI
         # await interaction.followup.send("Tickets bought!", ephemeral=True)
 
