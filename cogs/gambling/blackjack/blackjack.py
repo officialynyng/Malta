@@ -92,7 +92,13 @@ class BlackjackGameView(View):
         user_data = get_user_data(self.user_id)
         delta = payout - self.bet
         user_data["gold"] += delta
-        update_user_gold(self.user_id, user_data["gold"])
+        update_user_gold(
+            self.user_id,
+            user_data["gold"],
+            type_="gamble_win" if delta > 0 else "gamble_loss" if delta < 0 else "gamble_tie",
+            description=f"{'Won' if delta > 0 else 'Lost' if delta < 0 else 'Tied'} Blackjack for {abs(delta)} gold"
+        )
+
 
         # Stats update
         now = int(time.time())

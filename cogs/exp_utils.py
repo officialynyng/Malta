@@ -6,6 +6,8 @@ from cogs.exp_config import (
     players, engine, LEVEL_CAP, TIME_DELTA, MAX_MULTIPLIER, BASE_EXP_SCALE,
 )
 
+from cogs.wallet.log_transactions import log_transaction 
+
 DEBUG = True
 # 🔒 Ensures all user_id comparisons match the VARCHAR type in Postgres
 def safe_id(uid) -> str:
@@ -76,12 +78,19 @@ def update_user_data(user_id, new_retirement_multiplier, new_daily_multiplier, l
 
     print("[DEBUG]🗒️🖊️☑️ User data updated in database")
 
-def update_user_gold(user_id, new_gold_amount):
+def update_user_gold(user_id, new_gold_amount, type_: str = "gold_update", description: str = ""):
     if not isinstance(new_gold_amount, int):
         raise ValueError(f"[ERROR] Gold must be an integer, got {type(new_gold_amount)}")
 
+    user_data = get_user_data(user_id)
+    if not user_data:
+        raise ValueError(f"[ERROR] No user data found for ID {user_id}")
+
+    old_gold = user_data.get("gold", 0)
+    delta = new_gold_amount - old_gold
+
     if DEBUG:
-        print(f"[DEBUG]💰 Updating gold for user {user_id} → {new_gold_amount}")
+        print(f"[DEBUG]💰 Updating gold for user {user_id} → {new_gold_amount} (Δ {delta})")
 
     with engine.connect() as conn:
         conn.execute(
@@ -91,8 +100,13 @@ def update_user_gold(user_id, new_gold_amount):
         )
         conn.commit()
 
+    # Log the transaction
+    if delta != 0:
+        log_transaction(user_id, delta, type_, description)
+
     if DEBUG:
-        print(f"[DEBUG]💰 Gold updated successfully for {user_id}")
+        print(f"[DEBUG]💰 Gold updated and transaction logged for {user_id}")
+
 
 
 def get_all_user_ids():

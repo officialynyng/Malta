@@ -335,7 +335,13 @@ def process_purchase(user_id, item_id, item_type):
     user_data["gold"] = max(0, user_data["gold"] - price)
 
     # Update player data (keep existing multiplier-related info)
-    update_user_gold(user_id, user_data["gold"])
+    update_user_gold(
+        user_id,
+        user_data["gold"],
+        type_="shop_purchase",
+        description=f"Bought {item['name']} ({item_type})"
+    )
+
     update_user_data(
         user_id,
         user_data["multiplier"],
@@ -445,7 +451,12 @@ def roll_random_title_for_user(user_id, price):
             # Deduct gold
             user_data["gold"] = max(0, user_data["gold"] - price)
 
-            update_user_gold(user_id, user_data["gold"])
+            update_user_gold(
+                user_id,
+                user_data["gold"],
+                type_="title_roll",
+                description=f"Rolled and received {title['name']}"
+            )
             update_user_data(
                 user_id,
                 user_data["multiplier"],

@@ -47,7 +47,13 @@ class RoulettePlayButton(Button):
 
         # ✅ Update user gold
         self.view_ref.user_gold += net_change
-        update_user_gold(self.view_ref.user_id, self.view_ref.user_gold)
+        update_user_gold(
+            self.view_ref.user_id,
+            self.view_ref.user_gold,
+            type_="roulette_win" if net_change > 0 else "roulette_loss",
+            description=f"Roulette: {self.view_ref.bet} on {self.view_ref.choice} ({self.view_ref.bet_type}) → {self.view_ref.result_number} ({self.view_ref.result_color})"
+        )
+
 
         # ✅ Broadcast result to EXP_CHANNEL_ID
         exp_channel = interaction.client.get_channel(EXP_CHANNEL_ID)

@@ -60,7 +60,13 @@ async def handle_gamble_result(interaction: Interaction, user_id: int, game_key:
     net_change = payout - amount
     user_data["gold"] += net_change
     user_data["last_gamble_ts"] = now
-    update_user_gold(user_id, user_data["gold"])
+    update_user_gold(
+        user_id,
+        user_data["gold"],
+        type_="gamble_win" if win else "gamble_loss",
+        description=f"{'Won' if win else 'Lost'} {game['name']} for {abs(net_change)} gold"
+    )
+
 
     # Record stats
     with engine.begin() as conn:

@@ -87,7 +87,13 @@ class LotteryGroup(commands.Cog):
             return
 
         # Subtract gold
-        update_user_gold(user_id, gold - ticket_cost)
+        update_user_gold(
+            user_id,
+            gold - ticket_cost,
+            type_="lottery_buy",
+            description=f"Bought {amount} lottery ticket{'s' if amount != 1 else ''} for {ticket_cost} gold"
+        )
+
 
         # Insert or update lottery_entries
         with engine.begin() as conn:
@@ -305,7 +311,13 @@ class LotteryGroup(commands.Cog):
 
             user_data = get_user_data(winner_id)
             if user_data:
-                update_user_gold(winner_id, user_data["gold"] + pot)
+                update_user_gold(
+                    winner_id,
+                    user_data["gold"] + pot,
+                    type_="lottery_win",
+                    description=f"Won the weekly Malta Lottery for {pot} gold"
+                )
+
 
             channel = self.bot.get_channel(EXP_CHANNEL_ID)
             if channel:

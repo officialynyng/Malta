@@ -114,16 +114,7 @@ async def help_command(interaction: discord.Interaction):
         "⚗️🪦 `/crpg retire` — Retire your character (Lvl 31–38) to earn permanent (🧬) heirloom bonuses.\n"
         "⚗️⚡ `/crpg cooldown` — Check when you'll next earn EXP & gold.\n"
         "⚗️🏔️ `/crpg multipliers` — View your daily and generational multipliers.\n\n"
-
-        "## __[GAMBLING]__\n\n"
-        "♠️♥️♦️♣️ `/gamble play` — Open the gambling hall and choose a game via dropdown.\n"
-        "♠️♥️♦️♣️ - 📊 `/gamble_stats` — View your gambling history and performance.\n\n"
-
-        "## __[LOTTERY]__\n\n"
-        "🎟️ `/lottery <amount>` — Buy weekly lottery tickets (100 gold each).\n"
-        "🏁 `/lottery_stats` — See how many tickets you’ve bought over time.\n"
-        "🥇 `/lottery_leaderboard` — See who has won the most gold from the lottery.\n\n"
-
+        
         "## __[SHOP]__\n\n"
         "🍯🛒 `/shop open` — Open Malta’s CRPG item shop interface.\n"
         "🍯🛍️ `/shop buy <category> <item_id>` — Purchase a shop item.\n"
