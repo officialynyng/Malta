@@ -29,12 +29,19 @@ class LotteryReminder(commands.Cog):
     def cog_unload(self):
         self.lottery_reminder.cancel()
 
-    @tasks.loop(hours=24)
+    @tasks.loop(minutes=15)
     async def lottery_reminder(self):
         now = datetime.now(CENTRAL_TZ)
+
         if now.weekday() not in REMINDER_DAYS:
             if DEBUG:
                 print(f"[DEBUG]📆 No reminder today ({now.strftime('%A')})")
+            return
+
+        if now.hour not in {12, 18} or now.minute >= 15:
+            # Only send at exactly 12:00 or 18:00
+            if DEBUG:
+                print(f"[DEBUG]🕒 Current time is {now.hour}:{now.minute:02d} — not a target window.")
             return
 
         channel = self.bot.get_channel(EXP_CHANNEL_ID)
@@ -48,13 +55,14 @@ class LotteryReminder(commands.Cog):
         embed = discord.Embed(
             title="🎟️ WEEKLY LOTTERY REMINDER",
             description="**Use** `/lottery` to enter this week's drawing.\nBig rewards await the lucky winner!",
-            color=discord.Color.green()
+            color=discord.Color.from_rgb(0, 120, 255)
         )
         embed.set_footer(text="Drawing occurs every Sunday at 6 PM CST. Buy tickets anytime before then!")
 
         await channel.send(content=message, embed=embed)
         if DEBUG:
             print(f"[DEBUG]✅ Lottery reminder sent at {now}")
+
 
     async def wait_until_next_reminder(self):
         await self.bot.wait_until_ready()
