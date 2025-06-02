@@ -135,7 +135,7 @@ class Wallet(commands.Cog):
         # Initial wallet embed
         main_embed = Embed(
             title=f"{WALLET_EMOJI} Your Wallet",
-            description=f"**Gold:** {gold:,} 💰\n\nClick below to view your recent transactions.",
+            description=f"**Gold:** {gold:,} 💰\n\n",
             color=discord.Color.from_rgb(0, 0, 0)
         )
 
