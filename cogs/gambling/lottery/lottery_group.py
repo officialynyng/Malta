@@ -61,6 +61,54 @@ class LotteryGroup(commands.Cog):
         embed.add_field(name="Current Jackpot", value=f"**{jackpot}** gold", inline=True)
         embed.add_field(name="Your Odds", value=f"{odds:.2f}%", inline=True)
         return embed
+    
+    async def buy_tickets(self, interaction, amount):
+        user_id = interaction.user.id
+        user_name = interaction.user.display_name
+
+        # Validation
+        if amount <= 0:
+            await interaction.response.send_message("❌ Amount must be greater than zero.", ephemeral=True)
+            return
+
+        user_data = get_user_data(user_id)
+        if not user_data:
+            await interaction.response.send_message("❌ User not found.", ephemeral=True)
+            return
+
+        gold = user_data["gold"]
+        ticket_cost = amount * TICKET_COST
+
+        if gold < ticket_cost:
+            await interaction.response.send_message(
+                f"❌ You need {ticket_cost} gold, but you only have {gold}.", ephemeral=True
+            )
+            return
+
+        # Subtract gold
+        update_user_gold(user_id, gold - ticket_cost)
+
+        # Insert or update lottery_entries
+        with engine.begin() as conn:
+            from sqlalchemy.dialects.postgresql import insert as pg_insert
+            stmt = pg_insert(lottery_entries).values(
+                user_id=user_id,
+                user_name=user_name,
+                tickets=amount,
+                gold_spent=ticket_cost,
+                timestamp=int(time.time()),
+                winnings=0
+            ).on_conflict_do_update(
+                index_elements=[lottery_entries.c.user_id],
+                set_={
+                    "tickets": lottery_entries.c.tickets + amount,
+                    "gold_spent": lottery_entries.c.gold_spent + ticket_cost,
+                    "timestamp": int(time.time())
+                }
+            )
+            conn.execute(stmt)
+        # Optionally send a silent ephemeral confirmation or update the UI
+        # await interaction.followup.send("Tickets bought!", ephemeral=True)
 
     async def build_leaderboard_embed(self):
         with engine.begin() as conn:
