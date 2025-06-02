@@ -3,12 +3,16 @@ from discord.ext import commands
 from discord import app_commands, Interaction, Embed, ButtonStyle
 from discord.ui import View, Button
 from sqlalchemy import select, desc
+from datetime import timezone, timedelta
 from cogs.exp_config import engine
 from cogs.exp_utils import get_user_data
 from cogs.database.transactions_table import transactions
 
 DEBUG = True
 WALLET_EMOJI = "💼"
+CST = timezone(timedelta(hours=-6))
+SHOW_EPHEMERAL = True  # Set to False to make wallet public
+
 
 class TransactionView(View):
     def __init__(self, user_id, transactions, page=0):
@@ -24,7 +28,7 @@ class TransactionView(View):
         self.add_item(NextPageButton(self))
 
     def get_embed(self):
-        embed = Embed(title=f"💼 Recent Transactions", color=discord.Color.dark_gold())
+        embed = Embed(title=f"💼 Recent Transactions", color=discord.Color.from_rgb(0, 0, 0))
         start = self.page * 5
         end = start + 5
         page_txns = self.transactions[start:end]
@@ -32,7 +36,8 @@ class TransactionView(View):
         if page_txns:
             for row in page_txns:
                 amount_str = f"+{row.amount}" if row.amount >= 0 else f"{row.amount}"
-                line = f"`{row.timestamp.strftime('%Y-%m-%d %H:%M')}` → `{amount_str}`g — *{row.description}*"
+                timestamp_cst = row.timestamp.astimezone(CST)
+                line = f"`{timestamp_cst.strftime('%Y-%m-%d %H:%M')}` → `{amount_str}`g — *{row.description}*"
                 embed.add_field(name="", value=line, inline=False)
         else:
             embed.description = "No transactions to display."
@@ -111,7 +116,7 @@ class Wallet(commands.Cog):
         show_button.callback = show_transactions_callback
         view.add_item(show_button)
 
-        await interaction.response.send_message(embed=main_embed, view=view)
+        await interaction.response.send_message(embed=main_embed, view=view, ephemeral=SHOW_EPHEMERAL)
 
 async def setup(bot):
     await bot.add_cog(Wallet(bot))
