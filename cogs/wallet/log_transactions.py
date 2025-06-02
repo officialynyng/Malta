@@ -1,6 +1,7 @@
 from cogs.database.transactions_table import transactions
 from cogs.exp_config import engine
 import sqlalchemy as db
+from sqlalchemy import select, desc
 from datetime import datetime, timezone, timedelta
 
 # Define CST timezone
