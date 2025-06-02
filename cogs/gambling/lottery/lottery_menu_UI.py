@@ -26,7 +26,7 @@ class LotteryMainView(View):
         super().__init__(timeout=None)  # persistent
         self.cog = cog
 
-    @discord.ui.button(label="🎟️ Buy Tickets", style=ButtonStyle.Primary, custom_id="lottery_buy")
+    @discord.ui.button(label="🎟️ Buy Tickets", style=ButtonStyle.primary, custom_id="lottery_buy")
     async def buy_tickets_button(self, interaction: Interaction, button: Button):
         # Open your BuyTicketsModal when clicked
         modal = BuyTicketsModal(self.cog, interaction.user)
