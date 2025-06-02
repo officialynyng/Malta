@@ -46,26 +46,3 @@ class GamblingMenuView(View):
         await interaction.response.edit_message(embed=embed, view=self)
 
 # If you want, you can add a "Home" button or back-to-menu logic in your subviews
-
-class BackToGamblingMenuButton(discord.ui.Button):
-    def __init__(self, user_id, cog):
-        super().__init__(label="⬅️ Back to Menu", style=discord.ButtonStyle.secondary)
-        self.user_id = user_id
-        self.cog = cog
-
-    async def callback(self, interaction: Interaction):
-        if interaction.user.id != self.user_id:
-            return await interaction.response.send_message("❌ Not your menu!", ephemeral=True)
-
-        view = GamblingMenuView(self.cog)
-        embed = Embed(
-            title="🎰 Welcome to the Gambling Hall",
-            description="Pick your game to begin.",
-            color=discord.Color.red()
-        )
-
-        user_data = get_user_data(self.user_id)
-        gold = user_data["gold"] if user_data else 0
-        embed.set_footer(text=f"🎲 Gold: {gold}")
-
-        await interaction.response.edit_message(embed=embed, view=view)
