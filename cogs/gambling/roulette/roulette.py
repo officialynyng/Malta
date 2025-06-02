@@ -81,7 +81,6 @@ class RoulettePlayButton(Button):
             game_key="roulette",
             parent=self.view_ref.parent,
             bet=self.view_ref.bet,
-            parent=self.view_ref
         ))
         await interaction.edit_original_response(embed=embed, view=self.view_ref)
 
