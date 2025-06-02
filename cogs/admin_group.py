@@ -333,8 +333,13 @@ class AdminGroup(app_commands.Group):
                 content=post_content
                 # You can add `applied_tags=[...]` here if you want to auto-tag.
             )
+            # Try thread.jump_url, else fall back to manual URL if needed
+            try:
+                url = thread.jump_url
+            except AttributeError:
+                url = f"https://discord.com/channels/{interaction.guild.id}/{thread.id}"
             await interaction.response.send_message(
-                f"✅ Forum post created: [Jump to post]({thread.jump_url})", ephemeral=True
+                f"✅ Forum post created: [Jump to post]({url})", ephemeral=True
             )
         except Exception as e:
             await interaction.response.send_message(f"⚠️ Failed to create forum post: {e}", ephemeral=True)
