@@ -2,23 +2,23 @@ import discord
 from discord.ui import View, Button
 from discord import Interaction, ButtonStyle, Embed
 
+from cogs.gambling.gambling_ui import GameSelectionView
+
 class GamblingMenuView(View):
     def __init__(self, cog):
         super().__init__(timeout=None)  # Persistent!
         self.cog = cog
 
-    @discord.ui.button(label="♠️ Blackjack", style=ButtonStyle.primary, custom_id="gamble_blackjack")
-    async def blackjack(self, interaction: Interaction, button: Button):
-        # Launch the Blackjack subview/modal here
-        await self.cog.open_blackjack(interaction)
+    @discord.ui.button(label="🎲 Games", style=ButtonStyle.primary, custom_id="gamble_games")
+    async def games(self, interaction: Interaction, button: Button):
+        view = GameSelectionView(self.cog)
+        embed = Embed(
+            title="🎲 Choose a Game",
+            description="Pick which game you'd like to play.",
+            color=discord.Color.green()
+        )
+        await interaction.response.edit_message(embed=embed, view=view)
 
-    @discord.ui.button(label="🎡 Roulette", style=ButtonStyle.primary, custom_id="gamble_roulette")
-    async def roulette(self, interaction: Interaction, button: Button):
-        await self.cog.open_roulette(interaction)
-
-    @discord.ui.button(label="🪙 Coinflip", style=ButtonStyle.primary, custom_id="gamble_coinflip")
-    async def coinflip(self, interaction: Interaction, button: Button):
-        await self.cog.open_coinflip(interaction)
 
     @discord.ui.button(label="📊 Stats", style=ButtonStyle.secondary, custom_id="gamble_stats")
     async def stats(self, interaction: Interaction, button: Button):
