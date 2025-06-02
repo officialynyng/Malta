@@ -9,10 +9,11 @@ from cogs.gambling.gambling_ui_common import BetAmountSelectionView
 
 
 class GameSelectionView(View):
-    def __init__(self, user_id, user_gold):
+    def __init__(self, user_id, user_gold, cog):
         super().__init__(timeout=60)
         self.user_id = user_id
         self.user_gold = user_gold
+        self.cog = cog
 
         options = []
 

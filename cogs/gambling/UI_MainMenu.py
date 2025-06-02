@@ -16,7 +16,7 @@ class GamblingMenuView(View):
         user_data = get_user_data(user_id)
         user_gold = user_data["gold"] if user_data else 0
 
-        view = GameSelectionView(user_id, user_gold)
+        view = GameSelectionView(user_id, user_gold, self.cog)
         embed = Embed(
             title="🎲 Choose a Game",
             description="Pick which game you'd like to play.",
@@ -47,3 +47,25 @@ class GamblingMenuView(View):
 
 # If you want, you can add a "Home" button or back-to-menu logic in your subviews
 
+class GameBackButton(discord.ui.Button):
+    def __init__(self, user_id, cog):
+        super().__init__(label="⬅️ Back to Gambling Menu", style=discord.ButtonStyle.secondary)
+        self.user_id = user_id
+        self.cog = cog
+
+    async def callback(self, interaction: Interaction):
+        if interaction.user.id != self.user_id:
+            return await interaction.response.send_message("❌ Not your menu!", ephemeral=True)
+
+        view = GamblingMenuView(self.cog)
+        embed = Embed(
+            title="🎰 Welcome to the Gambling Hall",
+            description="Pick your game to begin.",
+            color=discord.Color.green()
+        )
+
+        user_data = get_user_data(self.user_id)
+        gold = user_data["gold"] if user_data else 0
+        embed.set_footer(text=f"💰 Gold: {gold}")
+
+        await interaction.response.edit_message(embed=embed, view=view)
