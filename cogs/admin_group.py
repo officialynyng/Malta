@@ -299,6 +299,45 @@ class AdminGroup(app_commands.Group):
         # Exit the current process (which will trigger a restart in environments like Heroku)
         os.execv(sys.executable, ['python'] + sys.argv)
 
+    @app_commands.command(
+    name="forum_post",
+    description="🔒 - 📝 Create a new forum post (thread) in a Forum Channel by channel ID."
+    )
+    @app_commands.describe(
+        forum_channel_id="The ID of the Forum Channel.",
+        post_title="Title for the forum post.",
+        post_content="The content/body of the post."
+    )
+    async def forum_post(
+        self,
+        interaction: discord.Interaction,
+        forum_channel_id: str,
+        post_title: str,
+        post_content: str
+    ):
+        # Permission check (adjust as you need)
+        if not interaction.user.guild_permissions.administrator:
+            await interaction.response.send_message("❌ You must be an admin to use this command.", ephemeral=True)
+            return
+
+        try:
+            forum_channel = interaction.guild.get_channel(int(forum_channel_id))
+            if not isinstance(forum_channel, discord.ForumChannel):
+                await interaction.response.send_message(
+                    "❌ The channel ID provided is not a Forum Channel.", ephemeral=True
+                )
+                return
+
+            thread = await forum_channel.create_thread(
+                name=post_title,
+                content=post_content
+                # You can add `applied_tags=[...]` here if you want to auto-tag.
+            )
+            await interaction.response.send_message(
+                f"✅ Forum post created: [Jump to post]({thread.jump_url})", ephemeral=True
+            )
+        except Exception as e:
+            await interaction.response.send_message(f"⚠️ Failed to create forum post: {e}", ephemeral=True)
 
     @app_commands.command(name="crpg_multi_check", description="🔒 - 🧪🌀 Force a multiplier check for all users.")
     async def check_all_multipliers(self, interaction: discord.Interaction):
