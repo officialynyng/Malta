@@ -45,7 +45,8 @@ class MaltaBot(commands.Bot):
         print("Loading ♠️ ♥️ ♦️ ♣️Gambling cogs...")
         await self.load_extension("cogs.gambling.gambling_group")
         await self.load_extension("cogs.gambling.gambling_reminder")
-        
+        print("Loading 💼 Wallet cogs...")
+        await self.load_extension("cogs.wallet.wallet")
         from cogs.exp_background import setup_crpg
         await setup_crpg(self)
 
@@ -114,7 +115,7 @@ async def help_command(interaction: discord.Interaction):
         "⚗️🪦 `/crpg retire` — Retire your character (Lvl 31–38) to earn permanent (🧬) heirloom bonuses.\n"
         "⚗️⚡ `/crpg cooldown` — Check when you'll next earn EXP & gold.\n"
         "⚗️🏔️ `/crpg multipliers` — View your daily and generational multipliers.\n\n"
-        
+
         "## __[SHOP]__\n\n"
         "🍯🛒 `/shop open` — Open Malta’s CRPG item shop interface.\n"
         "🍯🛍️ `/shop buy <category> <item_id>` — Purchase a shop item.\n"
