@@ -21,7 +21,7 @@ class BetAmountDropdown(discord.ui.Select):
                 discord.SelectOption(label=str(parent_view.min_bet), value=str(parent_view.min_bet))
             ]
 
-        super().__init__(placeholder="💰 Choose your bet amount", options=options)
+        super().__init__(placeholder="💰 Choose your bet amount", min_values=1, max_values=1, options=options, custom_id="blackjack_bet_dropdown")
 
 
     async def callback(self, interaction: Interaction):

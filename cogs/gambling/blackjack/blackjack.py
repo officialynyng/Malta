@@ -140,7 +140,7 @@ class BlackjackGameView(View):
 
 class HitButton(Button):
     def __init__(self, game: BlackjackGameView):
-        super().__init__(label="Hit", style=discord.ButtonStyle.primary)
+        super().__init__(label="Hit", style=discord.ButtonStyle.primary, custom_id="blackjack_hit")
         self.game = game
 
     async def callback(self, interaction: Interaction):
@@ -156,7 +156,7 @@ class HitButton(Button):
 
 class StandButton(Button):
     def __init__(self, game: BlackjackGameView):
-        super().__init__(label="Stand", style=discord.ButtonStyle.secondary)
+        super().__init__(label="Stand", style=discord.ButtonStyle.secondary, custom_id="blackjack_stand")
         self.game = game
 
     async def callback(self, interaction: Interaction):
