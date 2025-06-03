@@ -92,7 +92,7 @@ class RoulettePlayButton(Button):
 
 class RouletteOptionView(View):
     def __init__(self, user_id, user_gold, parent):
-        super().__init__(timeout=60)
+        super().__init__(timeout=None)
         self.user_id = user_id
         self.user_gold = user_gold
         self.parent = parent
@@ -102,21 +102,22 @@ class RouletteOptionView(View):
             discord.SelectOption(label="Black", value="color:Black", emoji="⚫"),
             discord.SelectOption(label="Pick a Number (0–36)", value="number", emoji="🔢")
         ]
-
-        self.select = discord.ui.Select(
-            placeholder="🎡 Choose Red, Black, or a Number...",
-            options=options
-        )
-        self.select.callback = self.select_callback
-        self.add_item(self.select)
-
+    
         self.add_item(BackToGameButton(self.user_id, self.parent))
-
-    async def select_callback(self, interaction: Interaction):
+    @discord.ui.select(
+        placeholder="🎡 Choose Red, Black, or a Number...",
+        custom_id="roulette_bet_selector",  # must be unique globally
+        options=[
+            discord.SelectOption(label="Red", value="color:Red", emoji="🔴"),
+            discord.SelectOption(label="Black", value="color:Black", emoji="⚫"),
+            discord.SelectOption(label="Pick a Number (0–36)", value="number", emoji="🔢")
+        ]
+    )
+    async def select_callback(self, interaction: Interaction, select: discord.ui.Select):
         if interaction.user.id != self.user_id:
             return await interaction.response.send_message("❌ Not your selection!", ephemeral=True)
 
-        selection = self.select.values[0]
+        selection = select.values[0]
 
         if selection.startswith("color:"):
             color = selection.split(":")[1]

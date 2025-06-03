@@ -7,8 +7,8 @@ from sqlalchemy import select
 from cogs.exp_config import engine
 from cogs.database.gambling_stats_table import gambling_stats
 from cogs.exp_utils import get_user_data
-from cogs.gambling.gambling_ui import GameSelectionView
 from cogs.gambling.UI_MainMenu import GamblingMenuView
+
 
 gamble_group = Group(name="gamble", description="🎰 Enter the gambling hall and play games!")
 DEBUG = True
@@ -39,6 +39,7 @@ async def gamble_menu(interaction: Interaction):
 async def setup(bot):
     from cogs.gambling.gambling_ui import GameSelectionView
     from cogs.gambling.UI_MainMenu import GamblingMenuView
+    from cogs.gambling.roulette.roulette import RouletteOptionView
 
     bot.tree.add_command(gamble_group)
 
@@ -49,3 +50,4 @@ async def setup(bot):
     # ⚙️ Register persistent views
     bot.add_view(GamblingMenuView(bot.get_cog("GamblingGroup")))  # Already persistent via buttons
     bot.add_view(GameSelectionView(dummy_user_id, dummy_gold, cog=bot.get_cog("GamblingGroup")))
+    bot.add_view(RouletteOptionView(user_id=123456789012345678, user_gold=1000, parent=None))
