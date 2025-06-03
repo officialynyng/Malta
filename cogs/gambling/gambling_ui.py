@@ -103,7 +103,7 @@ class GameSelectionView(View):
 
 class BackToGamblingMenuButton(discord.ui.Button):
     def __init__(self, user_id, cog):
-        super().__init__(label="⬅️ Back to Menu", style=discord.ButtonStyle.secondary)
+        super().__init__(label="⬅️ Back to Menu", style=discord.ButtonStyle.secondary, custom_id="back_to_menu")
         self.user_id = user_id
         self.cog = cog
 
