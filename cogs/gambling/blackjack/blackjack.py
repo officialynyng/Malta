@@ -15,7 +15,7 @@ import time
 class BlackjackGameView(View):
     shared_shoe = create_shoe()
     def __init__(self, user_id, user_gold, parent, bet):
-        super().__init__(timeout=120)
+        super().__init__(timeout=None)
         self.user_id = user_id
         self.user_gold = user_gold
         self.parent = parent
