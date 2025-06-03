@@ -37,4 +37,15 @@ async def gamble_menu(interaction: Interaction):
     await interaction.followup.send(embed=embed, view=view)
 
 async def setup(bot):
+    from cogs.gambling.gambling_ui import GameSelectionView
+    from cogs.gambling.UI_MainMenu import GamblingMenuView
+
     bot.tree.add_command(gamble_group)
+
+    # 🧠 Dummy values just for persistent view registration
+    dummy_user_id = 123456789012345678  # Replace with your own user ID or a safe static ID
+    dummy_gold = 1000
+
+    # ⚙️ Register persistent views
+    bot.add_view(GamblingMenuView(bot.get_cog("GamblingGroup")))  # Already persistent via buttons
+    bot.add_view(GameSelectionView(dummy_user_id, dummy_gold, cog=bot.get_cog("GamblingGroup")))
