@@ -10,7 +10,7 @@ from cogs.gambling.gambling_ui_common import BetAmountSelectionView, PlayAgainBu
 
 class RouletteView(View):
     def __init__(self, user_id, parent, bet, choice, bet_type, user_gold):
-        super().__init__(timeout=120)
+        super().__init__(timeout=None)
         self.user_id = user_id
         self.parent = parent
         self.bet = bet
@@ -33,7 +33,7 @@ class RouletteView(View):
 
 class RoulettePlayButton(Button):
     def __init__(self, view: RouletteView):
-        super().__init__(label="🎡 Play", style=discord.ButtonStyle.danger)
+        super().__init__(label="🎡 Play", style=discord.ButtonStyle.danger, custom_id="roulette_play_button")
         self.view_ref = view
 
     async def callback(self, interaction: Interaction):
@@ -97,22 +97,9 @@ class RouletteOptionView(View):
         self.user_gold = user_gold
         self.parent = parent
 
-        options = [
-            discord.SelectOption(label="Red", value="color:Red", emoji="🔴"),
-            discord.SelectOption(label="Black", value="color:Black", emoji="⚫"),
-            discord.SelectOption(label="Pick a Number (0–36)", value="number", emoji="🔢")
-        ]
-    
+        self.add_item(RouletteBetSelector(self))
         self.add_item(BackToGameButton(self.user_id, self.parent))
-    @discord.ui.select(
-        placeholder="🎡 Choose Red, Black, or a Number...",
-        custom_id="roulette_bet_selector",  # must be unique globally
-        options=[
-            discord.SelectOption(label="Red", value="color:Red", emoji="🔴"),
-            discord.SelectOption(label="Black", value="color:Black", emoji="⚫"),
-            discord.SelectOption(label="Pick a Number (0–36)", value="number", emoji="🔢")
-        ]
-    )
+
     async def select_callback(self, interaction: Interaction, select: discord.ui.Select):
         if interaction.user.id != self.user_id:
             return await interaction.response.send_message("❌ Not your selection!", ephemeral=True)
@@ -141,7 +128,7 @@ class RouletteOptionView(View):
                 description="Choose your bet amount below.",
                 color=discord.Color.green()
             )
-            embed.set_image(url="https://theknightsofmalta.net/wp-content/uploads/2025/05/roulette.png")  # ⬅️ Replace with your actual roulette banner
+            embed.set_image(url="https://theknightsofmalta.net/wp-content/uploads/2025/05/roulette.png")
             embed.set_footer(text=f"💰 Gold: {self.user_gold}")
 
             await interaction.response.edit_message(
@@ -157,59 +144,30 @@ class RouletteOptionView(View):
                 )
             )
 
-
         elif selection == "number":
             await interaction.response.send_modal(
                 RouletteNumberModal(self.user_id, self.user_gold, self.parent)
             )
 
-            def check(msg):
-                return msg.author.id == self.user_id and msg.channel == interaction.channel
 
-            try:
-                msg = await interaction.client.wait_for("message", timeout=30.0, check=check)
-                if not msg.content.isdigit() or not (0 <= int(msg.content) <= 36):
-                    await interaction.edit_original_response(
-                        content="❌ Invalid number. Please enter a value between 0 and 36.",
-                        view=None
-                    )
-                    return
+class RouletteBetSelector(discord.ui.Select):
+    def __init__(self, view: RouletteOptionView):
+        self.view_ref = view
+        options = [
+            discord.SelectOption(label="Red", value="color:Red", emoji="🔴"),
+            discord.SelectOption(label="Black", value="color:Black", emoji="⚫"),
+            discord.SelectOption(label="Pick a Number (0–36)", value="number", emoji="🔢")
+        ]
+        super().__init__(
+            placeholder="🎡 Choose Red, Black, or a Number...",
+            min_values=1,
+            max_values=1,
+            custom_id="roulette_bet_selector",  # persistent
+            options=options
+        )
 
-
-                number_choice = int(msg.content)
-
-                async def roulette_number_callback(interaction: Interaction, bet: int):
-                    await interaction.edit_original_response(
-                        content=f"🎡 Spinning for **{bet}** gold on **{number_choice}**!",
-                        embed=None,
-                        view=RouletteView(
-                            self.user_id,
-                            parent=self.parent,
-                            bet=bet,
-                            choice=str(number_choice),
-                            bet_type="Number",
-                            user_gold=self.user_gold
-                        )
-                    )
-
-                await interaction.edit_original_response(
-                    content=f"🎡 You chose **{number_choice}**. Now choose your bet amount:",
-                    view=BetAmountSelectionView(
-                        self.user_id,
-                        "roulette",
-                        min_bet=10,
-                        max_bet=5000,
-                        parent=self.parent,
-                        extra_callback=roulette_number_callback
-                    )
-                )
-
-            except asyncio.TimeoutError:
-                await interaction.edit_original_response(
-                    content="⌛ Timed out waiting for number input.",
-                    view=None
-                )
-
+    async def callback(self, interaction: Interaction):
+        await self.view_ref.select_callback(interaction, self)
 
 class RouletteNumberModal(Modal):
     def __init__(self, user_id, user_gold, parent):
@@ -280,7 +238,7 @@ class RouletteNumberModal(Modal):
 
 class BackToRouletteOptionsButton(Button):
     def __init__(self, user_id, user_gold, parent):
-        super().__init__(label="🎡 Back to Roulette Options", style=discord.ButtonStyle.secondary)
+        super().__init__(label="🎡 Back to Roulette Options", style=discord.ButtonStyle.secondary, custom_id="back_to_roulette_options")
         self.user_id = user_id
         self.user_gold = user_gold
         self.parent = parent  # should be GameSelectionView or similar

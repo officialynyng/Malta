@@ -170,7 +170,7 @@ class StandButton(Button):
 
 class DrawCardsButton(discord.ui.Button):
     def __init__(self, view: BlackjackGameView):
-        super().__init__(label="Draw Cards", emoji="🃏", style=discord.ButtonStyle.green)
+        super().__init__(label="Draw Cards", emoji="🃏", style=discord.ButtonStyle.green, custom_id="blackjack_draw")
         self.view_ref = view
 
     async def callback(self, interaction: Interaction):
