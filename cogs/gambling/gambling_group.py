@@ -40,6 +40,7 @@ async def setup(bot):
     from cogs.gambling.gambling_ui import GameSelectionView
     from cogs.gambling.UI_MainMenu import GamblingMenuView
     from cogs.gambling.roulette.roulette import RouletteOptionView
+    from cogs.gambling.blackjack.blackjack import BlackjackGameView
 
     bot.tree.add_command(gamble_group)
 
@@ -51,3 +52,4 @@ async def setup(bot):
     bot.add_view(GamblingMenuView(bot.get_cog("GamblingGroup")))  # Already persistent via buttons
     bot.add_view(GameSelectionView(dummy_user_id, dummy_gold, cog=bot.get_cog("GamblingGroup")))
     bot.add_view(RouletteOptionView(user_id=123456789012345678, user_gold=1000, parent=None))
+    bot.add_view(BlackjackGameView(user_id=0, user_gold=0, parent=None, bet=0))
