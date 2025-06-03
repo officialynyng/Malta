@@ -82,7 +82,11 @@ class RefreshGoldButton(discord.ui.Button):
 
 class BackToGameButton(Button):
     def __init__(self, user_id, parent):
-        super().__init__(label="⬅️ Back", style=discord.ButtonStyle.secondary)
+        super().__init__(
+            label="⬅️ Back",
+            style=discord.ButtonStyle.secondary,
+            custom_id="back_to_game_button"  # ✅ Required for persistence
+        )
         self.user_id = user_id
         self.parent = parent
 
