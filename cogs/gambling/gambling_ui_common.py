@@ -60,22 +60,24 @@ class RefreshGoldButton(discord.ui.Button):
         super().__init__(
             label="🔄 Refresh Gold View",
             style=discord.ButtonStyle.grey,
-            custom_id="refresh_gold_button"
+            custom_id="refresh_gold_button"  # ✅ Needed for persistence
         )
 
     async def callback(self, interaction: Interaction):
         user_data = get_user_data(interaction.user.id)
         gold = user_data.get("gold", 0)
 
-        # Send the gold as a private message
+        # 💡 Send updated gold info privately
         await interaction.response.send_message(
             embed=discord.Embed(
                 title=f"💰 {interaction.user.display_name}'s Gold",
                 description=f"You currently have **{gold:,}** gold.",
                 color=discord.Color.green()
             ),
-            ephemeral=True
+            ephemeral=True  # ✅ private and safe
         )
+
+
 
 
 
@@ -141,7 +143,7 @@ class BetAmountSelectionView(BaseCogView):
 
         self.add_item(self.dropdown)
         self.add_item(self.play_button)
-        self.add_item(RefreshGoldButton(user_id))
+        self.add_item(RefreshGoldButton())
         if self.parent:
             self.add_item(BackToGameButton(user_id=user_id, parent=self.parent, cog=self.cog)) # Already simplified via BaseCogButton
 
