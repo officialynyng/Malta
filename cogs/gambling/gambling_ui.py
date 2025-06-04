@@ -20,40 +20,41 @@ class GameSelectionView(View):
     @discord.ui.select(
         placeholder="♠️ ♥️ ♦️ ♣️ What do you wish to play?",
         custom_id="game_selection_menu",  # required for persistence
-        options = []
-
-        for key, game in GAMES.items():
-            if key == "slot_machine" and "variants" in game:
-                for variant_key, variant in game["variants"].items():
-                    options.append(discord.SelectOption(
-                        label=variant["name"],
-                        value=f"slot_machine:{variant_key}",
-                        description=variant.get("description", "")[:100],
-                        emoji=variant.get("emoji", "🎰")
-                    ))
-            elif key not in ("big_spender", "blackjack"):
-                options.append(discord.SelectOption(
+        options=[
+            *[
+                discord.SelectOption(
+                    label=variant["name"],
+                    value=f"slot_machine:{variant_key}",
+                    description=variant.get("description", "")[:100],
+                    emoji=variant.get("emoji", "🎰")
+                )
+                for variant_key, variant in GAMES.get("slot_machine", {}).get("variants", {}).items()
+            ],
+            *[
+                discord.SelectOption(
                     label=game["name"],
                     value=key,
                     description=game["description"][:100],
                     emoji=game.get("emoji", "🎰")
-                ))
-
-        # Manual additions
-        options.append(discord.SelectOption(
-            label="Big Spender",
-            value="big_spender",
-            description="Bet 10,000 gold for a slim shot at massive returns.",
-            emoji="💰"
-        ))
-        options.append(discord.SelectOption(
-            label="Blackjack",
-            value="blackjack",
-            description="Play a real-time game of Blackjack against the dealer.",
-            emoji="🃏"
-        ))
-
+                )
+                for key, game in GAMES.items()
+                if key not in ("slot_machine", "big_spender", "blackjack")
+            ],
+            discord.SelectOption(
+                label="Big Spender",
+                value="big_spender",
+                description="Bet 10,000 gold for a slim shot at massive returns.",
+                emoji="💰"
+            ),
+            discord.SelectOption(
+                label="Blackjack",
+                value="blackjack",
+                description="Play a real-time game of Blackjack against the dealer.",
+                emoji="🃏"
+            )
+        ]
     )
+
     async def select_callback(self, select, interaction: Interaction):
         if interaction.user.id != self.user_id:
             return await interaction.response.send_message("❌ Not your selection!", ephemeral=True)
