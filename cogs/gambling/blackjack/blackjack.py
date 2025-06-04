@@ -154,7 +154,7 @@ class BlackjackGameView(BaseCogView):
 
         self.clear_items()
         self.add_item(BackToGameButton(user_id=self.user_id, parent=self.parent, cog=self.cog))
-        self.add_item(Button(label="🔁 Play Again", style=discord.ButtonStyle.success, custom_id="persistent_play_again_blackjack"))
+        self.add_item(PlayAgainButton(game_key="blackjack"))
         self.add_item(RefreshGoldButton())
         await interaction.response.edit_message(embed=self.get_embed(reveal_dealer=True, final=True), view=self)
 
