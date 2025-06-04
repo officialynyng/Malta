@@ -38,11 +38,13 @@ class PlayAgainButton(Button):
 
                 view = BetAmountSelectionView(
                     user_id=user_id,
-                    user_gold=gold,
                     game_key="blackjack",
+                    min_bet=5,            # ✅ provide reasonable values
+                    max_bet=gold,           # ✅ this will reflect user's current gold
                     parent=None,
                     cog=cog
                 )
+
 
                 await interaction.response.edit_message(
                     content="🃏 You've chosen **Blackjack**. Pick your bet to start!",
@@ -53,18 +55,13 @@ class PlayAgainButton(Button):
             elif game_key == "roulette":
                 from cogs.gambling.roulette.roulette import RouletteOptionView
 
-                cog = interaction.client.get_cog("GamblingGroup")
-                if not cog:
-                    print("[ERROR] GamblingGroup cog not found!")
-                    return await interaction.response.send_message("❌ Gambling system is currently unavailable.", ephemeral=True)
-
                 view = RouletteOptionView(
                     user_id=user_id,
                     user_gold=gold,
                     parent=None,
-                    cog=cog
+                    cog=interaction.client.get_cog("GamblingGroup")
                 )
-                
+
                 await interaction.response.edit_message(
                     content="🎡 Choose your Roulette type:",
                     embed=None,
