@@ -32,11 +32,12 @@ class GamblingPlayButton(discord.ui.Button):
             await interaction.edit_original_response(
                 content=f"🃏 You bet **{amount}** gold on Blackjack!",
                 embed=None,
-                view=BlackjackGameView(
+                view = BlackjackGameView(
                     self.user_id,
                     user_data['gold'],
                     parent=self.parent,
-                    bet=amount
+                    bet=amount,
+                    cog=self.parent.cog if self.parent else None
                 )
             )
             return
