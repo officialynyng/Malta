@@ -122,7 +122,8 @@ class RouletteOptionView(BaseCogView):
                         bet=bet,
                         choice=color,
                         bet_type="Color",
-                        user_gold=self.user_gold
+                        user_gold=self.user_gold,
+                        cog=self.cog
                     )
                 )
 
@@ -134,18 +135,20 @@ class RouletteOptionView(BaseCogView):
             embed.set_image(url="https://theknightsofmalta.net/wp-content/uploads/2025/05/roulette.png")
             embed.set_footer(text=f"💰 Gold: {self.user_gold}")
 
+            view = BetAmountSelectionView(
+                self.user_id,
+                "roulette",
+                min_bet=10,
+                max_bet=10000,
+                parent=self.parent,
+                extra_callback=roulette_color_callback,
+                cog=self.parent.cog
+            )
+
             await interaction.response.edit_message(
                 content=None,
                 embed=embed,
-                view=BetAmountSelectionView(
-                    user_id=self.user_id,
-                    game_key="roulette",
-                    min_bet=10,
-                    max_bet=10000,
-                    parent=self.parent,
-                    extra_callback=roulette_color_callback,
-                    cog=self.cog
-                )
+                view=view
             )
 
         elif selection == "number":
@@ -197,10 +200,11 @@ class RouletteNumberModal(Modal):
             number_choice = int(self.number_input.value)
             if not 0 <= number_choice <= 36:
                 raise ValueError("Invalid range")
-
         except Exception:
             await interaction.response.send_message("❌ Please enter a valid number between 0–36.", ephemeral=True)
             return
+
+        await interaction.response.defer()  # ✅ acknowledge modal
 
         async def roulette_number_callback(interaction: discord.Interaction, bet: int):
             await interaction.edit_original_response(
@@ -212,28 +216,31 @@ class RouletteNumberModal(Modal):
                     bet=bet,
                     choice=str(number_choice),
                     bet_type="Number",
-                    user_gold=self.user_gold
+                    user_gold=self.user_gold,
+                    cog=self.parent.cog  # ✅ make sure cog is passed
                 )
             )
 
-        await interaction.response.defer()  # acknowledges the modal submit to prevent "This interaction failed"
-        embed = Embed(
+        embed = discord.Embed(
             title=f"🎡 Roulette — Number {number_choice}",
             description="Choose your bet amount below.",
             color=discord.Color.green()
         )
-        embed.set_image(url="https://theknightsofmalta.net/wp-content/uploads/2025/05/roulette.png")  # ⬅️ Replace with your roulette art
+        embed.set_image(url="https://theknightsofmalta.net/wp-content/uploads/2025/05/roulette.png")
         embed.set_footer(text=f"💰 Gold: {self.user_gold}")
 
-        view=BetAmountSelectionView(
+        view = BetAmountSelectionView(
             self.user_id,
             "roulette",
             min_bet=10,
             max_bet=10000,
             parent=self.parent,
             extra_callback=roulette_number_callback,
-            cog=self.parent.cog  # ✅ Required for BackToGameButton
+            cog=self.parent.cog
         )
+
+        await interaction.followup.send(embed=embed, view=view)  # ✅ This is correct
+
 
 
 
