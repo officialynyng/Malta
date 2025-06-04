@@ -46,11 +46,10 @@ async def setup(bot: commands.Bot):
 
     dummy_user_id = 123456789012345678  # Safe static test ID
     dummy_gold = 1000
+    cog = bot.get_cog("GamblingGroup")  # ✅ reuse for all views
 
-    # ✅ Register persistent views — cog is auto-injected by BaseCogView
-    bot.add_view(GamblingMenuView(cog=bot.get_cog("GamblingGroup")))
-    bot.add_view(GameSelectionView(dummy_user_id, dummy_gold))
-    bot.add_view(RouletteOptionView(dummy_user_id, dummy_gold, parent=None))
-    bot.add_view(BlackjackGameView(dummy_user_id, dummy_gold, parent=None, bet=100))
-
-
+    # ✅ Register persistent views
+    bot.add_view(GamblingMenuView(cog=cog))
+    bot.add_view(GameSelectionView(dummy_user_id, dummy_gold, cog=cog))
+    bot.add_view(RouletteOptionView(dummy_user_id, dummy_gold, parent=None, cog=cog))
+    bot.add_view(BlackjackGameView(dummy_user_id, dummy_gold, parent=None, bet=100, cog=cog))
