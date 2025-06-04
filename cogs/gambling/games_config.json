@@ -15,22 +15,6 @@
   "max_bet": 5000,
   "image_url": "https://theknightsofmalta.net/wp-content/uploads/2025/05/roulette.png"
 },
-  "dice_roll": {
-    "name": "Dice Roll (6-sided)",
-    "emoji": "🎲",
-    "odds": 0.166,
-    "payout": 6,
-    "description": "Pick a number from 1 to 6. If it rolls your number, you win!",
-    "image_url": "https://theknightsofmalta.net/wp-content/uploads/2025/05/dice_roll.png"
-  },
-  "highlow": {
-    "name": "High-Low",
-    "emoji": "📈",
-    "odds": 0.5,
-    "payout": 2,
-    "description": "Guess whether the next number (1–100) will be higher or lower than 50.",
-    "image_url": "https://theknightsofmalta.net/wp-content/uploads/2025/05/high-low.png"
-  },
   "blackjack": {
   "name": "Blackjack",
   "description": "A simple game of blackjack.",
