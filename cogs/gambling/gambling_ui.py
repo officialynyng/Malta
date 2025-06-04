@@ -7,7 +7,7 @@ from cogs.gambling.games_loader import GAMES
 from cogs.gambling.blackjack.blackjack import BlackjackGameView
 from cogs.gambling.roulette.roulette import RouletteOptionView
 from cogs.gambling.gambling_ui_common import BetAmountSelectionView
-from cogs.UTILITIES.ui_base import BaseCogView, BaseCogButton
+from cogs.x_utilities.ui_base import BaseCogView, BaseCogButton
 
 class GameSelectionView(BaseCogView):
     def __init__(self, user_id, user_gold, cog):
