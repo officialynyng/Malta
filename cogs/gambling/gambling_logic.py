@@ -86,16 +86,21 @@ async def handle_gamble_result(interaction: Interaction, user_id: int, game_key:
             conn.execute(insert(gambling_stats).values(user_id=user_id, **values))
 
 
-    await interaction.response.edit_message(content="⏳ Calculating result...", view=None)
 
     # 4. Get CST timestamp
     ts = datetime.now(ZoneInfo("America/Chicago")).strftime("%I:%M:%S %p CST")
 
-    # 🧠 Fetch the original message and embed
+    # 🧠 Fetch original message and embed
     original = await interaction.original_response()
-    embed = original.embeds[0] if original.embeds else None
+    embed = original.embeds[0].copy() if original.embeds else Embed()
 
-    # ✅ Edit the original response without removing the embed
+    # ✅ Update footer with latest gold count
+    embed.set_footer(text=f"💰 Gold: {user_data['gold']}")
+
+    # 🕐 Timestamp
+    ts = datetime.now(ZoneInfo("America/Chicago")).strftime("%I:%M:%S %p CST")
+
+    # ✏️ Edit the original message with updated content and modified embed
     if win:
         await interaction.edit_original_response(
             content=f"🎉 You won **{payout}** gold on {game['name']} {game['emoji']}!\n*Updated at {ts}*",
