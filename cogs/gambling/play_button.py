@@ -23,7 +23,8 @@ class GamblingPlayButton(discord.ui.Button):
         if amount <= 0:
             return await interaction.followup.send("❌ Invalid bet amount.", ephemeral=True)
 
-        user_data = get_user_data(self.user_id)
+        user_data = get_user_data(self.user_id) or {"gold": 0}
+
 
         # ✅ BLACKJACK (custom view-based game)
         if self.game_key == "blackjack":

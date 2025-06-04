@@ -100,7 +100,7 @@ class BackToGameButton(BaseCogButton):
         from cogs.exp_config import EXP_CHANNEL_ID
         from cogs.gambling.gambling_ui import GameSelectionView
 
-        user_data = get_user_data(self.user_id)
+        user_data = get_user_data(self.user_id) or {"gold": 0}
 
         # 💥 Penalize if the game was in progress
         if hasattr(self.parent, "player_hand") and self.parent.player_hand:
