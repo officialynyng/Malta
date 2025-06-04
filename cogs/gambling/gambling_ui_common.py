@@ -114,15 +114,18 @@ class BackToGameButton(BaseCogButton):
                 description=f"Left Blackjack early and lost {penalty} gold"
             )
 
-            # 🕵️ Ephemeral to user
-            await interaction.followup.send(
-                embed=discord.Embed(
-                    title="🏳️ You Left the Game",
-                    description=f"You lost **{penalty:,}** gold for quitting mid-game.",
-                    color=discord.Color.red()
-                ),
-                ephemeral=True
+            # 🕵️ Ephemeral to user (safe send)
+            embed_notice = discord.Embed(
+                title="🏳️ You Left the Game",
+                description=f"You lost **{penalty:,}** gold for quitting mid-game.",
+                color=discord.Color.red()
             )
+
+            if interaction.response.is_done():
+                await interaction.followup.send(embed=embed_notice, ephemeral=True)
+            else:
+                await interaction.response.send_message(embed=embed_notice, ephemeral=True)
+
 
             # 📢 Public announcement
             exp_channel = interaction.client.get_channel(EXP_CHANNEL_ID)
