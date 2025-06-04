@@ -239,7 +239,7 @@ class RouletteNumberModal(Modal):
             cog=self.parent.cog
         )
 
-        await interaction.followup.send(embed=embed, view=view)  # ✅ This is correct
+        await interaction.edit_original_response(embed=embed, view=view) # ✅ This is correct
 
 
 
