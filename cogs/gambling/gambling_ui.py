@@ -55,7 +55,7 @@ class GameSelectionView(View):
             options=options,
             custom_id="game_selection_menu"
         )
-        select.callback = self.select_callback  # bind the function manually
+        select.callback = lambda interaction: self.select_callback(select, interaction)  # bind the function manually
         self.add_item(select)
 
         self.add_item(BackToGamblingMenuButton(self.user_id, self.cog))
