@@ -1,6 +1,6 @@
 import asyncio
 import discord
-from discord import Interaction
+from discord import Interaction, Embed
 from discord.ui import Button, View
 
 from cogs.exp_utils import get_user_data, get_user_data
@@ -46,9 +46,16 @@ class PlayAgainButton(Button):
                 ) 
                 view.parent = view
 
+                embed = Embed(
+                    title="🃏 Blackjack — Place Your Bet",
+                    description="Use the dropdown below to choose your bet amount.",
+                    color=discord.Color.green()
+                )
+                embed.set_image(url="https://theknightsofmalta.net/wp-content/uploads/2025/05/blackjack.png")
+
                 await interaction.response.edit_message(
-                    content="🃏 You've chosen **Blackjack**. Pick your bet to start!",
-                    embed=None,
+                    content=None,
+                    embed=embed,
                     view=view
                 )
 
