@@ -142,7 +142,7 @@ class RouletteOptionView(BaseCogView):
                 max_bet=10000,
                 parent=self.parent,
                 extra_callback=roulette_color_callback,
-                cog=self.parent.cog
+                cog=self.cog
             )
 
             await interaction.response.edit_message(
@@ -153,8 +153,14 @@ class RouletteOptionView(BaseCogView):
 
         elif selection == "number":
             await interaction.response.send_modal(
-                RouletteNumberModal(self.user_id, self.user_gold, self.parent)
+                RouletteNumberModal(
+                    self.user_id,
+                    self.user_gold,
+                    self.parent,
+                    cog=self.cog  # ✅ explicitly pass cog here
+                )
             )
+
 
 
 class RouletteBetSelector(discord.ui.Select):
@@ -177,11 +183,12 @@ class RouletteBetSelector(discord.ui.Select):
         await self.view_ref.select_callback(interaction, self)
 
 class RouletteNumberModal(Modal):
-    def __init__(self, user_id, user_gold, parent):
+    def __init__(self, user_id, user_gold, parent, cog):
         super().__init__(title="🎡 Enter a Number (0–36)")
         self.user_id = user_id
         self.user_gold = user_gold
         self.parent = parent
+        self.cog = cog  # ✅ store directly
 
         self.number_input = TextInput(
             label="Pick a number to bet on",
@@ -217,7 +224,7 @@ class RouletteNumberModal(Modal):
                     choice=str(number_choice),
                     bet_type="Number",
                     user_gold=self.user_gold,
-                    cog=self.parent.cog  # ✅ make sure cog is passed
+                    cog=self.cog
                 )
             )
 
@@ -236,7 +243,7 @@ class RouletteNumberModal(Modal):
             max_bet=10000,
             parent=self.parent,
             extra_callback=roulette_number_callback,
-            cog=self.parent.cog
+            cog=self.cog
         )
 
         await interaction.edit_original_response(embed=embed, view=view) # ✅ This is correct
