@@ -22,42 +22,39 @@ class PlayAgainButton(Button):
         self.bet = bet
 
     async def callback(self, interaction: Interaction):
-        user_id = interaction.user.id
+        user_id = interaction.user.id  # Always use this at runtime
 
         try:
-            # Extract game key and bet from custom_id
+            # Extract game_key and bet from custom_id
             _, _, game_key, bet_str = self.custom_id.split("_")
             bet = int(bet_str)
             user_data = get_user_data(user_id) or {"gold": 0}
-            gold = user_data.get('gold', 0)
+            gold = user_data.get("gold", 0)
 
             if game_key == "blackjack":
                 from cogs.gambling.blackjack.blackjack import BlackjackGameView
+                view = BlackjackGameView(user_id, gold, parent=None, bet=bet, cog=interaction.client.get_cog("GamblingGroup"))
                 await interaction.response.edit_message(
                     content="🃏 You've chosen **Blackjack**. Ready to draw your cards?",
                     embed=None,
-                    view=BlackjackGameView(user_id, gold, self.parent, bet, self.parent.cog)
+                    view=view
                 )
 
             elif game_key == "roulette":
                 from cogs.gambling.roulette.roulette import RouletteOptionView
+                view = RouletteOptionView(user_id, gold, parent=None, cog=interaction.client.get_cog("GamblingGroup"))
                 await interaction.response.edit_message(
                     content="🎡 Choose your Roulette type:",
                     embed=None,
-                    view=RouletteOptionView(user_id, gold, self.parent, self.parent.cog)
+                    view=view
                 )
 
             else:
-                raise ValueError("Unknown game_key")
+                raise ValueError("Unknown game key.")
 
         except Exception as e:
-            print(f"PlayAgain fallback error: {e}")
-            if self.parent:
-                await interaction.response.edit_message(
-                    content="🎲 Back to the Gambling Hall. Choose your game.",
-                    embed=None,
-                    view=self.parent
-                )
+            print(f"[PlayAgainButton] Failed: {e}")
+            await interaction.response.send_message("❌ Something went wrong starting the game again.", ephemeral=True)
 
 
 
