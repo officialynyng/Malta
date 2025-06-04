@@ -48,16 +48,16 @@ class PlayAgainButton(Button):
 
                 embed = Embed(
                     title="🃏 Blackjack — Place Your Bet",
-                    description="Use the dropdown below to choose your bet amount.",
+                    description="🃏 You've chosen **Blackjack**. Pick your bet to start!",
                     color=discord.Color.green()
                 )
                 embed.set_image(url="https://theknightsofmalta.net/wp-content/uploads/2025/05/blackjack.png")
 
                 await interaction.response.edit_message(
-                    content=None,
                     embed=embed,
                     view=view
                 )
+
 
             elif game_key == "roulette":
                 from cogs.gambling.roulette.roulette import RouletteOptionView
