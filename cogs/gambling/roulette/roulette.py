@@ -91,12 +91,12 @@ class RoulettePlayButton(Button):
         await interaction.edit_original_response(embed=embed, view=self.view_ref)
 
 class RouletteOptionView(View):
-    def __init__(self, user_id, user_gold, parent):
+    def __init__(self, user_id, user_gold, parent, cog):
         super().__init__(timeout=None)
         self.user_id = user_id
         self.user_gold = user_gold
         self.parent = parent
-
+        self.cog = cog
         self.add_item(RouletteBetSelector(self))
         self.add_item(BackToGameButton(self.user_id, self.parent, self.cog))
 
