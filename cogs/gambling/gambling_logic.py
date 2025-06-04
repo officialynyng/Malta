@@ -93,7 +93,11 @@ async def handle_gamble_result(interaction: Interaction, user_id: int, game_key:
     # Public broadcast of all results
     exp_channel = interaction.client.get_channel(EXP_CHANNEL_ID)
     if exp_channel:
-        await exp_channel.send(
-            f"♠️ ♥️ ♦️ ♣️ - **{interaction.user.display_name}** wagered **{amount}** gold on {game['name']} {game['emoji']} and "
-            f"{'won 🎉' if win else 'lost 💀'} **{abs(net_change)}** gold!"
-        )
+        if win:
+            await exp_channel.send(
+                f"♠️ ♥️ ♦️ ♣️ **{interaction.user.display_name}** wagered **{amount}** gold on {game['name']} {game['emoji']} and won 🎉 **+{net_change}** gold!"
+            )
+        else:
+            await exp_channel.send(
+                f"♠️ ♥️ ♦️ ♣️ **{interaction.user.display_name}** wagered **{amount}** gold on {game['name']} {game['emoji']} and lost 💀."
+            )
