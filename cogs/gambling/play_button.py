@@ -6,7 +6,7 @@ from discord import Interaction
 
 class GamblingPlayButton(discord.ui.Button):
     def __init__(self, user_id, game_key, get_amount_callback, parent=None, extra_callback=None):
-        super().__init__(label="Play", emoji="🎰", style=discord.ButtonStyle.red)
+        super().__init__(label="Play", emoji="🎰", style=discord.ButtonStyle.red, custom_id="gambling_play_button")
         self.user_id = user_id
         self.game_key = game_key
         self.get_amount = get_amount_callback
