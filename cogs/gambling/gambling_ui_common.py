@@ -6,6 +6,7 @@ from discord.ui import Button, View
 from cogs.exp_utils import get_user_data, get_user_data
 from cogs.gambling.bet_amount import BetAmountDropdown
 from cogs.gambling.play_button import GamblingPlayButton
+from cogs.UTILITIES.ui_base import BaseCogButton
 
 
 class PlayAgainButton(Button):
@@ -86,8 +87,10 @@ class RefreshGoldButton(discord.ui.Button):
 
 
 
-class BackToGameButton(Button):
+class BackToGameButton(BaseCogButton):
     def __init__(self, user_id, parent, cog):
+        super().__init__(label="⬅️ Back", style=discord.ButtonStyle.secondary, custom_id="back_to_game_button", user_id=user_id, cog=cog)
+        self.parent = parent
         super().__init__(
             label="⬅️ Back",
             style=discord.ButtonStyle.secondary,
@@ -149,7 +152,8 @@ class BetAmountSelectionView(View):
         self.add_item(self.play_button)
         self.add_item(RefreshGoldButton(user_id))
         if self.parent:
-            self.add_item(BackToGameButton(user_id, self.parent, self.cog))
+            self.add_item(BackToGameButton(user_id, self.parent, self.cog))  # Already simplified via BaseCogButton
+
 
 
 

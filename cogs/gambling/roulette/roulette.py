@@ -7,6 +7,7 @@ from cogs.exp_utils import update_user_gold
 from cogs.exp_config import EXP_CHANNEL_ID
 from cogs.gambling.roulette.roulette_utils import spin_roulette, payout
 from cogs.gambling.gambling_ui_common import BetAmountSelectionView, PlayAgainButton, BackToGameButton, RefreshGoldButton
+from cogs.UTILITIES.ui_base import BaseCogView
 
 class RouletteView(View):
     def __init__(self, user_id, parent, bet, choice, bet_type, user_gold):
@@ -90,13 +91,16 @@ class RoulettePlayButton(Button):
         ))
         await interaction.edit_original_response(embed=embed, view=self.view_ref)
 
-class RouletteOptionView(View):
+class RouletteOptionView(BaseCogView):
     def __init__(self, user_id, user_gold, parent, cog):
+        super().__init__(cog=cog, timeout=None)
+        self.user_id = user_id
+        self.user_gold = user_gold
+        self.parent = parent
         super().__init__(timeout=None)
         self.user_id = user_id
         self.user_gold = user_gold
         self.parent = parent
-        self.cog = cog
         self.add_item(RouletteBetSelector(self))
         self.add_item(BackToGameButton(self.user_id, self.parent, self.cog))
 

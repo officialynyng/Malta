@@ -7,10 +7,11 @@ from cogs.gambling.games_loader import GAMES
 from cogs.gambling.blackjack.blackjack import BlackjackGameView
 from cogs.gambling.roulette.roulette import RouletteOptionView
 from cogs.gambling.gambling_ui_common import BetAmountSelectionView
+from cogs.UTILITIES.ui_base import BaseCogView, BaseCogButton
 
-
-class GameSelectionView(View):
+class GameSelectionView(BaseCogView):
     def __init__(self, user_id, user_gold, cog):
+        super().__init__(cog=cog, timeout=None)
         super().__init__(timeout=None)
         self.user_id = user_id
         self.user_gold = user_gold
@@ -135,12 +136,16 @@ class GameSelectionView(View):
         embed.set_footer(text=f"💰 Gold: {self.user_gold}")
         await interaction.response.edit_message(embed=embed, view=BetAmountSelectionView(self.user_id, game_key, min_bet, max_bet, parent=self))
 
-
-class BackToGamblingMenuButton(discord.ui.Button):
+class BackToGamblingMenuButton(BaseCogButton):
     def __init__(self, user_id, cog):
-        super().__init__(label="⬅️ Back to Menu", style=discord.ButtonStyle.secondary, custom_id="back_to_menu")
-        self.user_id = user_id
-        self.cog = cog
+        super().__init__(
+            label="⬅️ Back to Menu",
+            style=discord.ButtonStyle.secondary,
+            custom_id="back_to_menu",
+            user_id=user_id,
+            cog=cog
+        )
+
 
     async def callback(self, interaction: Interaction):
         if interaction.user.id != self.user_id:
