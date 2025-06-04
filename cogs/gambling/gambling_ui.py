@@ -145,10 +145,7 @@ class BackToGamblingMenuButton(BaseCogButton):
             cog=cog
         )
 
-
     async def callback(self, interaction: Interaction):
-        if interaction.user.id != self.user_id:
-            return await interaction.response.send_message("❌ Not your menu!", ephemeral=True)
         from cogs.gambling.UI_MainMenu import GamblingMenuView 
         view = GamblingMenuView(self.cog)
         embed = Embed(
@@ -156,7 +153,7 @@ class BackToGamblingMenuButton(BaseCogButton):
             description="Pick your game to begin.",
             color=discord.Color.green()
         )
-        user_data = get_user_data(self.user_id)
+        user_data = get_user_data(interaction.user.id)
         gold = user_data["gold"] if user_data else 0
         embed.set_footer(text=f"💰 Gold: {gold}")
         await interaction.response.edit_message(embed=embed, view=view)
