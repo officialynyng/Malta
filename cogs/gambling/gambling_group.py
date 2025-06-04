@@ -67,7 +67,8 @@ async def setup(bot: commands.Bot):
     class PersistentPlayAgainView(View):
         def __init__(self):
             super().__init__(timeout=None)
-            self.add_item(PlayAgainButton(game_key="blackjack"))
+            from cogs.gambling.gambling_ui_common import PersistentPlayAgainView
+            self.add_item(PersistentPlayAgainView().children[0])  # reuse the persistent instance
 
     bot.add_view(PersistentPlayAgainView())
 
