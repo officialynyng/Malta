@@ -94,17 +94,19 @@ async def handle_gamble_result(interaction: Interaction, user_id: int, game_key:
 
     # Public broadcast of all results
     exp_channel = interaction.client.get_channel(EXP_CHANNEL_ID)
-    # 1. Defer ephemeral response if not already done
+    # 1. Defer the interaction first
     if not interaction.response.is_done():
         await interaction.response.defer(ephemeral=True)
 
-    # 2. Send a placeholder ephemeral message
+    # 2. Send initial ephemeral placeholder (ONCE)
     ephemeral_msg = await interaction.followup.send("⏳ Calculating result...", ephemeral=True)
 
-    # 3. Create a timestamp string
-    ts = datetime.now(ZoneInfo("America/Chicago")).strftime("%H:%M:%S %p CST")
+    # 3. Do your game result logic...
 
-    # 4. Update the ephemeral message with the result + timestamp
+    # 4. Get CST timestamp
+    ts = datetime.now(ZoneInfo("America/Chicago")).strftime("%I:%M:%S %p CST")
+
+    # 5. Edit that original ephemeral message
     if win:
         await ephemeral_msg.edit(
             content=f"🎉 You won **{payout}** gold on {game['name']} {game['emoji']}!\n*Updated at {ts}*"
