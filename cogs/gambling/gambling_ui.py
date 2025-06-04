@@ -102,7 +102,7 @@ class GameSelectionView(BaseCogView):
             )
             embed.set_image(url="https://theknightsofmalta.net/wp-content/uploads/2025/05/big_spender_official.png")
             embed.set_footer(text=f"💰 Gold: {self.user_gold}")
-            await interaction.response.edit_message(embed=embed, view=BetAmountSelectionView(self.user_id, game_key, bet, bet, parent=self))
+            await interaction.response.edit_message(embed=embed, view=BetAmountSelectionView(self.user_id, game_key, bet, bet, parent=self, cog=self.cog))
             return
 
         if game_key.startswith("slot_machine:"):
@@ -118,7 +118,7 @@ class GameSelectionView(BaseCogView):
             if "image_url" in game:
                 embed.set_image(url=game["image_url"])
             embed.set_footer(text=f"💰 Gold: {self.user_gold}")
-            await interaction.response.edit_message(embed=embed, view=BetAmountSelectionView(self.user_id, f"slot_machine:{variant_key}", min_bet, max_bet, parent=self))
+            await interaction.response.edit_message(embed=embed, view=BetAmountSelectionView(self.user_id, f"slot_machine:{variant_key}", min_bet, max_bet, parent=self, cog=self.cog))
             return
 
         # Fallback for all other games
@@ -133,7 +133,7 @@ class GameSelectionView(BaseCogView):
         if "image_url" in game:
             embed.set_image(url=game["image_url"])
         embed.set_footer(text=f"💰 Gold: {self.user_gold}")
-        await interaction.response.edit_message(embed=embed, view=BetAmountSelectionView(self.user_id, game_key, min_bet, max_bet, parent=self))
+        await interaction.response.edit_message(embed=embed, view=BetAmountSelectionView(self.user_id, game_key, min_bet, max_bet, parent=self, cog=self.cog))
 
 class BackToGamblingMenuButton(BaseCogButton):
     def __init__(self, user_id, cog):

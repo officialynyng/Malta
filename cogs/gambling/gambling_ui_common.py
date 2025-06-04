@@ -153,7 +153,7 @@ class BetAmountSelectionView(BaseCogView):
         self.add_item(self.play_button)
         self.add_item(RefreshGoldButton(user_id))
         if self.parent:
-            self.add_item(BackToGameButton(user_id, self.parent, self.cog))  # Already simplified via BaseCogButton
+            self.add_item(BackToGameButton(user_id=user_id, parent=self.parent, cog=self.cog)) # Already simplified via BaseCogButton
 
 
 
