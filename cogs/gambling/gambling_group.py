@@ -48,7 +48,7 @@ async def setup(bot: commands.Bot):
     from cogs.gambling.roulette.roulette import RouletteOptionView
     from cogs.gambling.blackjack.blackjack import BlackjackGameView
     from cogs.gambling.gambling_ui_common import PersistentPlayAgainView
-    from cogs.gambling.roulette.roulette import BackToRouletteOptionsButton
+    from cogs.gambling.roulette.roulette import PersistentBackToRouletteView
       # ✅ correct import
     from discord.ui import View
 
@@ -66,7 +66,7 @@ async def setup(bot: commands.Bot):
 
     # ✅ Just add the imported persistent view
     bot.add_view(PersistentPlayAgainView())
-    bot.add_view(BackToRouletteOptionsButton)
+    bot.add_view(PersistentBackToRouletteView())
 
     print("[DEBUG] Persistent PlayAgainButton view registered ✅")
 

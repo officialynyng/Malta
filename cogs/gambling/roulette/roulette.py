@@ -271,3 +271,8 @@ class BackToRouletteOptionsButton(Button):
                 cog=interaction.client.get_cog("GamblingGroup")
             )
         )
+        
+class PersistentBackToRouletteView(View):
+    def __init__(self):
+        super().__init__(timeout=None)
+        self.add_item(BackToRouletteOptionsButton())
