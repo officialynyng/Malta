@@ -63,3 +63,5 @@ async def setup(bot: commands.Bot):
     play_again_view = View(timeout=None)
     play_again_view.add_item(PlayAgainButton(game_key="blackjack"))
     bot.add_view(play_again_view)
+
+    print("[DEBUG] Persistent PlayAgainButton view registered ✅")
