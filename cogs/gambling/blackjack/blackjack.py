@@ -151,7 +151,7 @@ class BlackjackGameView(BaseCogView):
 
         self.clear_items()
         self.add_item(BackToGameButton(user_id=self.user_id, parent=self.parent, cog=self.cog))
-        self.add_item(PlayAgainButton(self.user_id, parent_view=self.parent, game_key="blackjack", bet=self.bet))
+        self.add_item(PlayAgainButton(game_key="blackjack"))
         self.add_item(RefreshGoldButton())
         await interaction.response.edit_message(embed=self.get_embed(reveal_dealer=True, final=True), view=self)
 
