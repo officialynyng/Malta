@@ -48,7 +48,7 @@ async def setup(bot: commands.Bot):
     dummy_gold = 1000
 
     # ✅ Register persistent views — cog is auto-injected by BaseCogView
-    bot.add_view(GamblingMenuView())
+    bot.add_view(GamblingMenuView(cog=bot.get_cog("GamblingGroup")))
     bot.add_view(GameSelectionView(dummy_user_id, dummy_gold))
     bot.add_view(RouletteOptionView(dummy_user_id, dummy_gold, parent=None))
     bot.add_view(BlackjackGameView(dummy_user_id, dummy_gold, parent=None, bet=100))
