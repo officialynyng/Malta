@@ -11,6 +11,7 @@ from cogs.x_utilities.ui_base import BaseCogButton, BaseCogView
 
 class PlayAgainButton(Button):
     def __init__(self, game_key: str):
+        print(f"[DEBUG] Constructing PlayAgainButton for game: {game_key}")
         super().__init__(
             label="🔁 Play Again",
             style=discord.ButtonStyle.success,
@@ -19,7 +20,7 @@ class PlayAgainButton(Button):
 
     async def callback(self, interaction: Interaction):
         user_id = interaction.user.id
-        print("[DEBUG] PlayAgainButton triggered")
+        print("[DEBUG] PlayAgainButton triggered by user:", interaction.user.id)
         try:
             # Extract game_key from custom_id
             _, _, game_key = self.custom_id.split("_")
