@@ -11,35 +11,30 @@ from cogs.gambling.gambling_ui_common import BetAmountSelectionView
 
 class GameSelectionView(View):
     def __init__(self, user_id, user_gold, cog):
-        super().__init__(timeout=None)  # Required for persistence
+        super().__init__(timeout=None)
         self.user_id = user_id
         self.user_gold = user_gold
         self.cog = cog
-        self.add_item(BackToGamblingMenuButton(self.user_id, self.cog))
 
-    @discord.ui.select(
-        placeholder="♠️ ♥️ ♦️ ♣️ What do you wish to play?",
-        custom_id="game_selection_menu",  # required for persistence
-        options=[
-            *[
-                discord.SelectOption(
-                    label=variant["name"],
-                    value=f"slot_machine:{variant_key}",
-                    description=variant.get("description", "")[:100],
-                    emoji=variant.get("emoji", "🎰")
-                )
-                for variant_key, variant in GAMES.get("slot_machine", {}).get("variants", {}).items()
-            ],
-            *[
-                discord.SelectOption(
-                    label=game["name"],
-                    value=key,
-                    description=game["description"][:100],
-                    emoji=game.get("emoji", "🎰")
-                )
-                for key, game in GAMES.items()
-                if key not in ("slot_machine", "big_spender", "blackjack")
-            ],
+        # Build options manually
+        options = [
+            discord.SelectOption(
+                label=variant["name"],
+                value=f"slot_machine:{variant_key}",
+                description=variant.get("description", "")[:100],
+                emoji=variant.get("emoji", "🎰")
+            )
+            for variant_key, variant in GAMES.get("slot_machine", {}).get("variants", {}).items()
+        ] + [
+            discord.SelectOption(
+                label=game["name"],
+                value=key,
+                description=game["description"][:100],
+                emoji=game.get("emoji", "🎰")
+            )
+            for key, game in GAMES.items()
+            if key not in ("slot_machine", "big_spender", "blackjack")
+        ] + [
             discord.SelectOption(
                 label="Big Spender",
                 value="big_spender",
@@ -53,7 +48,17 @@ class GameSelectionView(View):
                 emoji="🃏"
             )
         ]
-    )
+
+        # Create the Select manually
+        select = discord.ui.Select(
+            placeholder="♠️ ♥️ ♦️ ♣️ What do you wish to play?",
+            options=options,
+            custom_id="game_selection_menu"
+        )
+        select.callback = self.select_callback  # bind the function manually
+        self.add_item(select)
+
+        self.add_item(BackToGamblingMenuButton(self.user_id, self.cog))
 
     async def select_callback(self, select, interaction: Interaction):
         if interaction.user.id != self.user_id:
