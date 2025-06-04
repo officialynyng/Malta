@@ -101,14 +101,11 @@ class BackToGameButton(BaseCogButton):
         self.cog = cog
 
     async def callback(self, interaction: Interaction):
-        if interaction.user.id != self.user_id:
-            return await interaction.response.send_message("❌ Not your session!", ephemeral=True)
-
         # ✅ Lazy imports to prevent circular dependency
         from cogs.gambling.gambling_ui import GameSelectionView
         from cogs.exp_utils import get_user_data
 
-        user_data = get_user_data(self.user_id)
+        user_data = get_user_data(interaction.user.id)
         gold = user_data.get("gold", 0)
 
         embed = discord.Embed(
@@ -122,7 +119,7 @@ class BackToGameButton(BaseCogButton):
         await interaction.response.edit_message(
             content=None,
             embed=embed,
-            view=GameSelectionView(user_id=self.user_id, user_gold=gold, cog=self.cog)
+            view=GameSelectionView(user_id=interaction.user.id, user_gold=gold, cog=self.cog)
         )
 
 
