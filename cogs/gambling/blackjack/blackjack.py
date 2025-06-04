@@ -193,10 +193,11 @@ class DrawCardsButton(discord.ui.Button):
         self.view_ref.add_item(
             BackToGameButton(
                 user_id=self.view_ref.user_id,
-                parent=self.view_ref.parent,
-                cog=self.view_ref.cog  # ✅ fix: provide the cog argument
+                parent=self.view_ref,  # ✅ this is the BlackjackGameView instance
+                cog=self.view_ref.cog
             )
         )
+
         self.disabled = True
         await interaction.response.edit_message(
             embed=self.view_ref.get_embed(),
