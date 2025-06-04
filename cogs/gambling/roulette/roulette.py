@@ -245,17 +245,29 @@ class RouletteNumberModal(Modal):
 
 
 class BackToRouletteOptionsButton(Button):
-    def __init__(self, user_id, user_gold, parent):
-        super().__init__(label="🎡 Back to Roulette Options", style=discord.ButtonStyle.secondary, custom_id="back_to_roulette_options")
-        self.user_id = user_id
-        self.user_gold = user_gold
-        self.parent = parent  # should be GameSelectionView or similar
+    def __init__(self):
+        super().__init__(
+            label="🎡 Back to Roulette Options",
+            style=discord.ButtonStyle.secondary,
+            custom_id="persistent_back_to_roulette_options"  # static for persistence
+        )
 
     async def callback(self, interaction: Interaction):
+        from cogs.exp_utils import get_user_data
         from cogs.gambling.roulette.roulette import RouletteOptionView
+
+        user_data = get_user_data(interaction.user.id)
+        if not user_data:
+            await interaction.response.send_message("❌ Could not load your data.", ephemeral=True)
+            return
 
         await interaction.response.edit_message(
             content="🎡 Pick Red, Black, or a Number:",
             embed=None,
-            view=RouletteOptionView(self.user_id, self.user_gold, parent=self.parent)
+            view=RouletteOptionView(
+                user_id=interaction.user.id,
+                user_gold=user_data["gold"],
+                parent=None,
+                cog=interaction.client.get_cog("GamblingGroup")
+            )
         )

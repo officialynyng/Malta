@@ -228,4 +228,4 @@ class PersistentPlayAgainView(View):
     def __init__(self):
         super().__init__(timeout=None)
         self.add_item(PlayAgainButton(game_key="blackjack"))
-
+        self.add_item(PlayAgainButton(game_key="roulette"))
