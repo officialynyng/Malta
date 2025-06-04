@@ -9,6 +9,10 @@ from cogs.database.gambling_stats_table import gambling_stats
 from cogs.exp_utils import get_user_data
 from cogs.gambling.UI_MainMenu import GamblingMenuView
 
+class GamblingGroup(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+        print("[DEBUG] GamblingGroup initialized ✅")
 
 gamble_group = Group(name="gamble", description="🎰 Enter the gambling hall and play games!")
 DEBUG = True
@@ -46,19 +50,20 @@ async def setup(bot: commands.Bot):
     from cogs.gambling.gambling_ui_common import PlayAgainButton
     from discord.ui import View
 
+    # ✅ Add the cog instance to the bot
+    await bot.add_cog(GamblingGroup(bot))
+
     bot.tree.add_command(gamble_group)
 
     dummy_user_id = 123456789012345678  # Safe static test ID
     dummy_gold = 1000
     cog = bot.get_cog("GamblingGroup")
 
-    # ✅ Register persistent views
     bot.add_view(GamblingMenuView(cog=cog))
     bot.add_view(GameSelectionView(dummy_user_id, dummy_gold, cog=cog))
     bot.add_view(RouletteOptionView(dummy_user_id, dummy_gold, parent=None, cog=cog))
     bot.add_view(BlackjackGameView(dummy_user_id, dummy_gold, parent=None, bet=100, cog=cog))
 
-    # ✅ Wrap PlayAgainButton in a persistent view class
     class PersistentPlayAgainView(View):
         def __init__(self):
             super().__init__(timeout=None)

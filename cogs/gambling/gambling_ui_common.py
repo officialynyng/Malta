@@ -53,13 +53,18 @@ class PlayAgainButton(Button):
             elif game_key == "roulette":
                 from cogs.gambling.roulette.roulette import RouletteOptionView
 
+                cog = interaction.client.get_cog("GamblingGroup")
+                if not cog:
+                    print("[ERROR] GamblingGroup cog not found!")
+                    return await interaction.response.send_message("❌ Gambling system is currently unavailable.", ephemeral=True)
+
                 view = RouletteOptionView(
                     user_id=user_id,
                     user_gold=gold,
                     parent=None,
-                    cog=interaction.client.get_cog("GamblingGroup")
+                    cog=cog
                 )
-
+                
                 await interaction.response.edit_message(
                     content="🎡 Choose your Roulette type:",
                     embed=None,

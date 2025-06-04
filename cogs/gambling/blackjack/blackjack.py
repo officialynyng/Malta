@@ -136,18 +136,21 @@ class BlackjackGameView(BaseCogView):
         # Public result message
         exp_channel = interaction.client.get_channel(EXP_CHANNEL_ID)
         if exp_channel:
+            bet_amount = self.bet
             if delta > 0:
                 await exp_channel.send(
-                    f"🃏 **{interaction.user.display_name}** played Blackjack and won 🎉 **+{delta}**!"
+                    f"🃏 **{interaction.user.display_name}** bet **{bet_amount}** gold in Blackjack and won 🎉 "
+                    f"**+{delta}** gold!"
                 )
             elif delta < 0:
                 await exp_channel.send(
-                    f"🃏 **{interaction.user.display_name}** played Blackjack and lost 💀 **{abs(delta)}**"
+                    f"🃏 **{interaction.user.display_name}** bet **{bet_amount}** gold in Blackjack and lost 💀"
                 )
             else:
                 await exp_channel.send(
-                    f"🃏 **{interaction.user.display_name}** played Blackjack and tied 🤝"
+                    f"🃏 **{interaction.user.display_name}** bet **{bet_amount}** gold in Blackjack and tied 🤝"
                 )
+
 
         self.clear_items()
         self.add_item(BackToGameButton(user_id=self.user_id, parent=self.parent, cog=self.cog))
