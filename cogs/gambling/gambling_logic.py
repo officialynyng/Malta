@@ -91,14 +91,20 @@ async def handle_gamble_result(interaction: Interaction, user_id: int, game_key:
     # 4. Get CST timestamp
     ts = datetime.now(ZoneInfo("America/Chicago")).strftime("%I:%M:%S %p CST")
 
-    # 5. Edit that original ephemeral message
+    # 🧠 Fetch the original message and embed
+    original = await interaction.original_response()
+    embed = original.embeds[0] if original.embeds else None
+
+    # ✅ Edit the original response without removing the embed
     if win:
         await interaction.edit_original_response(
-            content=f"🎉 You won **{payout}** gold on {game['name']} {game['emoji']}!\n*Updated at {ts}*"
+            content=f"🎉 You won **{payout}** gold on {game['name']} {game['emoji']}!\n*Updated at {ts}*",
+            embed=embed
         )
     else:
         await interaction.edit_original_response(
-            content=f"💀 You lost your bet of **{amount}** gold on {game['name']} {game['emoji']}.\n*Updated at {ts}*"
+            content=f"💀 You lost your bet of **{amount}** gold on {game['name']} {game['emoji']}.\n*Updated at {ts}*",
+            embed=embed
         )
 
     exp_channel = interaction.client.get_channel(EXP_CHANNEL_ID)
