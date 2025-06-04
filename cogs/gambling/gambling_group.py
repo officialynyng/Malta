@@ -43,25 +43,27 @@ async def setup(bot: commands.Bot):
     from cogs.gambling.UI_MainMenu import GamblingMenuView
     from cogs.gambling.roulette.roulette import RouletteOptionView
     from cogs.gambling.blackjack.blackjack import BlackjackGameView
-    
-    from discord.ui import View
     from cogs.gambling.gambling_ui_common import PlayAgainButton
-
+    from discord.ui import View
 
     bot.tree.add_command(gamble_group)
 
     dummy_user_id = 123456789012345678  # Safe static test ID
     dummy_gold = 1000
-    cog = bot.get_cog("GamblingGroup")  # ✅ reuse for all views
+    cog = bot.get_cog("GamblingGroup")
 
     # ✅ Register persistent views
     bot.add_view(GamblingMenuView(cog=cog))
     bot.add_view(GameSelectionView(dummy_user_id, dummy_gold, cog=cog))
     bot.add_view(RouletteOptionView(dummy_user_id, dummy_gold, parent=None, cog=cog))
     bot.add_view(BlackjackGameView(dummy_user_id, dummy_gold, parent=None, bet=100, cog=cog))
-    # ✅ Create a persistent View that holds the PlayAgain button
-    play_again_view = View(timeout=None)
-    play_again_view.add_item(PlayAgainButton(game_key="blackjack"))
-    bot.add_view(play_again_view)
+
+    # ✅ Wrap PlayAgainButton in a persistent view class
+    class PersistentPlayAgainView(View):
+        def __init__(self):
+            super().__init__(timeout=None)
+            self.add_item(PlayAgainButton(game_key="blackjack"))
+
+    bot.add_view(PersistentPlayAgainView())
 
     print("[DEBUG] Persistent PlayAgainButton view registered ✅")
