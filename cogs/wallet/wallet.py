@@ -7,7 +7,7 @@ from datetime import timezone, timedelta
 from cogs.exp_config import engine
 from cogs.exp_utils import get_user_data
 from cogs.database.transactions_table import transactions
-
+from cogs.wallet.wallet_button import WalletButtonView, WalletButtonCog
 DEBUG = True
 WALLET_EMOJI = "💼"
 CST = timezone(timedelta(hours=-6))
@@ -152,6 +152,13 @@ class Wallet(commands.Cog):
         await interaction.response.send_message(embed=main_embed, view=view, ephemeral=SHOW_EPHEMERAL)
 
 
+async def setup(bot: commands.Bot):
+    # Wait until Wallet cog is available
+    await bot.wait_until_ready()
+    wallet_cog = bot.get_cog("Wallet")
+    if wallet_cog:
+        bot.add_view(WalletButtonView(wallet_cog))
+    else:
+        print("⚠️ Wallet cog not loaded — wallet button will not function.")
 
-async def setup(bot):
-    await bot.add_cog(Wallet(bot))
+    await bot.add_cog(WalletButtonCog(bot))

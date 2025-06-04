@@ -7,7 +7,7 @@ from datetime import timezone, timedelta
 from cogs.exp_config import engine
 from cogs.exp_utils import get_user_data
 from cogs.database.transactions_table import transactions
-from cogs.wallet.wallet import TransactionView
+from cogs.wallet.wallet import TransactionView, Wallet
 
 WALLET_EMOJI = "💼"
 CST = timezone(timedelta(hours=-6))
@@ -15,10 +15,12 @@ SHOW_EPHEMERAL = True
 
 
 class WalletButton(Button):
-    def __init__(self):
+    def __init__(self, wallet_cog):
         super().__init__(label="💼 Wallet", style=ButtonStyle.primary, custom_id="wallet_button")
+        self.wallet_cog = wallet_cog
 
     async def callback(self, interaction: Interaction):
+        await self.wallet_cog.send_wallet(interaction)
         user_id = interaction.user.id
         user_data = get_user_data(user_id)
 
@@ -55,9 +57,9 @@ class WalletButton(Button):
 
 
 class WalletButtonView(View):
-    def __init__(self):
+    def __init__(self, wallet_cog):
         super().__init__(timeout=None)
-        self.add_item(WalletButton())
+        self.add_item(WalletButton(wallet_cog))
 
 
 class WalletButtonCog(commands.Cog):
