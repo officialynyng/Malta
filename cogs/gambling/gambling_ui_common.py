@@ -83,17 +83,18 @@ class RefreshGoldButton(discord.ui.Button):
 
 
 class BackToGameButton(BaseCogButton):
-    def __init__(self, *, user_id, parent, cog):
+    def __init__(self, user_id, parent, cog):
         super().__init__(
             label="⬅️ Back",
             style=discord.ButtonStyle.secondary,
-            custom_id="back_to_game_button",  # ✅ Required for persistence
+            custom_id="back_to_game_button",
             user_id=user_id,
             cog=cog
         )
         self.user_id = user_id
         self.parent = parent
         self.cog = cog
+
 
     async def callback(self, interaction: Interaction):
         # ✅ Lazy imports to prevent circular dependency
