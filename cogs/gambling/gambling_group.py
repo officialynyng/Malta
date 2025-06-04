@@ -48,8 +48,10 @@ async def setup(bot: commands.Bot):
     dummy_gold = 1000
 
     # ✅ Register persistent views — make sure all buttons/selects have static custom_id
-    bot.add_view(GamblingMenuView(bot.get_cog("GamblingGroup")))
-    bot.add_view(GameSelectionView(dummy_user_id, dummy_gold, cog=bot.get_cog("GamblingGroup")))
-    bot.add_view(RouletteOptionView(user_id=dummy_user_id, user_gold=dummy_gold, parent=None))
-    bot.add_view(BlackjackGameView(user_id=dummy_user_id, user_gold=dummy_gold, parent=None, bet=100))
+    cog = bot.get_cog("GamblingGroup")
+    bot.add_view(GamblingMenuView(cog))
+    bot.add_view(GameSelectionView(dummy_user_id, dummy_gold, cog=cog))
+    bot.add_view(RouletteOptionView(user_id=dummy_user_id, user_gold=dummy_gold, parent=None, cog=cog))
+    bot.add_view(BlackjackGameView(user_id=dummy_user_id, user_gold=dummy_gold, parent=None, bet=100, cog=cog))
+
 
