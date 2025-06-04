@@ -23,7 +23,7 @@ class GameSelectionView(View):
         options=[
             discord.SelectOption(label=game["name"], value=key, description=game["description"][:100], emoji=game.get("emoji", "🎰"))
             for key, game in GAMES.items()
-            if key != "big_spender" and not (key == "slot_machine" and "variants" in game)
+            if key not in ("big_spender", "blackjack") and not (key == "slot_machine" and "variants" in game)
         ] + [
             discord.SelectOption(label="Big Spender", value="big_spender", description="Bet 10,000 gold for a slim shot at massive returns.", emoji="💰"),
             discord.SelectOption(label="Blackjack", value="blackjack", description="Play a real-time game of Blackjack against the dealer.", emoji="🃏")
