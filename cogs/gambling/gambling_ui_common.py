@@ -23,7 +23,7 @@ class PlayAgainButton(Button):
         print("[DEBUG] PlayAgainButton triggered by user:", interaction.user.id)
         try:
             # Extract game_key from custom_id
-            _, _, game_key = self.custom_id.split("_")
+            game_key = self.custom_id.removeprefix("persistent_play_again_")
             user_data = get_user_data(user_id) or {"gold": 0}
             gold = user_data.get("gold", 0)
 
