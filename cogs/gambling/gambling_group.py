@@ -47,15 +47,13 @@ async def setup(bot: commands.Bot):
     from cogs.gambling.UI_MainMenu import GamblingMenuView
     from cogs.gambling.roulette.roulette import RouletteOptionView
     from cogs.gambling.blackjack.blackjack import BlackjackGameView
-    from cogs.gambling.gambling_ui_common import PlayAgainButton
+    from cogs.gambling.gambling_ui_common import PersistentPlayAgainView  # ✅ correct import
     from discord.ui import View
 
-    # ✅ Add the cog instance to the bot
     await bot.add_cog(GamblingGroup(bot))
-
     bot.tree.add_command(gamble_group)
 
-    dummy_user_id = 123456789012345678  # Safe static test ID
+    dummy_user_id = 123456789012345678
     dummy_gold = 1000
     cog = bot.get_cog("GamblingGroup")
 
@@ -64,12 +62,8 @@ async def setup(bot: commands.Bot):
     bot.add_view(RouletteOptionView(dummy_user_id, dummy_gold, parent=None, cog=cog))
     bot.add_view(BlackjackGameView(dummy_user_id, dummy_gold, parent=None, bet=100, cog=cog))
 
-    class PersistentPlayAgainView(View):
-        def __init__(self):
-            super().__init__(timeout=None)
-            from cogs.gambling.gambling_ui_common import PersistentPlayAgainView
-            self.add_item(PersistentPlayAgainView().children[0])  # reuse the persistent instance
-
+    # ✅ Just add the imported persistent view
     bot.add_view(PersistentPlayAgainView())
 
     print("[DEBUG] Persistent PlayAgainButton view registered ✅")
+
