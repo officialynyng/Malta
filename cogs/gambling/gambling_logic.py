@@ -15,6 +15,9 @@ async def handle_gamble_result(interaction: Interaction, user_id: int, game_key:
     user_data = get_user_data(user_id)
     now = int(time.time())
 
+    if not interaction.response.is_done():
+        await interaction.response.defer(ephemeral=True)
+
     if user_data.get("last_gamble_ts") and now - user_data["last_gamble_ts"] < 5:
         await interaction.response.send_message("⏳ You must wait a few seconds before gambling again.", ephemeral=True)
         return
