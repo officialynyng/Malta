@@ -37,7 +37,7 @@ class BlackjackGameView(BaseCogView):
         BackToGameButton(user_id=self.user_id, parent=self.parent, cog=self.cog)
         self.add_item(RefreshGoldButton())
 
-    def get_embed(self, reveal_dealer=False, final=False):
+    def get_embed(self, reveal_dealer=False, final=False, delta=None):
         embed = Embed(title="🃏 Blackjack", color=discord.Color.green())
         embed.add_field(
             name="Your Hand",
@@ -53,7 +53,7 @@ class BlackjackGameView(BaseCogView):
         )
 
         if final:
-            embed.add_field(name="🎲 Result", value=self.evaluate_result(), inline=False)
+            embed.add_field(name="🎲 Result", value=self.evaluate_result(delta=delta), inline=False)
 
         embed.set_image(url="https://theknightsofmalta.net/wp-content/uploads/2025/05/blackjack.png")  # replace with your themed blackjack banner
         user_data = get_user_data(self.user_id) or {"gold": 0}
@@ -62,20 +62,31 @@ class BlackjackGameView(BaseCogView):
         
         return embed
 
-    def evaluate_result(self):
+    def evaluate_result(self, delta=None):
         player = hand_value(self.player_hand)
         dealer = hand_value(self.dealer_hand)
 
         if player > 21:
-            return "**💥 You busted!**"
+            result = "**💥 You busted!**"
         elif dealer > 21:
-            return "**🔥 Dealer busted — you win!**"
+            result = "**🔥 Dealer busted – you win!**"
         elif player > dealer:
-            return "**✅ You win!**"
+            result = "**✅ You win!**"
         elif player == dealer:
-            return "**🤝 It's a tie.**"
+            result = "**🤝 It's a tie.**"
         else:
-            return "**❌ Dealer wins.**"
+            result = "**❌ Dealer wins.**"
+
+        if delta is not None:
+            if delta > 0:
+                result += f"\n**+{delta} gold!** 🎉"
+            elif delta < 0:
+                result += f"\n**-{abs(delta)} gold.** 💀"
+            else:
+                result += f"\n**No gold change.** 🤝"
+
+        return result
+
 
     async def finalize_game(self, interaction: Interaction):
         player = hand_value(self.player_hand)
