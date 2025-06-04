@@ -43,6 +43,9 @@ async def setup(bot: commands.Bot):
     from cogs.gambling.UI_MainMenu import GamblingMenuView
     from cogs.gambling.roulette.roulette import RouletteOptionView
     from cogs.gambling.blackjack.blackjack import BlackjackGameView
+    
+    from discord.ui import View
+    from cogs.gambling.gambling_ui_common import PlayAgainButton
 
 
     bot.tree.add_command(gamble_group)
@@ -56,4 +59,8 @@ async def setup(bot: commands.Bot):
     bot.add_view(GameSelectionView(dummy_user_id, dummy_gold, cog=cog))
     bot.add_view(RouletteOptionView(dummy_user_id, dummy_gold, parent=None, cog=cog))
     bot.add_view(BlackjackGameView(dummy_user_id, dummy_gold, parent=None, bet=100, cog=cog))
+
+    play_again_view = View(timeout=None)
+    play_again_view.add_item(PlayAgainButton(game_key="blackjack"))
+    bot.add_view(play_again_view)
 

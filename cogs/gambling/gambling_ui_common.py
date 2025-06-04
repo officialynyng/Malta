@@ -10,36 +10,49 @@ from cogs.x_utilities.ui_base import BaseCogButton, BaseCogView
 
 
 class PlayAgainButton(Button):
-    def __init__(self, game_key, bet):
+    def __init__(self, game_key: str):
         super().__init__(
             label="🔁 Play Again",
             style=discord.ButtonStyle.success,
-            custom_id=f"persistent_play_again_{game_key}_{bet or 100}"
+            custom_id=f"persistent_play_again_{game_key}"
         )
 
     async def callback(self, interaction: Interaction):
-        user_id = interaction.user.id  # Always use this at runtime
+        user_id = interaction.user.id
 
         try:
-            # Extract game_key and bet from custom_id
-            _, _, game_key, bet_str = self.custom_id.split("_")
-            bet = int(bet_str)
+            # Extract game_key from custom_id
+            _, _, game_key = self.custom_id.split("_")
             user_data = get_user_data(user_id) or {"gold": 0}
             gold = user_data.get("gold", 0)
 
             if game_key == "blackjack":
                 from cogs.gambling.gambling_ui_common import BetAmountSelectionView
-                view = BetAmountSelectionView(user_id, gold, game_key="blackjack", parent=None, cog=interaction.client.get_cog("GamblingGroup"))
+
+                view = BetAmountSelectionView(
+                    user_id=user_id,
+                    user_gold=gold,
+                    game_key="blackjack",
+                    parent=None,
+                    cog=interaction.client.get_cog("GamblingGroup")
+                )
+
                 await interaction.response.edit_message(
                     content="🃏 You've chosen **Blackjack**. Pick your bet to start!",
                     embed=None,
                     view=view
                 )
 
-
             elif game_key == "roulette":
                 from cogs.gambling.roulette.roulette import RouletteOptionView
-                view = RouletteOptionView(user_id, gold, parent=None, cog=interaction.client.get_cog("GamblingGroup"))
+
+                view = RouletteOptionView(
+                    user_id=user_id,
+                    user_gold=gold,
+                    parent=None,
+                    cog=interaction.client.get_cog("GamblingGroup")
+                )
+
                 await interaction.response.edit_message(
                     content="🎡 Choose your Roulette type:",
                     embed=None,
@@ -52,7 +65,6 @@ class PlayAgainButton(Button):
         except Exception as e:
             print(f"[PlayAgainButton] Failed: {e}")
             await interaction.response.send_message("❌ Something went wrong starting the game again.", ephemeral=True)
-
 
 
 
