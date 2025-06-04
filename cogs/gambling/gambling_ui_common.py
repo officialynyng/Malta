@@ -113,6 +113,12 @@ class BackToGameButton(BaseCogButton):
                 description=f"Left Blackjack early and lost {penalty} gold"
             )
 
+            await interaction.response.edit_message(
+            content=None,
+            embed=embed,
+            view=GameSelectionView(user_id=self.user_id, user_gold=user_data["gold"], cog=self.cog)
+        )
+            
             # 🕵️ Ephemeral to user
             await interaction.followup.send(
                 embed=discord.Embed(
@@ -140,11 +146,6 @@ class BackToGameButton(BaseCogButton):
         embed.set_image(url="https://theknightsofmalta.net/wp-content/uploads/2025/05/Gold-Casino.png")
         embed.set_footer(text=f"💰 Gold: {user_data['gold']}")
 
-        await interaction.response.edit_message(
-            content=None,
-            embed=embed,
-            view=GameSelectionView(user_id=self.user_id, user_gold=user_data["gold"], cog=self.cog)
-        )
 
 
 
