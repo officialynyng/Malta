@@ -45,7 +45,7 @@ class BetAmountDropdown(discord.ui.Select):
         await interaction.followup.send(
             embed=discord.Embed(
                 title="✅ Bet Selected",
-                description=f"You chose to bet **{self.parent_view.amount:,}** gold.",
+                description=f"You wager **{self.parent_view.amount:,}** gold.",
                 color=discord.Color.green()
             ),
             ephemeral=True

@@ -188,7 +188,13 @@ class DrawCardsButton(discord.ui.Button):
         self.view_ref.clear_items()
         self.view_ref.add_item(HitButton(self.view_ref))
         self.view_ref.add_item(StandButton(self.view_ref))
-        self.view_ref.add_item(BackToGameButton(self.view_ref.user_id, self.view_ref.parent))
+        self.view_ref.add_item(
+            BackToGameButton(
+                user_id=self.view_ref.user_id,
+                parent=self.view_ref.parent,
+                cog=self.view_ref.cog  # ✅ fix: provide the cog argument
+            )
+        )
         self.disabled = True
         await interaction.response.edit_message(
             embed=self.view_ref.get_embed(),
