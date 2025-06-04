@@ -26,7 +26,7 @@ class RouletteView(BaseCogView):
 
         self.add_item(RoulettePlayButton(self))
         self.add_item(RefreshGoldButton())
-        self.add_item(BackToRouletteOptionsButton(user_id, user_gold, self.parent))
+        self.add_item(BackToRouletteOptionsButton())
         self.add_item(BackToGameButton(user_id=self.user_id, parent=self.parent, cog=self.cog))
 
 
@@ -271,7 +271,7 @@ class BackToRouletteOptionsButton(Button):
                 cog=interaction.client.get_cog("GamblingGroup")
             )
         )
-        
+
 class PersistentBackToRouletteView(View):
     def __init__(self):
         super().__init__(timeout=None)
