@@ -83,11 +83,11 @@ class RefreshGoldButton(discord.ui.Button):
 
 
 class BackToGameButton(BaseCogButton):
-    def __init__(self, user_id, parent, cog):
+    def __init__(self, *, user_id, parent, cog):
         super().__init__(
             label="⬅️ Back",
             style=discord.ButtonStyle.secondary,
-            custom_id="back_to_game_button",
+            custom_id="back_to_game_button",  # ✅ Required for persistence
             user_id=user_id,
             cog=cog
         )
@@ -95,28 +95,58 @@ class BackToGameButton(BaseCogButton):
         self.parent = parent
         self.cog = cog
 
-
     async def callback(self, interaction: Interaction):
-        # ✅ Lazy imports to prevent circular dependency
+        from cogs.exp_utils import get_user_data, update_user_gold
+        from cogs.exp_config import EXP_CHANNEL_ID
         from cogs.gambling.gambling_ui import GameSelectionView
-        from cogs.exp_utils import get_user_data
 
-        user_data = get_user_data(interaction.user.id)
-        gold = user_data.get("gold", 0)
+        # 💥 Penalize if the game was in progress
+        if hasattr(self.parent, "player_hand") and self.parent.player_hand:
+            user_data = get_user_data(self.user_id)
+            penalty = getattr(self.parent, "bet", 100)
 
+            user_data["gold"] -= penalty
+            update_user_gold(
+                self.user_id,
+                user_data["gold"],
+                type_="gamble_quit",
+                description=f"Left Blackjack early and lost {penalty} gold"
+            )
+
+            # 🕵️ Ephemeral to user
+            await interaction.followup.send(
+                embed=discord.Embed(
+                    title="🏳️ You Left the Game",
+                    description=f"You lost **{penalty:,}** gold for quitting mid-game.",
+                    color=discord.Color.red()
+                ),
+                ephemeral=True
+            )
+
+            # 📢 Public to EXP_CHANNEL
+            exp_channel = interaction.client.get_channel(EXP_CHANNEL_ID)
+            if exp_channel:
+                await exp_channel.send(
+                    f"🏳️ **{interaction.user.display_name}** fled from a Blackjack game and forfeited **{penalty:,}** gold!"
+                )
+
+        # ↩️ Return to menu
+        user_data = get_user_data(self.user_id)
         embed = discord.Embed(
             title="🎰 Welcome to the Gambling Hall",
             description="Pick your game to begin.",
             color=discord.Color.green()
         )
         embed.set_image(url="https://theknightsofmalta.net/wp-content/uploads/2025/05/Gold-Casino.png")
-        embed.set_footer(text=f"💰 Gold: {gold}")
+        embed.set_footer(text=f"💰 Gold: {user_data['gold']}")
 
         await interaction.response.edit_message(
             content=None,
             embed=embed,
-            view=GameSelectionView(user_id=interaction.user.id, user_gold=gold, cog=self.cog)
+            view=GameSelectionView(user_id=self.user_id, user_gold=user_data["gold"], cog=self.cog)
         )
+
+
 
 
 
