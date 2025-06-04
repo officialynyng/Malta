@@ -7,7 +7,7 @@ from cogs.exp_utils import update_user_gold
 from cogs.exp_config import EXP_CHANNEL_ID
 from cogs.gambling.roulette.roulette_utils import spin_roulette, payout
 from cogs.gambling.gambling_ui_common import BetAmountSelectionView, PlayAgainButton, BackToGameButton, RefreshGoldButton
-from cogs.UTILITIES.ui_base import BaseCogView
+from cogs.x_utilities.ui_base import BaseCogView
 
 class RouletteView(View):
     def __init__(self, user_id, parent, bet, choice, bet_type, user_gold):
