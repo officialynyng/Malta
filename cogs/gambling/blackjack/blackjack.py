@@ -30,7 +30,7 @@ class BlackjackGameView(View):
         self.play_button = DrawCardsButton(self)
         self.add_item(BetAmountDropdown(self))
         self.add_item(self.play_button)
-        self.add_item(BackToGameButton(user_id, self.parent))
+        self.add_item(BackToGameButton(user_id, self.parent, self.cog))
         self.add_item(RefreshGoldButton(user_id))
         self.message = None
 
