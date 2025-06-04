@@ -19,7 +19,7 @@ class PlayAgainButton(Button):
 
     async def callback(self, interaction: Interaction):
         user_id = interaction.user.id
-
+        print("[DEBUG] PlayAgainButton triggered")
         try:
             # Extract game_key from custom_id
             _, _, game_key = self.custom_id.split("_")
