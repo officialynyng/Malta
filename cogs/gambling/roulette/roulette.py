@@ -221,17 +221,14 @@ class RouletteNumberModal(Modal):
         embed.set_image(url="https://theknightsofmalta.net/wp-content/uploads/2025/05/roulette.png")  # ⬅️ Replace with your roulette art
         embed.set_footer(text=f"💰 Gold: {self.user_gold}")
 
-        await interaction.followup.send(
-            embed=embed,
-            view=BetAmountSelectionView(
-                self.user_id,
-                "roulette",
-                min_bet=10,
-                max_bet=10000,
-                parent=self.parent,
-                extra_callback=roulette_number_callback
-            ),
-            ephemeral=True
+        view=BetAmountSelectionView(
+            self.user_id,
+            "roulette",
+            min_bet=10,
+            max_bet=10000,
+            parent=self.parent,
+            extra_callback=roulette_number_callback,
+            cog=self.parent.cog  # ✅ Required for BackToGameButton
         )
 
 
