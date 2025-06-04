@@ -14,7 +14,8 @@ class GamblingPlayButton(discord.ui.Button):
         self.extra_callback = extra_callback
 
     async def callback(self, interaction: Interaction):
-        await interaction.response.defer()
+        pass
+
 
         if interaction.user.id != self.user_id:
             return await interaction.followup.send("❌ Not your session!", ephemeral=True)
