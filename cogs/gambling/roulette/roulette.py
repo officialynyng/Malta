@@ -101,7 +101,7 @@ class RouletteOptionView(BaseCogView):
         self.parent = parent
 
         self.add_item(RouletteBetSelector(self))
-        self.add_item(BackToGameButton(self.user_id, self.parent, self.cog))
+        self.add_item(BackToGameButton(user_id=self.user_id, parent=self.parent, cog=self.cog))
 
     async def select_callback(self, interaction: Interaction, select: discord.ui.Select):
         if interaction.user.id != self.user_id:
@@ -138,12 +138,13 @@ class RouletteOptionView(BaseCogView):
                 content=None,
                 embed=embed,
                 view=BetAmountSelectionView(
-                    self.user_id,
-                    "roulette",
+                    user_id=self.user_id,
+                    game_key="roulette",
                     min_bet=10,
                     max_bet=10000,
                     parent=self.parent,
-                    extra_callback=roulette_color_callback
+                    extra_callback=roulette_color_callback,
+                    cog=self.cog
                 )
             )
 

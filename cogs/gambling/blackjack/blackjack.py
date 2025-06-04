@@ -34,7 +34,7 @@ class BlackjackGameView(BaseCogView):
         self.play_button = DrawCardsButton(self)
         self.add_item(BetAmountDropdown(self))
         self.add_item(self.play_button)
-        self.add_item(BackToGameButton(user_id, self.parent, self.cog))
+        self.add_item(BackToGameButton(user_id=self.user_id, parent=self.parent, cog=self.cog))
         self.add_item(RefreshGoldButton(user_id))
 
     def get_embed(self, reveal_dealer=False, final=False):
@@ -137,7 +137,7 @@ class BlackjackGameView(BaseCogView):
                 )
 
         self.clear_items()
-        self.add_item(BackToGameButton(self.user_id, self.parent, self.cog))
+        self.add_item(BackToGameButton(user_id=self.user_id, parent=self.parent, cog=self.cog))
         self.add_item(PlayAgainButton(self.user_id, parent_view=self.parent, game_key="blackjack", bet=self.bet))
         self.add_item(RefreshGoldButton(self.user_id))
         await interaction.response.edit_message(embed=self.get_embed(reveal_dealer=True, final=True), view=self)
