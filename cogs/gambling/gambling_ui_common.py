@@ -21,7 +21,7 @@ class PlayAgainButton(Button):
         if interaction.user.id != self.user_id:
             return await interaction.response.send_message("❌ Not your session!", ephemeral=True)
 
-        user_data = get_user_data(self.user_id)
+        user_data = get_user_data(self.user_id) or {"gold": 0}
         gold = user_data.get('gold', 0)
         try:
             if self.game_key == "blackjack":
