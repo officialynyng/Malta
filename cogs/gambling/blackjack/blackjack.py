@@ -34,7 +34,7 @@ class BlackjackGameView(BaseCogView):
         self.play_button = DrawCardsButton(self)
         self.add_item(BetAmountDropdown(self))
         self.add_item(self.play_button)
-        self.add_item(BackToGameButton(user_id, self.parent, self.cog))
+        BackToGameButton(user_id=self.user_id, parent=self.parent, cog=self.cog)
         self.add_item(RefreshGoldButton())
 
     def get_embed(self, reveal_dealer=False, final=False):
