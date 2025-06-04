@@ -9,15 +9,17 @@ from cogs.gambling.roulette.roulette_utils import spin_roulette, payout
 from cogs.gambling.gambling_ui_common import BetAmountSelectionView, PlayAgainButton, BackToGameButton, RefreshGoldButton
 from cogs.x_utilities.ui_base import BaseCogView
 
-class RouletteView(View):
-    def __init__(self, user_id, parent, bet, choice, bet_type, user_gold):
-        super().__init__(timeout=None)
+class RouletteView(BaseCogView):
+    def __init__(self, user_id, parent, bet, choice, bet_type, user_gold, cog):
+        super().__init__(cog=cog, timeout=None)
         self.user_id = user_id
         self.parent = parent
         self.bet = bet
         self.choice = choice
         self.bet_type = bet_type
         self.user_gold = user_gold
+        self.cog = cog
+
         self.result = spin_roulette()
         self.payout_multiplier = payout(self.bet_type, self.choice, self.result)
         self.result_number, self.result_color = self.result
@@ -25,7 +27,7 @@ class RouletteView(View):
         self.add_item(RoulettePlayButton(self))
         self.add_item(RefreshGoldButton(user_id))
         self.add_item(BackToRouletteOptionsButton(user_id, user_gold, self.parent))
-        self.add_item(BackToGameButton(self.user_id, parent=self.parent))
+        self.add_item(BackToGameButton(self.user_id, parent=self.parent, cog=self.cog))
 
 
     async def on_timeout(self):
@@ -97,10 +99,7 @@ class RouletteOptionView(BaseCogView):
         self.user_id = user_id
         self.user_gold = user_gold
         self.parent = parent
-        super().__init__(timeout=None)
-        self.user_id = user_id
-        self.user_gold = user_gold
-        self.parent = parent
+
         self.add_item(RouletteBetSelector(self))
         self.add_item(BackToGameButton(self.user_id, self.parent, self.cog))
 

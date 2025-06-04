@@ -10,12 +10,15 @@ from cogs.exp_config import EXP_CHANNEL_ID, engine
 from cogs.gambling.blackjack.blackjack_utils import create_shoe, draw_card, format_hand, hand_value
 from cogs.gambling.bet_amount import BetAmountDropdown
 from cogs.database.gambling_stats_table import gambling_stats
+from cogs.x_utilities.ui_base import BaseCogView
 import time
 
-class BlackjackGameView(View):
+
+class BlackjackGameView(BaseCogView):
     shared_shoe = create_shoe()
+
     def __init__(self, user_id, user_gold, parent, bet, cog):
-        super().__init__(timeout=None)
+        super().__init__(cog=cog, timeout=None)
         self.user_id = user_id
         self.user_gold = user_gold
         self.parent = parent
@@ -26,13 +29,13 @@ class BlackjackGameView(View):
         self.amount = 100  # default bet
         self.player_hand = []
         self.dealer_hand = []
+        self.message = None
 
         self.play_button = DrawCardsButton(self)
         self.add_item(BetAmountDropdown(self))
         self.add_item(self.play_button)
         self.add_item(BackToGameButton(user_id, self.parent, self.cog))
         self.add_item(RefreshGoldButton(user_id))
-        self.message = None
 
     def get_embed(self, reveal_dealer=False, final=False):
         embed = Embed(title="🃏 Blackjack", color=discord.Color.green())
