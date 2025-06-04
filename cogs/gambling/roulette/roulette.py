@@ -98,7 +98,7 @@ class RouletteOptionView(View):
         self.parent = parent
 
         self.add_item(RouletteBetSelector(self))
-        self.add_item(BackToGameButton(self.user_id, self.parent))
+        self.add_item(BackToGameButton(self.user_id, self.parent, self.cog))
 
     async def select_callback(self, interaction: Interaction, select: discord.ui.Select):
         if interaction.user.id != self.user_id:

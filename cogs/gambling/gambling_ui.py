@@ -85,7 +85,10 @@ class GameSelectionView(View):
             )
             embed.set_image(url="https://theknightsofmalta.net/wp-content/uploads/2025/05/roulette.png")
             embed.set_footer(text=f"💰 Gold: {self.user_gold}")
-            await interaction.response.edit_message(embed=embed, view=RouletteOptionView(self.user_id, self.user_gold, parent=self))
+            await interaction.response.edit_message(
+                embed=embed,
+                view=RouletteOptionView(self.user_id, self.user_gold, parent=self, cog=self.cog)
+            )
             return
 
         if game_key == "big_spender":

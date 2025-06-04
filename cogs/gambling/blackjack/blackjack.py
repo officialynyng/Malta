@@ -14,11 +14,12 @@ import time
 
 class BlackjackGameView(View):
     shared_shoe = create_shoe()
-    def __init__(self, user_id, user_gold, parent, bet):
+    def __init__(self, user_id, user_gold, parent, bet, cog):
         super().__init__(timeout=None)
         self.user_id = user_id
         self.user_gold = user_gold
         self.parent = parent
+        self.cog = cog
         self.bet = bet
         self.min_bet = 1
         self.max_bet = 5000
@@ -133,7 +134,7 @@ class BlackjackGameView(View):
                 )
 
         self.clear_items()
-        self.add_item(BackToGameButton(self.user_id, self.parent))
+        self.add_item(BackToGameButton(self.user_id, self.parent, self.cog))
         self.add_item(PlayAgainButton(self.user_id, parent_view=self.parent, game_key="blackjack", bet=self.bet))
         self.add_item(RefreshGoldButton(self.user_id))
         await interaction.response.edit_message(embed=self.get_embed(reveal_dealer=True, final=True), view=self)
