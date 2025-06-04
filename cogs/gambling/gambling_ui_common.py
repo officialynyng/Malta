@@ -10,48 +10,55 @@ from cogs.x_utilities.ui_base import BaseCogButton, BaseCogView
 
 
 class PlayAgainButton(Button):
-    def __init__(self, user_id, parent_view=None, game_key=None, bet=None):
-        super().__init__(label="🔁 Play Again", style=discord.ButtonStyle.success)
+    def __init__(self, user_id=None, parent_view=None, game_key=None, bet=None):
+        super().__init__(
+            label="🔁 Play Again",
+            style=discord.ButtonStyle.success,
+            custom_id=f"persistent_play_again_{game_key}_{bet or 100}"
+        )
         self.user_id = user_id
         self.parent = parent_view
         self.game_key = game_key
         self.bet = bet
 
     async def callback(self, interaction: Interaction):
-        if interaction.user.id != self.user_id:
-            return await interaction.response.send_message("❌ Not your session!", ephemeral=True)
+        user_id = interaction.user.id
 
-        user_data = get_user_data(self.user_id) or {"gold": 0}
-        gold = user_data.get('gold', 0)
         try:
-            if self.game_key == "blackjack":
+            # Extract game key and bet from custom_id
+            _, _, game_key, bet_str = self.custom_id.split("_")
+            bet = int(bet_str)
+            user_data = get_user_data(user_id) or {"gold": 0}
+            gold = user_data.get('gold', 0)
+
+            if game_key == "blackjack":
                 from cogs.gambling.blackjack.blackjack import BlackjackGameView
                 await interaction.response.edit_message(
                     content="🃏 You've chosen **Blackjack**. Ready to draw your cards?",
                     embed=None,
-                    view=BlackjackGameView(self.user_id, gold, self.parent, self.bet or 100)
+                    view=BlackjackGameView(user_id, gold, self.parent, bet, self.parent.cog)
                 )
-                return
 
-            elif self.game_key == "roulette":
+            elif game_key == "roulette":
                 from cogs.gambling.roulette.roulette import RouletteOptionView
                 await interaction.response.edit_message(
                     content="🎡 Choose your Roulette type:",
                     embed=None,
-                    view=RouletteOptionView(self.user_id, gold, self.parent)
+                    view=RouletteOptionView(user_id, gold, self.parent, self.parent.cog)
                 )
-                return
+
+            else:
+                raise ValueError("Unknown game_key")
 
         except Exception as e:
             print(f"PlayAgain fallback error: {e}")
+            if self.parent:
+                await interaction.response.edit_message(
+                    content="🎲 Back to the Gambling Hall. Choose your game.",
+                    embed=None,
+                    view=self.parent
+                )
 
-        # Fallback to game hall
-        if self.parent:
-            await interaction.response.edit_message(
-                content="🎲 Back to the Gambling Hall. Choose your game.",
-                embed=None,
-                view=self.parent
-            )
 
 
 
