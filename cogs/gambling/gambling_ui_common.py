@@ -87,7 +87,7 @@ class RefreshGoldButton(discord.ui.Button):
 
 
 class BackToGameButton(Button):
-    def __init__(self, user_id, parent):
+    def __init__(self, user_id, parent, cog):
         super().__init__(
             label="⬅️ Back",
             style=discord.ButtonStyle.secondary,
@@ -95,6 +95,7 @@ class BackToGameButton(Button):
         )
         self.user_id = user_id
         self.parent = parent
+        self.cog = cog
 
     async def callback(self, interaction: Interaction):
         if interaction.user.id != self.user_id:
@@ -118,7 +119,7 @@ class BackToGameButton(Button):
         await interaction.response.edit_message(
             content=None,
             embed=embed,
-            view=GameSelectionView(self.user_id, gold)
+            view=GameSelectionView(self.user_id, gold, self.cog)
         )
 
 
@@ -146,5 +147,6 @@ class BetAmountSelectionView(View):
         self.add_item(self.play_button)
         self.add_item(RefreshGoldButton(user_id))
         if self.parent:
-            self.add_item(BackToGameButton(user_id, self.parent))
+            self.add_item(BackToGameButton(user_id, self.parent, self.parent.cog))
+
 
