@@ -109,8 +109,8 @@ class BackToWalletButton(Button):
 class Wallet(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-    @app_commands.command(name="wallet", description="💼 Check your gold and recent transactions")
-    async def wallet(self, interaction: discord.Interaction):
+
+    async def send_wallet(self, interaction: Interaction):
         user_id = interaction.user.id
 
         if DEBUG:
@@ -123,7 +123,6 @@ class Wallet(commands.Cog):
 
         gold = user_data.get("gold", 0)
 
-        # Fetch all transactions for paging
         with engine.connect() as conn:
             stmt = (
                 select(transactions)
@@ -132,24 +131,23 @@ class Wallet(commands.Cog):
             )
             all_results = conn.execute(stmt).fetchall()
 
-        # Initial wallet embed
-        main_embed = Embed(
+        embed = Embed(
             title=f"{WALLET_EMOJI} Your Wallet",
-            description=f"**Gold:** {gold:,} 💰\n\n",
+            description=f"**Gold:** {gold:,} 💰\n\nClick below to view your recent transactions.",
             color=discord.Color.from_rgb(0, 0, 0)
         )
 
-        # Button to open transaction view
-        async def show_transactions_callback(interaction):
+        async def show_transactions_callback(inner_interaction):
             view = TransactionView(user_id, all_results, gold)
-            await interaction.response.edit_message(embed=view.get_embed(), view=view)
+            await inner_interaction.response.edit_message(embed=view.get_embed(), view=view)
 
         view = View()
         show_button = Button(label="View Transactions", style=ButtonStyle.primary)
         show_button.callback = show_transactions_callback
         view.add_item(show_button)
 
-        await interaction.response.send_message(embed=main_embed, view=view, ephemeral=SHOW_EPHEMERAL)
+        await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+
 
 
 async def setup(bot: commands.Bot):
