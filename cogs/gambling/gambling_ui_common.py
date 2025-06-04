@@ -56,7 +56,12 @@ class PlayAgainButton(Button):
 
 class RefreshGoldButton(discord.ui.Button):
     def __init__(self, user_id):
-        super().__init__(label="Refresh Gold View", emoji="🔄", style=discord.ButtonStyle.grey)
+        super().__init__(
+            label="Refresh Gold View",
+            emoji="🔄",
+            style=discord.ButtonStyle.grey,
+            custom_id="refresh_gold_button"  # ✅ Required for persistence
+        )
         self.user_id = user_id
 
     async def callback(self, interaction: Interaction):
@@ -78,6 +83,7 @@ class RefreshGoldButton(discord.ui.Button):
         embed.add_field(name="💰 Gold", value=f"**{user_data['gold']}**", inline=False)
 
         await interaction.response.edit_message(embed=embed)
+
 
 
 class BackToGameButton(Button):
@@ -118,7 +124,7 @@ class BackToGameButton(Button):
 
 class BetAmountSelectionView(View):
     def __init__(self, user_id, game_key, min_bet, max_bet, parent=None, extra_callback=None):
-        super().__init__(timeout=60)
+        super().__init__(timeout=None)
         self.user_id = user_id
         self.game_key = game_key
         self.min_bet = min_bet
