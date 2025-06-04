@@ -85,23 +85,8 @@ async def handle_gamble_result(interaction: Interaction, user_id: int, game_key:
         else:
             conn.execute(insert(gambling_stats).values(user_id=user_id, **values))
 
-    # Final message suppressed (no ephemeral)
-    try:
-        if not interaction.response.is_done():
-            await interaction.response.defer()
-    except Exception:
-        pass
-
-    # Public broadcast of all results
-    exp_channel = interaction.client.get_channel(EXP_CHANNEL_ID)
-    # 1. Defer the interaction first
-    if not interaction.response.is_done():
-        await interaction.response.defer(ephemeral=True)
-
-    # 2. Send initial ephemeral placeholder (ONCE)
+    # 1. Send initial ephemeral message ONCE (no defer!)
     ephemeral_msg = await interaction.followup.send("⏳ Calculating result...", ephemeral=True)
-
-    # 3. Do your game result logic...
 
     # 4. Get CST timestamp
     ts = datetime.now(ZoneInfo("America/Chicago")).strftime("%I:%M:%S %p CST")
