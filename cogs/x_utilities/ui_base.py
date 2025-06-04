@@ -12,3 +12,4 @@ class BaseCogButton(discord.ui.Button):
         super().__init__(**kwargs)
         self.user_id = user_id
         self.cog = cog
+
