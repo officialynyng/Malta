@@ -10,16 +10,12 @@ from cogs.x_utilities.ui_base import BaseCogButton, BaseCogView
 
 
 class PlayAgainButton(Button):
-    def __init__(self, user_id=None, parent_view=None, game_key=None, bet=None):
+    def __init__(self, game_key, bet):
         super().__init__(
             label="🔁 Play Again",
             style=discord.ButtonStyle.success,
             custom_id=f"persistent_play_again_{game_key}_{bet or 100}"
         )
-        self.user_id = user_id
-        self.parent = parent_view
-        self.game_key = game_key
-        self.bet = bet
 
     async def callback(self, interaction: Interaction):
         user_id = interaction.user.id  # Always use this at runtime
