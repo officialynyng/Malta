@@ -1,6 +1,7 @@
 
 import time
-import datetime
+from datetime import datetime
+from zoneinfo import ZoneInfo
 import random
 from discord import Interaction, Embed
 from sqlalchemy import select, insert, update
@@ -101,7 +102,7 @@ async def handle_gamble_result(interaction: Interaction, user_id: int, game_key:
     ephemeral_msg = await interaction.followup.send("⏳ Calculating result...", ephemeral=True)
 
     # 3. Create a timestamp string
-    ts = datetime.datetime.now().strftime("%H:%M:%S")
+    ts = datetime.now(ZoneInfo("America/Chicago")).strftime("%H:%M:%S %p CST")
 
     # 4. Update the ephemeral message with the result + timestamp
     if win:
