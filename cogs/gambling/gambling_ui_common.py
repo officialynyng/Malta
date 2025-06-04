@@ -6,7 +6,7 @@ from discord.ui import Button, View
 from cogs.exp_utils import get_user_data, get_user_data
 from cogs.gambling.bet_amount import BetAmountDropdown
 from cogs.gambling.play_button import GamblingPlayButton
-from cogs.UTILITIES.ui_base import BaseCogButton
+from cogs.x_utilities.ui_base import BaseCogButton
 
 
 class PlayAgainButton(Button):
