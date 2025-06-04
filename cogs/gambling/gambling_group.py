@@ -59,4 +59,7 @@ async def setup(bot: commands.Bot):
     bot.add_view(GameSelectionView(dummy_user_id, dummy_gold, cog=cog))
     bot.add_view(RouletteOptionView(dummy_user_id, dummy_gold, parent=None, cog=cog))
     bot.add_view(BlackjackGameView(dummy_user_id, dummy_gold, parent=None, bet=100, cog=cog))
-    bot.add_view(PlayAgainButton(game_key="blackjack"))
+    # ✅ Create a persistent View that holds the PlayAgain button
+    play_again_view = View(timeout=None)
+    play_again_view.add_item(PlayAgainButton(game_key="blackjack"))
+    bot.add_view(play_again_view)
