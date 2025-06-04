@@ -1,5 +1,6 @@
 
 import time
+import datetime
 import random
 from discord import Interaction, Embed
 from sqlalchemy import select, insert, update
@@ -92,6 +93,26 @@ async def handle_gamble_result(interaction: Interaction, user_id: int, game_key:
 
     # Public broadcast of all results
     exp_channel = interaction.client.get_channel(EXP_CHANNEL_ID)
+    # 1. Defer ephemeral response if not already done
+    if not interaction.response.is_done():
+        await interaction.response.defer(ephemeral=True)
+
+    # 2. Send a placeholder ephemeral message
+    ephemeral_msg = await interaction.followup.send("⏳ Calculating result...", ephemeral=True)
+
+    # 3. Create a timestamp string
+    ts = datetime.datetime.now().strftime("%H:%M:%S")
+
+    # 4. Update the ephemeral message with the result + timestamp
+    if win:
+        await ephemeral_msg.edit(
+            content=f"🎉 You won **{payout}** gold on {game['name']} {game['emoji']}!\n*Updated at {ts}*"
+        )
+    else:
+        await ephemeral_msg.edit(
+            content=f"💀 You lost your bet of **{amount}** gold on {game['name']} {game['emoji']}.\n*Updated at {ts}*"
+        )
+
     if exp_channel:
         if win:
             await exp_channel.send(
