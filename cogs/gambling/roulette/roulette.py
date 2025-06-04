@@ -27,7 +27,7 @@ class RouletteView(BaseCogView):
         self.add_item(RoulettePlayButton(self))
         self.add_item(RefreshGoldButton())
         self.add_item(BackToRouletteOptionsButton(user_id, user_gold, self.parent))
-        self.add_item(BackToGameButton(self.user_id, parent=self.parent, cog=self.cog))
+        self.add_item(BackToGameButton(user_id=self.user_id, parent=self.parent, cog=self.cog))
 
 
     async def on_timeout(self):
