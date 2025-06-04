@@ -100,6 +100,8 @@ async def handle_gamble_result(interaction: Interaction, user_id: int, game_key:
         await ephemeral_msg.edit(
             content=f"💀 You lost your bet of **{amount}** gold on {game['name']} {game['emoji']}.\n*Updated at {ts}*"
         )
+        
+    exp_channel = interaction.client.get_channel(EXP_CHANNEL_ID)
 
     if exp_channel:
         if win:
