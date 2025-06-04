@@ -27,21 +27,26 @@ class GamblingPlayButton(discord.ui.Button):
         user_data = get_user_data(self.user_id) or {"gold": 0}
 
 
-        # ✅ BLACKJACK (custom view-based game)
+        # ✅ BLACKJACK (custom view-based game) — ephemeral friendly
         if self.game_key == "blackjack":
             from cogs.gambling.blackjack.blackjack import BlackjackGameView
-            await interaction.edit_original_response(
+
+            view = BlackjackGameView(
+                self.user_id,
+                user_data['gold'],
+                parent=self.parent,
+                bet=amount,
+                cog=self.parent.cog if self.parent else None
+            )
+
+            await interaction.response.send_message(
                 content=f"🃏 You bet **{amount}** gold on Blackjack!",
-                embed=None,
-                view = BlackjackGameView(
-                    self.user_id,
-                    user_data['gold'],
-                    parent=self.parent,
-                    bet=amount,
-                    cog=self.parent.cog if self.parent else None
-                )
+                embed=view.get_embed(),
+                view=view,
+                ephemeral=True
             )
             return
+
 
         # ✅ EXTRA CALLBACK for custom games
         if self.extra_callback:
