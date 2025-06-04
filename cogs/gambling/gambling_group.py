@@ -43,7 +43,6 @@ async def setup(bot: commands.Bot):
     from cogs.gambling.UI_MainMenu import GamblingMenuView
     from cogs.gambling.roulette.roulette import RouletteOptionView
     from cogs.gambling.blackjack.blackjack import BlackjackGameView
-    from discord.ui import View
 
 
     bot.tree.add_command(gamble_group)
