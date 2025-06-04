@@ -245,10 +245,6 @@ class BackToRouletteOptionsButton(Button):
         self.parent = parent  # should be GameSelectionView or similar
 
     async def callback(self, interaction: Interaction):
-        if interaction.user.id != self.user_id:
-            await interaction.response.send_message("❌ Not your session!", ephemeral=True)
-            return
-
         from cogs.gambling.roulette.roulette import RouletteOptionView
 
         await interaction.response.edit_message(
