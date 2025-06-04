@@ -36,7 +36,7 @@ async def gamble_menu(interaction: Interaction):
     await interaction.response.defer()
     await interaction.followup.send(embed=embed, view=view)
 
-async def setup(bot):
+async def setup(bot: commands.Bot):
     from cogs.gambling.gambling_ui import GameSelectionView
     from cogs.gambling.UI_MainMenu import GamblingMenuView
     from cogs.gambling.roulette.roulette import RouletteOptionView
@@ -44,12 +44,12 @@ async def setup(bot):
 
     bot.tree.add_command(gamble_group)
 
-    # 🧠 Dummy values just for persistent view registration
-    dummy_user_id = 123456789012345678  # Replace with your own user ID or a safe static ID
+    dummy_user_id = 123456789012345678  # Safe static test ID
     dummy_gold = 1000
 
-    # ⚙️ Register persistent views
-    bot.add_view(GamblingMenuView(bot.get_cog("GamblingGroup")))  # Already persistent via buttons
+    # ✅ Register persistent views — make sure all buttons/selects have static custom_id
+    bot.add_view(GamblingMenuView(bot.get_cog("GamblingGroup")))
     bot.add_view(GameSelectionView(dummy_user_id, dummy_gold, cog=bot.get_cog("GamblingGroup")))
-    bot.add_view(RouletteOptionView(user_id=123456789012345678, user_gold=1000, parent=None))
-    bot.add_view(BlackjackGameView(user_id=0, user_gold=0, parent=None, bet=0))
+    bot.add_view(RouletteOptionView(user_id=dummy_user_id, user_gold=dummy_gold, parent=None))
+    bot.add_view(BlackjackGameView(user_id=dummy_user_id, user_gold=dummy_gold, parent=None, bet=100))
+
