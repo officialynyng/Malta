@@ -7,7 +7,7 @@ from datetime import timezone, timedelta
 from cogs.exp_config import engine
 from cogs.exp_utils import get_user_data
 from cogs.database.transactions_table import transactions
-from cogs.wallet.wallet import TransactionView, Wallet
+from cogs.wallet.wallet_ui import TransactionView
 
 WALLET_EMOJI = "💼"
 CST = timezone(timedelta(hours=-6))
