@@ -43,8 +43,8 @@ class PlayAgainButton(Button):
                     max_bet=gold,           # ✅ this will reflect user's current gold
                     parent=None,
                     cog=cog
-                )
-
+                ) 
+                view.parent = view
 
                 await interaction.response.edit_message(
                     content="🃏 You've chosen **Blackjack**. Pick your bet to start!",
