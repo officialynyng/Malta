@@ -29,8 +29,18 @@ class BetAmountDropdown(discord.ui.Select):
             return await interaction.response.send_message("❌ Not your selection!", ephemeral=True)
 
         self.parent_view.amount = int(self.values[0])
-        self.parent_view.play_button.amount = self.parent_view.amount # ← THIS is key
+        self.parent_view.play_button.amount = self.parent_view.amount
+
+        # 👇 Update the main view
         await interaction.response.edit_message(view=self.parent_view)
 
-
+        # ✅ Ephemeral confirmation
+        await interaction.followup.send(
+            embed=discord.Embed(
+                title="✅ Bet Selected",
+                description=f"You chose to bet **{self.parent_view.amount:,}** gold.",
+                color=discord.Color.green()
+            ),
+            ephemeral=True
+        )
 
