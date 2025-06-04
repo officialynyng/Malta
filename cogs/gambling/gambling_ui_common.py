@@ -100,9 +100,10 @@ class BackToGameButton(BaseCogButton):
         from cogs.exp_config import EXP_CHANNEL_ID
         from cogs.gambling.gambling_ui import GameSelectionView
 
+        user_data = get_user_data(self.user_id)
+
         # 💥 Penalize if the game was in progress
         if hasattr(self.parent, "player_hand") and self.parent.player_hand:
-            user_data = get_user_data(self.user_id)
             penalty = getattr(self.parent, "bet", 100)
 
             user_data["gold"] -= penalty
@@ -113,12 +114,6 @@ class BackToGameButton(BaseCogButton):
                 description=f"Left Blackjack early and lost {penalty} gold"
             )
 
-            await interaction.response.edit_message(
-            content=None,
-            embed=embed,
-            view=GameSelectionView(user_id=self.user_id, user_gold=user_data["gold"], cog=self.cog)
-        )
-            
             # 🕵️ Ephemeral to user
             await interaction.followup.send(
                 embed=discord.Embed(
@@ -129,7 +124,7 @@ class BackToGameButton(BaseCogButton):
                 ephemeral=True
             )
 
-            # 📢 Public to EXP_CHANNEL
+            # 📢 Public announcement
             exp_channel = interaction.client.get_channel(EXP_CHANNEL_ID)
             if exp_channel:
                 await exp_channel.send(
@@ -137,7 +132,6 @@ class BackToGameButton(BaseCogButton):
                 )
 
         # ↩️ Return to menu
-        user_data = get_user_data(self.user_id)
         embed = discord.Embed(
             title="🎰 Welcome to the Gambling Hall",
             description="Pick your game to begin.",
@@ -145,6 +139,22 @@ class BackToGameButton(BaseCogButton):
         )
         embed.set_image(url="https://theknightsofmalta.net/wp-content/uploads/2025/05/Gold-Casino.png")
         embed.set_footer(text=f"💰 Gold: {user_data['gold']}")
+
+        # ✅ Ensure interaction hasn't already responded
+        if interaction.response.is_done():
+            await interaction.followup.edit_message(
+                message_id=interaction.message.id,
+                content=None,
+                embed=embed,
+                view=GameSelectionView(user_id=self.user_id, user_gold=user_data["gold"], cog=self.cog)
+            )
+        else:
+            await interaction.response.edit_message(
+                content=None,
+                embed=embed,
+                view=GameSelectionView(user_id=self.user_id, user_gold=user_data["gold"], cog=self.cog)
+        )
+
 
 
 
