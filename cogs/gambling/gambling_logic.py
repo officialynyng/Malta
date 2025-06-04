@@ -85,8 +85,13 @@ async def handle_gamble_result(interaction: Interaction, user_id: int, game_key:
         else:
             conn.execute(insert(gambling_stats).values(user_id=user_id, **values))
 
-    # 1. Send initial ephemeral message ONCE (no defer!)
+    # ✅ Defer the interaction if not already acknowledged
+    if not interaction.response.is_done():
+        await interaction.response.defer(ephemeral=True)
+
+    # ✅ Then follow up safely
     ephemeral_msg = await interaction.followup.send("⏳ Calculating result...", ephemeral=True)
+
 
     # 4. Get CST timestamp
     ts = datetime.now(ZoneInfo("America/Chicago")).strftime("%I:%M:%S %p CST")
@@ -100,7 +105,7 @@ async def handle_gamble_result(interaction: Interaction, user_id: int, game_key:
         await ephemeral_msg.edit(
             content=f"💀 You lost your bet of **{amount}** gold on {game['name']} {game['emoji']}.\n*Updated at {ts}*"
         )
-        
+
     exp_channel = interaction.client.get_channel(EXP_CHANNEL_ID)
 
     if exp_channel:
