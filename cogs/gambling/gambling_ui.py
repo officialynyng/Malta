@@ -12,7 +12,6 @@ from cogs.x_utilities.ui_base import BaseCogView, BaseCogButton
 class GameSelectionView(BaseCogView):
     def __init__(self, user_id, user_gold, cog):
         super().__init__(cog=cog, timeout=None)
-        super().__init__(timeout=None)
         self.user_id = user_id
         self.user_gold = user_gold
         self.cog = cog
