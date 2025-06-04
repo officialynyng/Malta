@@ -28,13 +28,14 @@ class PlayAgainButton(Button):
             gold = user_data.get("gold", 0)
 
             if game_key == "blackjack":
-                from cogs.gambling.blackjack.blackjack import BlackjackGameView
-                view = BlackjackGameView(user_id, gold, parent=None, bet=bet, cog=interaction.client.get_cog("GamblingGroup"))
+                from cogs.gambling.gambling_ui_common import BetAmountSelectionView
+                view = BetAmountSelectionView(user_id, gold, game_key="blackjack", parent=None, cog=interaction.client.get_cog("GamblingGroup"))
                 await interaction.response.edit_message(
-                    content="🃏 You've chosen **Blackjack**. Ready to draw your cards?",
+                    content="🃏 You've chosen **Blackjack**. Pick your bet to start!",
                     embed=None,
                     view=view
                 )
+
 
             elif game_key == "roulette":
                 from cogs.gambling.roulette.roulette import RouletteOptionView
