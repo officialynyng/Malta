@@ -56,34 +56,27 @@ class PlayAgainButton(Button):
 
 
 class RefreshGoldButton(discord.ui.Button):
-    def __init__(self, user_id):
+    def __init__(self):
         super().__init__(
-            label="Refresh Gold View",
-            emoji="🔄",
+            label="🔄 Refresh Gold View",
             style=discord.ButtonStyle.grey,
-            custom_id="refresh_gold_button"  # ✅ Required for persistence
+            custom_id="refresh_gold_button"
         )
-        self.user_id = user_id
 
     async def callback(self, interaction: Interaction):
-        if interaction.user.id != self.user_id:
-            return await interaction.response.send_message("❌ Not your session!", ephemeral=True)
+        user_data = get_user_data(interaction.user.id)
+        gold = user_data.get("gold", 0)
 
-        user_data = get_user_data(self.user_id)
+        # Send the gold as a private message
+        await interaction.response.send_message(
+            embed=discord.Embed(
+                title=f"💰 {interaction.user.display_name}'s Gold",
+                description=f"You currently have **{gold:,}** gold.",
+                color=discord.Color.green()
+            ),
+            ephemeral=True
+        )
 
-        # Try to get the original embed and update it
-        original_message = interaction.message
-        embed = original_message.embeds[0] if original_message.embeds else discord.Embed()
-
-        # Remove any existing gold field
-        for i, field in enumerate(embed.fields):
-            if field.name == "💰 Gold":
-                embed.remove_field(i)
-                break
-
-        embed.add_field(name="💰 Gold", value=f"**{user_data['gold']}**", inline=False)
-
-        await interaction.response.edit_message(embed=embed)
 
 
 
