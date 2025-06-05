@@ -87,7 +87,23 @@ async def post_weather(bot, triggered_by: str = "auto"):
         description=narrative,
         color=discord.Color.blue()
     )
-    embed.add_field(name="Condition", value=main, inline=True)
+    condition_emojis = {
+        "clear": "☀️",
+        "scattered": "⛅",
+        "overcast": "☁️",
+        "fog": "🌫️",
+        "rain": "🌧️",
+        "storm": "⛈️",
+        "light rain": "🌦️",
+        "drizzle": "💧",
+        "snow": "❄️",
+        "wind": "💨",
+        "heavy rain": "🌧️",
+        "lightning": "🌩️",
+    }
+
+    emoji = condition_emojis.get(main.lower(), "❓")
+    embed.add_field(name="Condition", value=f"{emoji} {main}", inline=True)
     embed.add_field(name="Temp", value=f"{temp}°F", inline=True)
     embed.add_field(name="Clouds", value=weather["cloud_condition"], inline=True)
     embed.add_field(name="☔ Precipitation", value=f"{precip}%", inline=True)
