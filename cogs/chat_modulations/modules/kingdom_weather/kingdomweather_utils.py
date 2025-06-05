@@ -12,6 +12,17 @@ ALL_REGIONS = [
     "Northern Slopes of Mellieħa"
 ]
 
+def readable_duration(seconds: float) -> str:
+    minutes, sec = divmod(int(seconds), 60)
+    hours, minutes = divmod(minutes, 60)
+    parts = []
+    if hours:
+        parts.append(f"{hours}h")
+    if minutes:
+        parts.append(f"{minutes}m")
+    if not parts:
+        parts.append(f"{sec}s")
+    return " ".join(parts)
 
 def pick_region() -> str:
     """
