@@ -59,7 +59,7 @@ class WeatherAdminGroup(commands.GroupCog, name="weather"):
         embed = discord.Embed(
             title="📅 Next Weather Post Times",
             description="\n".join(lines),
-            color=discord.Color.dark_teal()
+            color=discord.Color.from_rgb(0, 32, 96)
         )
         embed.set_footer(text=loop_info)
 
