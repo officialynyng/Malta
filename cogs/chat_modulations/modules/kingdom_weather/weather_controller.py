@@ -19,6 +19,27 @@ from cogs.chat_modulations.modules.kingdom_weather.kingdomweather_utils import g
 # Configurable cooldown per region
 WEATHER_COOLDOWN = 1800  # 30 minutes
 
+cloud_visuals = {
+    "none": "[     ] clear",
+    "light": "[░░░  ] light",
+    "moderate": "[▓▓▓░░] moderate",
+    "dense": "[█████] heavy"
+}
+
+def temperature_descriptor(temp_f: int) -> str:
+    if temp_f <= 32:
+        return "🥶 Freezing"
+    elif temp_f <= 50:
+        return "🧊 Cold"
+    elif temp_f <= 68:
+        return "🌬️ Cool"
+    elif temp_f <= 80:
+        return "🌤️ Warm"
+    elif temp_f <= 90:
+        return "🔥 Hot"
+    else:
+        return "☀️ Scorching"
+
 # Load weather narrative templates
 with open("cogs/chat_modulations/modules/kingdom_weather/conditions/conditions.json", "r", encoding="utf-8") as f:
     WEATHER_NARRATIVES = json.load(f)
@@ -104,8 +125,10 @@ async def post_weather(bot, triggered_by: str = "auto"):
 
     emoji = condition_emojis.get(main.lower(), "❓")
     embed.add_field(name="Condition", value=f"{emoji} {main}", inline=True)
-    embed.add_field(name="Temp", value=f"{temp}°F", inline=True)
-    embed.add_field(name="Clouds", value=weather["cloud_condition"], inline=True)
+    embed.add_field(name="Temp", value=f"{temp}°F - {temperature_descriptor(temp)}", inline=True)
+    cloud_density = weather.get("cloud_density", "none")
+    cloud_field = cloud_visuals.get(cloud_density, f"[?????] {cloud_density}")
+    embed.add_field(name="Clouds", value=cloud_field, inline=True)
     embed.add_field(name="☔ Precipitation", value=f"{precip}%", inline=True)
     embed.add_field(name="🕰️ Local Time", value=f"{time_label} — {region_time}", inline=False)
     embed.set_footer(text="• Dynamic Weather Generator")
