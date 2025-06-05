@@ -106,12 +106,12 @@ async def handle_gamble_result(interaction: Interaction, user_id: int, game_key:
     # ✏️ Edit the original message with updated content and modified embed
     if win:
         await interaction.edit_original_response(
-            content=f"## 🎉 You won **{payout}** gold on {game['name']} {game['emoji']}!\n*Updated at {ts}*",
+            content=f"## 🎉 You won **{payout}** gold on {game['name']} {game['emoji']}!\n🧾*Updated at {ts}*",
             embed=embed
         )
     else:
         await interaction.edit_original_response(
-            content=f"## 💀 You lost your bet of **{amount}** gold on {game['name']} {game['emoji']}.\n*Updated at {ts}*",
+            content=f"##💀 You lost your bet of **{amount}** gold on {game['name']} {game['emoji']}.\n🧾*Updated at {ts}*",
             embed=embed
         )
 
