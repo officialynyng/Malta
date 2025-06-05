@@ -47,13 +47,27 @@ def get_temperature_descriptor(temp_c: int) -> str:
 def c_to_f(celsius: int) -> int:
     return round((celsius * 9/5) + 32)
 
+_shared_kingdom_base_temp = {}
+
 def generate_temperature_structured(region: str):
+    global _shared_kingdom_base_temp
+
     month = get_region_month(region)
     hour = get_region_hour(region)
     season = get_season(month)
     temp_range = SEASONAL_TEMP_RANGES[season]
-    base_temp = random.randint(temp_range["min"], temp_range["max"])
-    adjusted_temp = apply_time_of_day_adjustment(base_temp, hour)
+
+    # Generate once per run
+    if season not in _shared_kingdom_base_temp:
+        _shared_kingdom_base_temp[season] = random.randint(temp_range["min"], temp_range["max"])
+    
+    kingdom_base = _shared_kingdom_base_temp[season]
+
+    # Add minor regional variance (±1–2°C)
+    region_offset = random.choice([-2, -1, 0, 1, 2])
+    region_temp = kingdom_base + region_offset
+
+    adjusted_temp = apply_time_of_day_adjustment(region_temp, hour)
     final_temp_c = max(5, min(adjusted_temp, 40))
     final_temp_f = c_to_f(final_temp_c)
     descriptor = get_temperature_descriptor(final_temp_c)
@@ -65,3 +79,4 @@ def generate_temperature_structured(region: str):
         "hour": hour,
         "descriptor": descriptor
     }
+

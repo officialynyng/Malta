@@ -11,6 +11,8 @@ from cogs.database.weather_ts import weather_ts_table
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy import select
 
+from cogs.database.weather_log_table import weather_log_table
+from cogs.database.session import get_session
 from cogs.chat_modulations.modules.kingdom_weather.kingdomweather_logger import get_last_weather_narrative
 from cogs.chat_modulations.modules.kingdom_weather.weather_generator import generate_weather_for_region
 from cogs.chat_modulations.modules.kingdom_weather.region_timezone import get_region_hour, get_region_time_str
@@ -140,6 +142,8 @@ async def post_weather(bot, triggered_by: str = "auto"):
     if channel:
         await channel.send(embed=embed)
         print(f"[✅] Weather update posted to #{channel.name}")
+        log_weather_to_db(weather, region, narrative, triggered_by)
+
 
         if triggered_by == "auto":
             with get_session() as session:
@@ -155,3 +159,22 @@ async def post_weather(bot, triggered_by: str = "auto"):
             return embed  # ⬅️ Return even if channel missing
 
     return None  # Default case
+
+
+def log_weather_to_db(weather, region, narrative, triggered_by):
+    with get_session() as session:
+        stmt = weather_log_table.insert().values(
+            temperature=weather["temperature"],
+            temperature_f=round((weather["temperature"] * 9/5) + 32),
+            descriptor=weather["descriptor"],
+            hour=weather["hour"],
+            season=weather["season"],
+            cloud_condition=weather["cloud_condition"],
+            main_condition=weather["main_condition"],
+            sub_condition=weather.get("sub_condition"),
+            region=region,
+            narrative=narrative,
+            triggered_by=triggered_by
+        )
+        session.execute(stmt)
+        session.commit()
