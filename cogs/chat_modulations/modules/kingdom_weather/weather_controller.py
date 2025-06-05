@@ -133,7 +133,7 @@ async def post_weather(bot, triggered_by: str = "auto"):
     embed = discord.Embed(
         title=f"🛰️ Weather Update – {region}",
         description=narrative,
-        color=discord.Color.blue()
+        color=discord.Color.from_rgb(0, 32, 96)
     )
     condition_emojis = {
         "clear": "☀️",
