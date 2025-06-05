@@ -43,7 +43,7 @@ class GambleReminder(commands.Cog):
             variant = random.choice(REMINDER_VARIANTS)
             embed = discord.Embed(
                 title="♠️ ♥️ ♦️ ♣️  Feeling lucky?",
-                description="**Use** `/gamble play` to play an assortment of games.\nTake a risk — and maybe take the pot.",
+                description="**Visit** `#malta_ui` and gamble some gold.\nTake a risk, you might find yourself rich on your way out.",
                 color=discord.Color.green()
             )
             embed.set_thumbnail(url=variant["img"])

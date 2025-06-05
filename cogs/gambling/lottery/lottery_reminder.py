@@ -54,7 +54,7 @@ class LotteryReminder(commands.Cog):
 
         embed = discord.Embed(
             title="🎟️ WEEKLY LOTTERY REMINDER",
-            description="**Use** `/lottery` to enter this week's drawing.\nBig rewards await the lucky winner!",
+            description="**Visit** `#malta_ui`  to enter this week's drawing.\nBig rewards await the lucky winner!",
             color=discord.Color.from_rgb(0, 120, 255)
         )
         embed.set_footer(text="Drawing occurs every Sunday at 6 PM CST. Buy tickets anytime before then!")
