@@ -1,6 +1,9 @@
 import discord
 import os
 from discord.ext import commands
+
+
+from cogs.database.init_db import init_database
 from cogs.exp_voice import setup as setup_voice_exp
 from cogs.admin_config import (
     GUILD_ID, WELCOME_CHANNEL_ID
@@ -12,6 +15,8 @@ INTENTS.messages = True
 INTENTS.guilds = True
 INTENTS.message_content = True
 INTENTS.members = True
+
+init_database()
 
 class MaltaBot(commands.Bot):
     def __init__(self):
@@ -29,24 +34,36 @@ class MaltaBot(commands.Bot):
         await self.load_extension("cogs.ActivityAnalyzer")
         await self.load_extension("cogs.exp_multi_autoupdate")
         await self.load_extension("cogs.exp_reminder")
+
         print("Loading 🍯Store cogs...")
         await self.load_extension("cogs.store.store_utils")
         await self.load_extension("cogs.store.store_upkeep")
         await self.load_extension("cogs.store.store_search")
         await self.load_extension("cogs.store.store_group")
         await self.load_extension("cogs.store.store_reminder")
+        
         print("Loading 👤Character cogs...")
         await self.load_extension("cogs.character.user_inventory_group")
         await self.load_extension("cogs.character.user_trigger")
         await setup_voice_exp(self)
+
         print("Loading 🎟️Lottery cogs...")
         await self.load_extension("cogs.gambling.lottery.lottery_group")
         await self.load_extension("cogs.gambling.lottery.lottery_reminder")
+
         print("Loading ♠️ ♥️ ♦️ ♣️Gambling cogs...")
         await self.load_extension("cogs.gambling.gambling_group")
         await self.load_extension("cogs.gambling.gambling_reminder")
+
         print("Loading 💼 Wallet cogs...")
         await self.load_extension("cogs.wallet.wallet")
+
+        print("Loading ⚙️ Chat Modulation cogs...")
+        print("Loading 🌧️ Kingdom Weather cogs...")
+        await self.load_extension("cogs.chat_modulations.modules.kingdom_weather.weather_scheduler")
+
+
+
         from cogs.exp_background import setup_crpg
         await setup_crpg(self)
 

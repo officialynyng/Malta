@@ -1,0 +1,104 @@
+
+## 🌦️ Kingdom Weather System – Overview
+
+A modular, dynamic weather system for a roleplay Discord bot simulating real-time fantasy-like conditions in the Kingdom of Malta. It combines temperature, cloud coverage, weather conditions, narrative flavor, and regional flavor into rich ambient messages.
+
+---
+
+### 🧱 Architecture Summary
+
+* **Temperature Generator (`temperature_generator.py`)**
+
+  * Produces realistic temperature values based on Malta’s current time and seasonal mapping.
+  * Output affects cloud and condition generation.
+
+* **Cloud Generator (`cloud_generator.py`)**
+
+  * Generates cloud keywords (e.g., `clear`, `scattered`, `overcast`, `dense fog`) based on temperature and (optionally) time of day or past weather.
+
+* **Weather Generator (`weather_generator.py`)**
+
+  * Central controller that:
+
+    * Accepts temperature and cloud keywords.
+    * Selects a matching main condition (e.g., `rain`, `clear`, `storm`) using weighted probability logic.
+    * Delegates to sub-condition JSONs (like `rain.json`, `clear.json`) for narrative selection.
+
+* **Narrative Profiles (`conditions/*.json`)**
+
+  * Each condition (rain, clear, fog, etc.) has its own JSON defining:
+
+    * Subtypes (`light drizzle`, `thunderstorm`, etc.)
+    * Icons, language templates, severity flags
+    * Optional visibility/wind details
+
+* **Time Localization (`region_timezone.py`)**
+
+  * Ensures messages reference Malta time and include a human-friendly label (`Morning`, `Afternoon`, etc.).
+
+* **Weather Controller (`weather_controller.py`)**
+
+  * Task loop (every 6 hours) that:
+
+    * Runs temperature → cloud → weather chain
+    * Posts to a designated channel as an embedded message
+
+* **Weather Log Table (`weather_log_table.py`)**
+
+  * Stores persistent history of all weather posts:
+
+    * Timestamp, region, temperature, main/sub condition, narrative, triggered\_by
+
+---
+
+### 🛠️ Planned Features
+
+* [ ] **Forecast Simulation** – Predict upcoming conditions based on trend analysis in `weather_log`
+* [ ] **Reactive Weather Events** – Trigger events or visual changes based on extreme weather
+* [ ] **User Forecast Command** – Let users request the current or upcoming forecast
+* [ ] **Seasonal Flavors** – Add distinct aesthetics per season (spring rains vs. summer storms)
+* [ ] **Dynamic Regions** – Vary weather regionally for expanded lore (desert vs. coastal zones)
+
+
+kingdom_weather/
+│
+├── __init__.py
+├── weather_controller.py               # Main loop & weather post logic
+├── kingdomweather_utils.py             # Helper functions for loading and selecting data
+├── region_timezone.py                  # Malta-specific timezone logic
+├── temperature_generator.py            # Time/season-based temperature calculation
+├── cloud_generator.py                  # Cloud condition selector based on temperature
+├── weather_generator.py                # Determines main condition + sub condition
+├── kingdomweather_logger.py            # SQL logging function for weather events
+│
+├── weather_profiles/                   # (LEGACY) Profile format for flat weather definitions (optional now)
+│
+├── temperature/                        # Future modular temperature styles if needed
+│   └── ...                             # (e.g., climate curves, season overrides)
+│
+├── cloud_keywords.json                 # Defines how cloud coverage keywords map to behavior
+│
+├── weather_weights.json                # Weighted probabilities for choosing main conditions
+│
+├── conditions/                         # Modular sub-condition JSONs per weather type
+│   ├── rain.json                       # e.g., drizzle, showers, thunderstorm
+│   ├── clear.json
+│   ├── fog.json
+│   ├── wind.json
+│   └── ...
+│
+├── regions.json                        # List of fictional or real regions for variation
+
+
+
+| **Variable**      | **Description**                                                           |
+| ----------------- | ------------------------------------------------------------------------- |
+| `temperature`     | Final temperature (°C) value used for all weather processing              |
+| `descriptor`      | A qualitative string for the temperature (e.g., `❄️ Cold`, `🔥 Hot`)      |
+| `hour`            | Current hour in Malta (0–23)                                              |
+| `season`          | Derived season from Malta month (e.g., "summer", "autumn")                |
+| `cloud_condition` | Selected keyword from cloud generator (e.g., `overcast`, `clear`, `hazy`) |
+| `main_condition`  | Selected from weather\_profiles based on temperature + cloud input        |
+| `sub_condition`   | A more specific sub-classification (e.g., `light drizzle`, `dense fog`)   |
+| `region`          | Selected region from `regions.json`                                       |
+| `narrative`       | Narrative generated using template + weather values                       |

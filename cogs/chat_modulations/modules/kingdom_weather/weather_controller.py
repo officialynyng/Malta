@@ -1,72 +1,109 @@
-import os
-import random
 import time
+import discord
+import random
 import json
-import asyncio
-
-
-from discord import Embed
 from discord.ext import tasks
 
-
+from sqlalchemy.orm import Session
 from cogs.exp_config import EXP_CHANNEL_ID
+from cogs.database.session import get_session
+from cogs.database.weather_ts import weather_ts_table
+from sqlalchemy.dialects.postgresql import insert as pg_insert
+from sqlalchemy import select
 
+from cogs.chat_modulations.modules.kingdom_weather.kingdomweather_logger import get_last_weather_narrative
+from cogs.chat_modulations.modules.kingdom_weather.weather_generator import generate_weather_for_region
+from cogs.chat_modulations.modules.kingdom_weather.region_timezone import get_region_hour, get_region_time_str
+from cogs.chat_modulations.modules.kingdom_weather.kingdomweather_utils import get_time_of_day_label, pick_region
 
-last_weather_ts = 0
+# Configurable cooldown per region
 WEATHER_COOLDOWN = 1800  # 30 minutes
 
-def load_json(path: str):
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
+# Load weather narrative templates
+with open("cogs/chat_modulations/modules/kingdom_weather/conditions/conditions.json", "r", encoding="utf-8") as f:
+    WEATHER_NARRATIVES = json.load(f)
 
-def pick_weighted_profile():
-    weights = load_json("cogs/chat_modulations/modules/kingdom_weather/weather_weights.json")
-    choices = list(weights.keys())
-    values = list(weights.values())
-    return random.choices(choices, weights=values, k=1)[0]
+def get_last_weather_ts(session: Session, region: str) -> float:
+    stmt = select(weather_ts_table.c.last_posted).where(weather_ts_table.c.region == region)
+    return session.execute(stmt).scalar() or 0.0
 
-def load_weather_profile(profile_name: str):
-    path = f"cogs/chat_modulations/modules/kingdom_weather/profiles/{profile_name}.json"
-    return load_json(path)
+def update_weather_ts(session: Session, region: str, now: float):
+    stmt = pg_insert(weather_ts_table).values(
+        region=region,
+        last_posted=now
+    ).on_conflict_do_update(
+        index_elements=["region"],
+        set_={"last_posted": now}
+    )
+    session.execute(stmt)
+    session.commit()
 
-def pick_region():
-    region_list = load_json("cogs/chat_modulations/modules/kingdom_weather/regions.json")
-    return random.choice(region_list)
-
-async def post_weather(bot):
-    global last_weather_ts
+async def post_weather(bot, triggered_by: str = "auto"):
+    region = pick_region()
     now = time.time()
 
-    if now - last_weather_ts < WEATHER_COOLDOWN:
-        return
+    with get_session() as session:
+        last_ts = get_last_weather_ts(session, region)
+        if now - last_ts < WEATHER_COOLDOWN:
+            print(f"[⏳] Skipping weather for {region} due to cooldown.")
+            return
 
-    profile_key = pick_weighted_profile()
-    profile = load_weather_profile(profile_key)
-    region = pick_region()
-    narrative = random.choice(profile["narrative_templates"]).replace("{region}", region)
+        weather = generate_weather_for_region(session, region)
+        update_weather_ts(session, region, now)
 
-    embed = Embed(
-        title=f"{profile['icon']} Weather Update – {region}",
+    # Format values
+    main = weather["main_condition"]
+    sub = weather["sub_condition"]
+    temp = round((weather["temperature"] * 9 / 5) + 32)
+    precip = int(weather.get("precipitation_chance", 0.0) * 100)
+
+    try:
+        # Get last narrative from DB
+        with get_session() as session:
+            last_narrative = get_last_weather_narrative(session, region)
+
+        # Select pool
+        narrative_pool = []
+        if sub and sub in WEATHER_NARRATIVES.get(main, {}):
+            narrative_pool = WEATHER_NARRATIVES[main][sub]
+        if not narrative_pool:
+            narrative_pool = WEATHER_NARRATIVES[main]["default"]
+
+        # Remove last narrative if it's in pool (fatigue prevention)
+        cleaned_pool = [n for n in narrative_pool if n != last_narrative]
+
+        # If all were the same, fallback to full pool
+        chosen = random.choice(cleaned_pool or narrative_pool)
+        narrative = chosen.replace("{region}", region)
+    except KeyError:
+        narrative = f"The weather over {region} is currently {main}."
+
+    hour = get_region_hour(region)
+    time_label = get_time_of_day_label(region)
+    region_time = get_region_time_str(region)
+
+    embed = discord.Embed(
+        title=f"🌦️ Weather Update – {region}",
         description=narrative,
-        color=int(profile["color"].lstrip("#"), 16)
+        color=discord.Color.blue()
     )
-    embed.add_field(name="Condition", value=profile["main_condition"], inline=True)
-    embed.add_field(name="Temp", value=profile["temperature"], inline=True)
-    embed.add_field(name="Wind", value=profile["wind"], inline=True)
-    embed.set_footer(text=profile["footer"])
+    embed.add_field(name="Condition", value=main, inline=True)
+    embed.add_field(name="Temp", value=f"{temp}°F", inline=True)
+    embed.add_field(name="Clouds", value=weather["cloud_condition"], inline=True)
+    embed.add_field(name="☔ Precipitation", value=f"{precip}%", inline=True)
+    embed.add_field(name="🕰️ Local Time", value=f"{time_label} — {region_time}", inline=False)
+    embed.set_footer(text="Logged automatically • Kingdom Weather System")
 
+    # Send to EXP channel
     channel = bot.get_channel(EXP_CHANNEL_ID)
     if channel:
         await channel.send(embed=embed)
-        last_weather_ts = now
-        
-def setup_weather_task(bot):
-    @tasks.loop(hours=6)
-    async def weather_loop():
-        await post_weather(bot)
+        print(f"[✅] Weather update posted to #{channel.name}")
+        if triggered_by == "admin":
+            return embed  # ⬅️ Return the result for testing
+    else:
+        print("[⚠️] EXP_CHANNEL_ID not found. Cannot post weather.")
+        if triggered_by == "admin":
+            return embed  # ⬅️ Return even if channel missing
 
-    @weather_loop.before_loop
-    async def before_loop():
-        await bot.wait_until_ready()
-
-    weather_loop.start()
+    return None  # Default case

@@ -1,0 +1,64 @@
+{
+    "storm": {
+      "default": [
+        "A violent storm looms over {region}, with thunder echoing in the distance.",
+        "Dark clouds swirl over {region} as a fierce storm rolls in.",
+        "The wind howls and lightning crackles across the skies above {region}."
+      ],
+      "lightning": [
+        "Bolts of lightning dance above {region}, illuminating the stormy skies.",
+        "The storm over {region} rages with crackling flashes of lightning."
+      ],
+      "heavy rain": [
+        "Torrential rain hammers down on {region}, drowning out all other sound.",
+        "The storm unleashes a relentless downpour over {region}."
+      ]
+    },
+    "rain": {
+      "default": [
+        "Rain patters gently across the rooftops of {region}.",
+        "A soft rain falls steadily over {region}, soaking the earth.",
+        "The scent of wet stone and rain fills the air in {region}."
+      ],
+      "light rain": [
+        "A light drizzle graces the skies over {region}, gentle and quiet.",
+        "Fine drops of rain mist the air around {region}."
+      ],
+      "moderate rain": [
+        "A steady rain falls on {region}, painting everything in muted hues.",
+        "Raindrops drum a rhythmic tune across {region}'s rooftops."
+      ],
+      "drizzle": [
+        "A faint drizzle hangs in the air around {region}, barely more than mist.",
+        "A subtle dampness clings to {region} as a light drizzle passes through."
+      ]
+    },
+    "fog": {
+      "default": [
+        "Thick fog clings to the valleys of {region}, obscuring the morning light.",
+        "A blanket of fog rolls across {region}, softening the world to a whisper.",
+        "Mist curls through the streets of {region}, chilling and quiet."
+      ]
+    },
+    "wind": {
+      "default": [
+        "Winds whip through {region}, bending trees and tugging at cloaks.",
+        "A restless breeze surges across {region}, carrying the scent of distant places.",
+        "The air over {region} thrums with the movement of a strong wind."
+      ]
+    },
+    "drizzle": {
+      "default": [
+        "A thin drizzle dusts {region}, subtle and persistent.",
+        "Rain barely more than a whisper dampens the ground in {region}."
+      ]
+    },
+    "clear": {
+      "default": [
+        "The skies above {region} are remarkably clear today.",
+        "Sunlight pours freely over {region}, unbroken by a single cloud.",
+        "A bright and cloudless day settles across {region}."
+      ]
+    }
+  }
+  

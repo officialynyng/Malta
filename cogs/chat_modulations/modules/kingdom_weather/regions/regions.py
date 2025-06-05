@@ -1,9 +1,9 @@
 {
   "regions": [
-    "Malta City",
-    "Stormwatch Ridge",
-    "The Southern Fields",
-    "Northpoint Coast",
-    "The Steppefront"
+    "Fortress of Mdina",
+    "Harbor of Birgu",
+    "Citadel of Valletta",
+    "Isle of Gozo",
+    "Northern Slopes of Mellieħa"
   ]
 }
