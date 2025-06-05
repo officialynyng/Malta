@@ -83,7 +83,7 @@ async def post_weather(bot, triggered_by: str = "auto"):
     region_time = get_region_time_str(region)
 
     embed = discord.Embed(
-        title=f"🌦️ Weather Update – {region}",
+        title=f"🛰️ Weather Update – {region}",
         description=narrative,
         color=discord.Color.blue()
     )
@@ -92,7 +92,7 @@ async def post_weather(bot, triggered_by: str = "auto"):
     embed.add_field(name="Clouds", value=weather["cloud_condition"], inline=True)
     embed.add_field(name="☔ Precipitation", value=f"{precip}%", inline=True)
     embed.add_field(name="🕰️ Local Time", value=f"{time_label} — {region_time}", inline=False)
-    embed.set_footer(text="Logged automatically • Kingdom Weather System")
+    embed.set_footer(text="Logged automatically • Malta")
 
     # Send to EXP channel
     channel = bot.get_channel(EXP_CHANNEL_ID)
