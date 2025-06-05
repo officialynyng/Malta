@@ -2,7 +2,7 @@ import discord
 from discord import Embed, ButtonStyle, Interaction
 from discord.ui import View, Button
 from datetime import timezone, timedelta
-from cogs.wallet.wallet_ui import TransactionView
+
 
 
 CST = timezone(timedelta(hours=-6))
