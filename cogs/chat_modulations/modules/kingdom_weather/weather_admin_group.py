@@ -4,6 +4,7 @@ from sqlalchemy import select
 from discord import app_commands, Interaction
 from discord.ext import commands
 
+from cogs.chat_modulations.modules.kingdom_weather.kingdomweather_utils import readable_duration
 from cogs.database.weather_ts import weather_ts_table
 from cogs.chat_modulations.modules.kingdom_weather.kingdomweather_utils import ALL_REGIONS, readable_duration
 from cogs.database.session import get_session
@@ -25,7 +26,7 @@ class WeatherAdminGroup(commands.GroupCog, name="weather"):
             await interaction.response.send_message(embed=embed, ephemeral=True)
         else:
             await interaction.response.send_message("⚠️ Failed to generate weather.", ephemeral=True)
-            
+
     @app_commands.command(name="next", description="🕰️ - See when the next weather post is allowed.")
     @app_commands.checks.has_permissions(administrator=True)
     async def weather_next(self, interaction: Interaction):
@@ -51,7 +52,7 @@ class WeatherAdminGroup(commands.GroupCog, name="weather"):
             loop_last = session.execute(loop_stmt).scalar()
             if loop_last:
                 next_loop_ts = loop_last + 6 * 3600
-                loop_info = f"🌀 **Next system check**: <t:{int(next_loop_ts)}:R>"
+                loop_info = f"🌀 Next system check in {readable_duration(next_loop_ts - now)}"
             else:
                 loop_info = "🌀 **Next system check**: unknown (loop has not run yet)"
 
