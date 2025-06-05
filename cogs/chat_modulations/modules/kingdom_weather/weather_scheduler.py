@@ -14,7 +14,7 @@ class WeatherScheduler(commands.Cog):
         self.bot = bot
         self.weather_loop.start()
 
-    @tasks.loop(hours=6)
+    @tasks.loop(hours=3)
     async def weather_loop(self):
         now = time.time()
 

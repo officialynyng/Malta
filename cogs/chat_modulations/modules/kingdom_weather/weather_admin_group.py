@@ -47,11 +47,11 @@ class WeatherAdminGroup(commands.GroupCog, name="weather"):
                     else:
                         lines.append(f"⏳ **{region}**: ready in {readable_duration(time_left)}")
 
-            # Task loop (6-hour) time
+            # Task loop (3-hour) time
             loop_stmt = select(weather_ts_table.c.value).where(weather_ts_table.c.key == "loop_last_run")
             loop_last = session.execute(loop_stmt).scalar()
             if loop_last:
-                next_loop_ts = loop_last + 6 * 3600
+                next_loop_ts = loop_last + 3 * 3600
                 loop_info = f"🌀 Next system check in {readable_duration(next_loop_ts - now)}"
             else:
                 loop_info = "🌀 **Next system check**: unknown (loop has not run yet)"
