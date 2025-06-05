@@ -210,7 +210,7 @@ class LotteryGroup(commands.Cog):
             ),
             color=discord.Color.blue()
         )
-        embed.set_footer(text="Good luck! The next draw might crown you champion. 🎉")
+        embed.set_footer(text="Good luck! The next draw might crown you champion. 🤑")
         return embed
 
     async def build_halloffame_embed(self, scope="all"):
@@ -322,10 +322,10 @@ class LotteryGroup(commands.Cog):
             channel = self.bot.get_channel(EXP_CHANNEL_ID)
             if channel:
                 await channel.send(
-                    f"# 🎉🎟️ The weekly lottery has concluded!\n"
+                    f"# 🤑🎟️ The weekly lottery has concluded!\n"
                     f"## 💰 **Jackpot**: {pot} gold\n"
                     f"🏆 **Winner**: <@{winner_id}> (**{winner_name}**)\n\n"
-                    f"Congratulations! 🎉"
+                    f"Congratulations! 🤑"
                 )
 
             if DEBUG:

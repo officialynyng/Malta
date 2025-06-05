@@ -79,7 +79,7 @@ class BlackjackGameView(BaseCogView):
 
         if delta is not None:
             if delta > 0:
-                result += f"\n**+{delta} gold!** 🎉"
+                result += f"\n**+{delta} gold!** 🤑"
             elif delta < 0:
                 result += f"\n**-{abs(delta)} gold.** 💀"
             else:
@@ -139,7 +139,7 @@ class BlackjackGameView(BaseCogView):
             bet_amount = self.bet
             if delta > 0:
                 await exp_channel.send(
-                    f"🃏 **{interaction.user.display_name}** bet **{bet_amount}** gold in Blackjack and won 🎉 "
+                    f"🃏 **{interaction.user.display_name}** bet **{bet_amount}** gold in Blackjack and won 🤑 "
                     f"**+{delta}** gold!"
                 )
             elif delta < 0:

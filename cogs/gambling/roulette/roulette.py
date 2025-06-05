@@ -65,7 +65,7 @@ class RoulettePlayButton(Button):
                 net_gain = int(self.view_ref.bet * (self.view_ref.payout_multiplier - 1))
                 await exp_channel.send(
                     f"🎡 **{interaction.user.display_name}** bet **{self.view_ref.bet}** gold on **{self.view_ref.choice}** "
-                    f"({self.view_ref.bet_type}) and won 🎉 **+{net_gain}**!"
+                    f"({self.view_ref.bet_type}) and won 🤑 **+{net_gain}**!"
                 )
             else:
                 await exp_channel.send(
@@ -79,7 +79,7 @@ class RoulettePlayButton(Button):
         embed.add_field(name="🎡 Your Bet", value=f"**{self.view_ref.bet}** gold on **{self.view_ref.choice}** ({self.view_ref.bet_type})", inline=False)
         embed.add_field(name="🎲 Result", value=f"**{self.view_ref.result_number}** ({self.view_ref.result_color})", inline=False)
         if self.view_ref.payout_multiplier > 0:
-            embed.add_field(name="🎉 Payout", value=f"You won **{payout_amount}** gold!", inline=False)
+            embed.add_field(name="🤑 Payout", value=f"You won **{payout_amount}** gold!", inline=False)
         else:
             embed.add_field(name="💀", value="You lost your bet.", inline=False)
         embed.set_footer(text=f"💰 Gold: {self.view_ref.user_gold} | Bet: {self.view_ref.bet}")

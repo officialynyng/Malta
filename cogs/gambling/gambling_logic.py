@@ -10,6 +10,9 @@ from cogs.exp_utils import get_user_data, update_user_gold
 from cogs.database.gambling_stats_table import gambling_stats
 from cogs.gambling.games_loader import GAMES
 
+import random
+receipt_emojis = ["🧾", "📄", "📑", "🗂️", "🗄️"]
+receipt_icon = random.choice(receipt_emojis)
 
 async def handle_gamble_result(interaction: Interaction, user_id: int, game_key: str, amount: int):
     user_data = get_user_data(user_id)
@@ -90,28 +93,32 @@ async def handle_gamble_result(interaction: Interaction, user_id: int, game_key:
 
 
 
-    # 4. Get CST timestamp
+    # 🧾 Receipt icon handling — avoid repeating last one
+    receipt_emojis = ["🧾", "📄", "📑", "🗂️", "🗄️"]
+    if "receipt_last_icon" not in user_data:
+        user_data["receipt_last_icon"] = None
+
+    available_icons = [e for e in receipt_emojis if e != user_data["receipt_last_icon"]]
+    receipt_icon = random.choice(available_icons)
+    user_data["receipt_last_icon"] = receipt_icon
+
+    # 🕐 Timestamp
     ts = datetime.now(ZoneInfo("America/Chicago")).strftime("%I:%M:%S %p CST")
 
     # 🧠 Fetch original message and embed
     original = await interaction.original_response()
     embed = original.embeds[0].copy() if original.embeds else Embed()
-
-    # ✅ Update footer with latest gold count
     embed.set_footer(text=f"💰 Gold: {user_data['gold']}")
 
-    # 🕐 Timestamp
-    ts = datetime.now(ZoneInfo("America/Chicago")).strftime("%I:%M:%S %p CST")
-
-    # ✏️ Edit the original message with updated content and modified embed
+    # ✏️ Edit the original message with updated content and receipt
     if win:
         await interaction.edit_original_response(
-            content=f"## 🎉 You won **{payout}** gold on {game['name']} {game['emoji']}!\n🧾*Updated at {ts}*",
+            content=f"## 🤑 You won **{payout}** gold on {game['name']} {game['emoji']}!\n{receipt_icon} *Updated at {ts}*",
             embed=embed
         )
     else:
         await interaction.edit_original_response(
-            content=f"##💀 You lost your bet of **{amount}** gold on {game['name']} {game['emoji']}.\n🧾*Updated at {ts}*",
+            content=f"## 💀 You lost your bet of **{amount}** gold on {game['name']} {game['emoji']}.\n{receipt_icon} *Updated at {ts}*",
             embed=embed
         )
 
@@ -120,7 +127,7 @@ async def handle_gamble_result(interaction: Interaction, user_id: int, game_key:
     if exp_channel:
         if win:
             await exp_channel.send(
-                f"♠️ ♥️ ♦️ ♣️ **{interaction.user.display_name}** wagered **{amount}** gold on {game['name']} {game['emoji']} and won 🎉 **+{net_change}** gold!"
+                f"♠️ ♥️ ♦️ ♣️ **{interaction.user.display_name}** wagered **{amount}** gold on {game['name']} {game['emoji']} and won 🤑 **+{net_change}** gold!"
             )
         else:
             await exp_channel.send(
