@@ -59,12 +59,12 @@ class Wallet(commands.Cog):
 
 
 async def setup(bot: commands.Bot):
-    # Wait until Wallet cog is available
-    await bot.wait_until_ready()
-    wallet_cog = bot.get_cog("Wallet")
-    if wallet_cog:
-        bot.add_view(WalletButtonView(wallet_cog))
-    else:
-        print("⚠️ Wallet cog not loaded — wallet button will not function.")
+    # Step 1: Register the Wallet cog
+    wallet_cog = Wallet(bot)
+    await bot.add_cog(wallet_cog)
 
+    # Step 2: Register persistent WalletButton view with Wallet cog reference
+    bot.add_view(WalletButtonView(wallet_cog))
+
+    # Step 3: Register WalletButtonCog (slash command for admins to post the button)
     await bot.add_cog(WalletButtonCog(bot))
