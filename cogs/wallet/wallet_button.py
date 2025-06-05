@@ -71,7 +71,7 @@ class WalletButtonCog(commands.Cog):
     @app_commands.checks.has_permissions(administrator=True)
     async def wallet_command(self, interaction: Interaction):
         await interaction.response.send_message("✅ Wallet button posted.", ephemeral=True)
-        await interaction.channel.send("Click the button below to check your wallet:", view=WalletButtonView(self.wallet_cog))
+        await interaction.channel.send("", view=WalletButtonView(self.wallet_cog))
 
 
 
