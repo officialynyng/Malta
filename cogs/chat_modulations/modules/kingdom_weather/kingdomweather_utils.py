@@ -32,19 +32,20 @@ def pick_region() -> str:
         data = json.load(f)
     return random.choice(data["regions"])
 
-
 def get_time_of_day_label(region: str) -> str:
     hour = get_region_hour(region)
-    
-    if 5 <= hour < 8:
-        return "early morning"
-    elif 8 <= hour < 12:
+
+    if 5 <= hour < 7:
+        return "dawn"
+    elif 7 <= hour < 12:
         return "morning"
-    elif 12 <= hour < 17:
-        return "afternoon"
-    elif 17 <= hour < 20:
-        return "evening"
-    elif 20 <= hour < 24:
-        return "night"
+    elif 12 <= hour < 15:
+        return "early afternoon"
+    elif 15 <= hour < 18:
+        return "late afternoon"
+    elif 18 <= hour < 20:
+        return "early evening"
+    elif 20 <= hour < 23:
+        return "nightfall"
     else:
         return "deep night"

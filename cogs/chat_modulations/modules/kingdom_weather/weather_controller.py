@@ -132,7 +132,7 @@ async def post_weather(bot, triggered_by: str = "auto"):
     cloud_field = cloud_visuals.get(cloud_density, f"[?????] {cloud_density}")
     embed.add_field(name="Clouds", value=cloud_field, inline=True)
     embed.add_field(name="☔ Precipitation", value=f"{precip}%", inline=True)
-    embed.add_field(name="🕰️ Local Time", value=f"{time_label} — {region_time}", inline=False)
+    embed.add_field(name="🕰️ Local Time", value=f"{time_label} — {region_time} MT", inline=False)
     embed.set_footer(text="• Dynamic Weather Generator")
 
     # Send to EXP channel
