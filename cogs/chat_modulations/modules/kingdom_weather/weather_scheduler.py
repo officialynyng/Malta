@@ -1,4 +1,5 @@
 import time
+import asyncio
 from discord.ext import commands, tasks
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy import select
@@ -26,11 +27,12 @@ class WeatherScheduler(commands.Cog):
                 print("[⏳] Skipping weather post – loop recently ran.")
                 return
 
-        await post_weather(self.bot)  # ✅ This function already logs loop_last_run
+        await post_weather(self.bot)  # ✅ Must log loop_last_run inside this
 
     @weather_loop.before_loop
     async def before_loop(self):
         await self.bot.wait_until_ready()
+        await asyncio.sleep(30)  # ⏳ Extra delay to avoid race condition on restart
 
 async def setup(bot):
     await bot.add_cog(WeatherScheduler(bot))

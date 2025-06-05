@@ -50,14 +50,15 @@ def get_last_weather_ts(session: Session, region: str) -> float:
 
 def update_weather_ts(session: Session, region: str, now: float):
     stmt = pg_insert(weather_ts_table).values(
-        key=region,
-        value=now
+        key="loop_last_run",
+        value=time.time()
     ).on_conflict_do_update(
         index_elements=["key"],
-        set_={"value": now}
+        set_={"value": time.time()}
     )
     session.execute(stmt)
     session.commit()
+
 
 async def post_weather(bot, triggered_by: str = "auto"):
     region = pick_region()

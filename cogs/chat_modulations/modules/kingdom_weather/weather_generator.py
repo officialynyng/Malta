@@ -39,16 +39,28 @@ def generate_weather_for_region(session: Session, region: str) -> dict:
     else:
         main_condition = "clear"
 
-    # Step 4: Optional narrative generator
+    def time_of_day(hour):
+        if 5 <= hour < 12:
+            return "morning"
+        elif 12 <= hour < 18:
+            return "afternoon"
+        elif 18 <= hour < 21:
+            return "evening"
+        else:
+            return "night"
+
+    tod = time_of_day(hour)
     narrative = None
+
     if main_condition == "storm":
-        narrative = f"A violent storm looms over {region}, with {sub_condition} in the distance."
+        narrative = f"A violent storm looms over {region} this {tod}, with {sub_condition} in the distance."
     elif main_condition == "fog":
-        narrative = f"Thick fog clings to the valleys of {region}, obscuring the morning light."
+        narrative = f"Thick fog clings to the valleys of {region} during the {tod}, obscuring the light."
     elif main_condition == "rain":
-        narrative = f"Rain patters gently across the rooftops of {region}."
+        narrative = f"Rain patters across the rooftops of {region} this {tod}."
     elif main_condition == "clear":
-        narrative = f"The skies above {region} are remarkably clear today."
+        narrative = f"The skies above {region} are remarkably clear this {tod}."
+
 
     # Step 5: Log to DB
     log_weather_event(
