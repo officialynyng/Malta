@@ -48,17 +48,16 @@ def get_last_weather_ts(session: Session, region: str) -> float:
     stmt = select(weather_ts_table.c.value).where(weather_ts_table.c.key == region)
     return session.execute(stmt).scalar() or 0.0
 
-def update_weather_ts(session: Session, region: str, now: float):
+def update_weather_ts(session: Session, key: str, now: float):
     stmt = pg_insert(weather_ts_table).values(
-        key="loop_last_run",
-        value=time.time()
+        key=key,
+        value=now
     ).on_conflict_do_update(
         index_elements=["key"],
-        set_={"value": time.time()}
+        set_={"value": now}
     )
     session.execute(stmt)
     session.commit()
-
 
 async def post_weather(bot, triggered_by: str = "auto"):
     region = pick_region()
@@ -71,7 +70,8 @@ async def post_weather(bot, triggered_by: str = "auto"):
             return
 
         weather = generate_weather_for_region(session, region)
-        update_weather_ts(session, region, now)
+        update_weather_ts(session, key=region, now=now)  # per-region tracking
+
 
     # Format values
     main = weather["main_condition"]
@@ -143,7 +143,8 @@ async def post_weather(bot, triggered_by: str = "auto"):
 
         if triggered_by == "auto":
             with get_session() as session:
-                update_weather_ts(session, "loop_last_run", now)
+                update_weather_ts(session, key="loop_last_run", now=now)
+
 
         if triggered_by == "admin":
             return embed
