@@ -93,14 +93,10 @@ async def handle_gamble_result(interaction: Interaction, user_id: int, game_key:
 
 
 
-    # 🧾 Receipt icon handling — avoid repeating last one
+    # 🧾 Dual receipt icon logic — never repeat the same icon twice
     receipt_emojis = ["🧾", "📄", "📑", "🗂️", "🗄️"]
-    if "receipt_last_icon" not in user_data:
-        user_data["receipt_last_icon"] = None
-
-    available_icons = [e for e in receipt_emojis if e != user_data["receipt_last_icon"]]
-    receipt_icon = random.choice(available_icons)
-    user_data["receipt_last_icon"] = receipt_icon
+    icon1 = random.choice(receipt_emojis)
+    icon2 = random.choice([e for e in receipt_emojis if e != icon1])
 
     # 🕐 Timestamp
     ts = datetime.now(ZoneInfo("America/Chicago")).strftime("%I:%M:%S %p CST")
@@ -110,17 +106,18 @@ async def handle_gamble_result(interaction: Interaction, user_id: int, game_key:
     embed = original.embeds[0].copy() if original.embeds else Embed()
     embed.set_footer(text=f"💰 Gold: {user_data['gold']}")
 
-    # ✏️ Edit the original message with updated content and receipt
+    # ✏️ Edit the original message with dual receipt icons
     if win:
         await interaction.edit_original_response(
-            content=f"## 🤑 You won **{payout}** gold on {game['name']} {game['emoji']}!\n{receipt_icon} *Updated at {ts}*",
+            content=f"## 🤑 You won **{payout}** gold on {game['name']} {game['emoji']}!\n{icon1}{icon2} *Updated at {ts}*",
             embed=embed
         )
     else:
         await interaction.edit_original_response(
-            content=f"## 💀 You lost your bet of **{amount}** gold on {game['name']} {game['emoji']}.\n{receipt_icon} *Updated at {ts}*",
+            content=f"## 💀 You lost your bet of **{amount}** gold on {game['name']} {game['emoji']}.\n{icon1}{icon2} *Updated at {ts}*",
             embed=embed
         )
+
 
     exp_channel = interaction.client.get_channel(EXP_CHANNEL_ID)
 
