@@ -62,6 +62,16 @@ def update_weather_ts(session: Session, key: str, now: float):
     session.commit()
 
 async def post_weather(bot, triggered_by: str = "auto"):
+    # Global cooldown check
+    COOLDOWN_SECONDS = 600
+    with get_session() as session:
+        stmt = select(weather_ts_table.c.value).where(weather_ts_table.c.key == "loop_last_run")
+        last_loop = session.execute(stmt).scalar() or 0.0
+
+    if time.time() - last_loop < COOLDOWN_SECONDS:
+        print(f"[⏳] Skipping weather due to global cooldown.")
+        return
+
     region = pick_region()
     now = time.time()
 

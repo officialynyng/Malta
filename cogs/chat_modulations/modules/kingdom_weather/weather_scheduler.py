@@ -20,12 +20,8 @@ class WeatherScheduler(commands.Cog):
         now = time.time()
 
         with get_session() as session:
-            stmt = select(weather_ts_table.c.value).where(weather_ts_table.c.key == "loop_last_run")
-            last_loop = session.execute(stmt).scalar() or 0.0
+            await post_weather(self.bot)
 
-            if now - last_loop < COOLDOWN_SECONDS:
-                print("[⏳] Skipping weather post – loop recently ran.")
-                return
 
         await post_weather(self.bot)  # ✅ Must log loop_last_run inside this
 
