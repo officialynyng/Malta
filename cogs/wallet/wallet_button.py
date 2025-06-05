@@ -63,14 +63,16 @@ class WalletButtonView(View):
 
 
 class WalletButtonCog(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot, wallet_cog):
         self.bot = bot
+        self.wallet_cog = wallet_cog
 
     @app_commands.command(name="wallet", description="💼 Post the wallet button (admin only)")
     @app_commands.checks.has_permissions(administrator=True)
     async def wallet_command(self, interaction: Interaction):
         await interaction.response.send_message("✅ Wallet button posted.", ephemeral=True)
-        await interaction.channel.send("Click the button below to check your wallet:", view=WalletButtonView())
+        await interaction.channel.send("Click the button below to check your wallet:", view=WalletButtonView(self.wallet_cog))
+
 
 
 async def setup(bot: commands.Bot):

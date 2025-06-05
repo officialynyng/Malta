@@ -67,4 +67,4 @@ async def setup(bot: commands.Bot):
     bot.add_view(WalletButtonView(wallet_cog))
 
     # Step 3: Register WalletButtonCog (slash command for admins to post the button)
-    await bot.add_cog(WalletButtonCog(bot))
+    await bot.add_cog(WalletButtonCog(bot, wallet_cog))
