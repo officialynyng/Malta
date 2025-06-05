@@ -113,6 +113,7 @@ async def post_weather(bot, triggered_by: str = "auto"):
         "clear": "☀️",
         "scattered": "⛅",
         "overcast": "☁️",
+        "partly cloudy": "⛅",
         "fog": "🌫️",
         "rain": "🌧️",
         "storm": "⛈️",

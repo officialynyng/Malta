@@ -37,7 +37,12 @@ def generate_weather_for_region(session: Session, region: str) -> dict:
     elif "drizzle" in eligible_conditions and random.random() < 0.25:
         main_condition = "drizzle"
     else:
-        main_condition = "clear"
+        # Adjust 'clear' condition based on cloud density
+        if cloud_data["cloud_density"] in ["moderate", "dense"]:
+            main_condition = "partly cloudy"
+        else:
+            main_condition = "clear"
+
 
     def time_of_day(hour):
         if 5 <= hour < 12:
