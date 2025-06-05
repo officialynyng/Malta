@@ -1,0 +1,11 @@
+{
+  "templates": [
+    "{user} bet everything and walked away with nothing but shame.",
+    "{user} went all-in... and got all-out.",
+    "{user} lost their entire fortune in one roll."
+  ],
+  "decoration_emojis": ["📉", "💸", "⚖️"],
+  "category_emoji": ":malta:",
+  "cooldown": 600,
+  "color": "#8B0000"
+}

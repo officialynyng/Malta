@@ -1,0 +1,17 @@
+{
+    "main_condition": "Rain",
+    "sub_conditions": ["Heavy", "Blustery"],
+    "temperature": "11°C",
+    "chance_of_precipitation": "98%",
+    "wind": "Strong gusts",
+    "time_of_day": "Afternoon",
+    "narrative_templates": [
+      "A relentless downpour batters rooftops and roadways.",
+      "Rain falls in sheets as the afternoon darkens prematurely.",
+      "Shutters rattle across the capital as gusts drive rain sideways."
+    ],
+    "footer": "Current conditions across Malta",
+    "icon": "🌧️",
+    "color": "#3e4b5b"
+  }
+  
