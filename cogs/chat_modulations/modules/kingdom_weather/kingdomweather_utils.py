@@ -4,6 +4,15 @@ from cogs.chat_modulations.modules.kingdom_weather.region_timezone import get_re
 import json
 import random
 
+ALL_REGIONS = [
+    "Fortress of Mdina",
+    "Harbor of Birgu",
+    "Citadel of Valletta",
+    "Isle of Gozo",
+    "Northern Slopes of Mellieħa"
+]
+
+
 def pick_region() -> str:
     """
     Randomly selects a region from regions.json.
