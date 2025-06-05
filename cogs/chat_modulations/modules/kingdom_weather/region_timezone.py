@@ -31,3 +31,7 @@ def get_region_month(region: str) -> int:
     """
     tz_name = REGION_TIMEZONES.get(region, "Europe/Malta")
     return datetime.now(ZoneInfo(tz_name)).month
+
+def get_region_timestamp(region: str) -> int:
+    tz_name = REGION_TIMEZONES.get(region, "Europe/Malta")
+    return int(datetime.now(ZoneInfo(tz_name)).timestamp())

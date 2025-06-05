@@ -1,10 +1,7 @@
 import time
 import asyncio
 from discord.ext import commands, tasks
-from sqlalchemy.dialects.postgresql import insert as pg_insert
-from sqlalchemy import select
 
-from cogs.database.weather_ts import weather_ts_table
 from cogs.database.session import get_session
 from cogs.chat_modulations.modules.kingdom_weather.weather_controller import post_weather
 

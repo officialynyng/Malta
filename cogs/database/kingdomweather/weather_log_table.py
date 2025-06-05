@@ -12,6 +12,7 @@ weather_log_table = db.Table(
     db.Column("descriptor", db.String, nullable=False),         # ❄️ Cold, ☀️ Warm, etc.
     db.Column("hour", db.Integer, nullable=False),
     db.Column("season", db.String, nullable=False),
+    db.Column("persistence_hours", db.Float, nullable=True),
 
     # Atmospheric features
     db.Column("cloud_condition", db.String, nullable=False),    # overcast, scattered, etc.

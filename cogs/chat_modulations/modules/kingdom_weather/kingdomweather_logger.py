@@ -1,8 +1,9 @@
 from sqlalchemy import select, func, delete
 from sqlalchemy.orm import Session
-from cogs.database.kingdomweather.weather_log_table import weather_log_table
-from cogs.database.weather_ts import weather_ts_table
 from sqlalchemy.dialects.postgresql import insert as pg_insert
+
+from cogs.database.kingdomweather.weather_log_table import weather_log_table
+from cogs.database.kingdomweather.weather_ts import weather_ts_table
 
 MAX_LOG_ENTRIES = 100
 
@@ -17,7 +18,8 @@ def log_weather_event(
     main_condition: str,
     sub_condition: str = None,
     narrative: str = None,
-    triggered_by: str = "auto"
+    persistence_hours: int = 0,
+    triggered_by: str = "auto",
 ):
     # ✅ Prevent narrative fatigue (duplicate message back-to-back)
     if narrative:
@@ -44,8 +46,10 @@ def log_weather_event(
         main_condition=main_condition,
         sub_condition=sub_condition,
         narrative=narrative,
+        persistence_hours=persistence_hours,
         triggered_by=triggered_by
     )
+
     session.execute(insert_stmt)
     session.commit()
 

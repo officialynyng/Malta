@@ -7,7 +7,7 @@ from discord.ext import tasks
 from sqlalchemy.orm import Session
 from cogs.exp_config import EXP_CHANNEL_ID
 from cogs.database.session import get_session
-from cogs.database.weather_ts import weather_ts_table
+from cogs.database.kingdomweather.weather_ts import weather_ts_table
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy import select
 
@@ -17,6 +17,7 @@ from cogs.chat_modulations.modules.kingdom_weather.kingdomweather_logger import 
 from cogs.chat_modulations.modules.kingdom_weather.weather_generator import generate_weather_for_region
 from cogs.chat_modulations.modules.kingdom_weather.region_timezone import get_region_hour, get_region_time_str
 from cogs.chat_modulations.modules.kingdom_weather.kingdomweather_utils import get_time_of_day_label, pick_region
+from cogs.database.kingdomweather.weather_state_region import get_region_weather_state
 
 # Configurable cooldown per region
 WEATHER_COOLDOWN = 1800  # 30 minutes
@@ -82,6 +83,19 @@ async def post_weather(bot, triggered_by: str = "auto"):
             return
 
         weather = generate_weather_for_region(session, region)
+        state = get_region_weather_state(session, region)
+        last_main = state.get("main_condition")
+        last_updated = state.get("last_updated", 0)
+        elapsed = time.time() - last_updated
+
+        if elapsed > 600 and weather["main_condition"] == last_main:
+            hours = round(elapsed / 3600, 1)
+            persistence_note = f"🧭 Weather has persisted for {hours} hours."
+        elif last_main and last_main != weather["main_condition"]:
+            persistence_note = f"↪️ Shifted from {last_main} to {weather['main_condition']}."
+        else:
+            persistence_note = None
+
         update_weather_ts(session, key=region, now=now)  # per-region tracking
 
 
@@ -143,8 +157,10 @@ async def post_weather(bot, triggered_by: str = "auto"):
     cloud_density = weather.get("cloud_density", "none")
     cloud_field = cloud_visuals.get(cloud_density, f"[?????] {cloud_density}")
     embed.add_field(name="Clouds", value=cloud_field, inline=True)
-    embed.add_field(name="☔ Precipitation", value=f"{precip}%", inline=True)
+    embed.add_field(name="🌧️ Precipitation", value=f"{precip}%", inline=True)
     embed.add_field(name="🕰️ Local Time", value=f"{time_label} — {region_time} MT", inline=False)
+    if persistence_note:
+        embed.description += f"\n\n{persistence_note}"
     embed.set_footer(text="• Dynamic Weather System | Temperature + Clouds Generator")
 
     # Send to EXP channel

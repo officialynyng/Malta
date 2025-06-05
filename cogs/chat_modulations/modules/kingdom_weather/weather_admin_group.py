@@ -5,7 +5,7 @@ from discord import app_commands, Interaction
 from discord.ext import commands
 
 from cogs.chat_modulations.modules.kingdom_weather.kingdomweather_utils import readable_duration
-from cogs.database.weather_ts import weather_ts_table
+from cogs.database.kingdomweather.weather_ts import weather_ts_table
 from cogs.chat_modulations.modules.kingdom_weather.kingdomweather_utils import ALL_REGIONS, readable_duration
 from cogs.database.session import get_session
 from cogs.chat_modulations.modules.kingdom_weather.weather_controller import post_weather
