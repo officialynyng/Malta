@@ -17,7 +17,7 @@ from cogs.chat_modulations.modules.kingdom_weather.kingdomweather_logger import 
 from cogs.chat_modulations.modules.kingdom_weather.weather_generator import generate_weather_for_region
 from cogs.chat_modulations.modules.kingdom_weather.region_timezone import get_region_hour, get_region_time_str
 from cogs.chat_modulations.modules.kingdom_weather.kingdomweather_utils import get_time_of_day_label, pick_region
-from cogs.database.kingdomweather.weather_state_region import get_region_weather_state
+from cogs.chat_modulations.modules.kingdom_weather.weather_state_region import get_region_weather_state
 
 # Configurable cooldown per region
 WEATHER_COOLDOWN = 1800  # 30 minutes

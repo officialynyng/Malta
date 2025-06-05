@@ -2,7 +2,7 @@ import random
 from sqlalchemy.orm import Session
 import time
 from cogs.chat_modulations.modules.kingdom_weather.region_timezone import get_region_hour
-from cogs.database.kingdomweather.weather_state_region import get_region_weather_state, upsert_region_weather_state
+from cogs.chat_modulations.modules.kingdom_weather.weather_state_region import get_region_weather_state, upsert_region_weather_state
 from cogs.chat_modulations.modules.kingdom_weather.temperature.temperature_generator import generate_temperature_structured
 from cogs.chat_modulations.modules.kingdom_weather.clouds.cloud_generator import generate_cloud_condition
 from cogs.chat_modulations.modules.kingdom_weather.kingdomweather_logger import log_weather_event
