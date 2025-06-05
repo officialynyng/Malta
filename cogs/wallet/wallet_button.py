@@ -16,7 +16,7 @@ SHOW_EPHEMERAL = True
 
 class WalletButton(Button):
     def __init__(self, wallet_cog):
-        super().__init__(label="💼 Wallet", style=ButtonStyle.primary, custom_id="wallet_button")
+        super().__init__(label="💼 Wallet", style=ButtonStyle.secondary, custom_id="wallet_button")
         self.wallet_cog = wallet_cog
 
     async def callback(self, interaction: Interaction):
