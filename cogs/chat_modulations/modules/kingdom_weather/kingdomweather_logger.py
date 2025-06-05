@@ -71,17 +71,17 @@ def _enforce_log_limit(session: Session):
 
 def update_weather_timestamp(session: Session, region: str, timestamp: float):
     stmt = pg_insert(weather_ts_table).values(
-        region=region,
-        last_posted=timestamp
+        key=region,
+        value=timestamp
     ).on_conflict_do_update(
-        index_elements=["region"],
-        set_={"last_posted": timestamp}
+        index_elements=["key"],
+        set_={"value": timestamp}
     )
     session.execute(stmt)
     session.commit()
 
 def get_last_weather_timestamp(session: Session, region: str) -> float:
-    stmt = select(weather_ts_table.c.last_posted).where(weather_ts_table.c.region == region)
+    stmt = select(weather_ts_table.c.value).where(weather_ts_table.c.key == region)
     result = session.execute(stmt).scalar()
     return result or 0.0
 

@@ -24,16 +24,16 @@ with open("cogs/chat_modulations/modules/kingdom_weather/conditions/conditions.j
     WEATHER_NARRATIVES = json.load(f)
 
 def get_last_weather_ts(session: Session, region: str) -> float:
-    stmt = select(weather_ts_table.c.last_posted).where(weather_ts_table.c.region == region)
+    stmt = select(weather_ts_table.c.value).where(weather_ts_table.c.key == region)
     return session.execute(stmt).scalar() or 0.0
 
 def update_weather_ts(session: Session, region: str, now: float):
     stmt = pg_insert(weather_ts_table).values(
-        region=region,
-        last_posted=now
+        key=region,
+        value=now
     ).on_conflict_do_update(
-        index_elements=["region"],
-        set_={"last_posted": now}
+        index_elements=["key"],
+        set_={"value": now}
     )
     session.execute(stmt)
     session.commit()
