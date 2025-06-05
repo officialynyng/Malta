@@ -11,7 +11,7 @@ from cogs.database.weather_ts import weather_ts_table
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy import select
 
-from cogs.database.weather_log_table import weather_log_table
+from cogs.database.kingdomweather.weather_log_table import weather_log_table
 from cogs.database.session import get_session
 from cogs.chat_modulations.modules.kingdom_weather.kingdomweather_logger import get_last_weather_narrative
 from cogs.chat_modulations.modules.kingdom_weather.weather_generator import generate_weather_for_region

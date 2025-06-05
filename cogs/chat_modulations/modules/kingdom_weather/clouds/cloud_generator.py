@@ -2,7 +2,7 @@ import random
 from sqlalchemy.orm import Session
 from collections import Counter
 
-from cogs.database.weather_log_table import weather_log_table
+from cogs.database.kingdomweather.weather_log_table import weather_log_table
 
 
 def generate_cloud_condition(session: Session, region: str, temperature_struct: dict):

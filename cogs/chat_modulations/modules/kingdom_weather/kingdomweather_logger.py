@@ -1,6 +1,6 @@
 from sqlalchemy import select, func, delete
 from sqlalchemy.orm import Session
-from cogs.database.weather_log_table import weather_log_table
+from cogs.database.kingdomweather.weather_log_table import weather_log_table
 from cogs.database.weather_ts import weather_ts_table
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 
