@@ -92,15 +92,21 @@ async def post_weather(bot, triggered_by: str = "auto"):
     embed.add_field(name="Clouds", value=weather["cloud_condition"], inline=True)
     embed.add_field(name="☔ Precipitation", value=f"{precip}%", inline=True)
     embed.add_field(name="🕰️ Local Time", value=f"{time_label} — {region_time}", inline=False)
-    embed.set_footer(text="Logged automatically • Malta's Dynamic Weather Generator")
+    embed.set_footer(text="• Malta's Dynamic Weather Generator")
 
     # Send to EXP channel
     channel = bot.get_channel(EXP_CHANNEL_ID)
     if channel:
         await channel.send(embed=embed)
         print(f"[✅] Weather update posted to #{channel.name}")
+
+        if triggered_by == "auto":
+            with get_session() as session:
+                update_weather_ts(session, "loop_last_run", now)
+
         if triggered_by == "admin":
-            return embed  # ⬅️ Return the result for testing
+            return embed
+
     else:
         print("[⚠️] EXP_CHANNEL_ID not found. Cannot post weather.")
         if triggered_by == "admin":
