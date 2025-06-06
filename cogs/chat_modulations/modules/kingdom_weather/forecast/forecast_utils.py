@@ -7,7 +7,7 @@ import os
 
 # Load allowed regions from JSON file
 REGION_JSON_PATH = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "..", "region", "region.json")
+    os.path.join(os.path.dirname(__file__), "..", "regions", "regions.json")
 )
 
 
