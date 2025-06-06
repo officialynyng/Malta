@@ -77,3 +77,4 @@ class TimeAdminGroup(commands.Cog):
 
 async def setup(bot):
     await bot.add_cog(TimeAdminGroup(bot))
+    bot.tree.add_command(TimeAdminGroup.time_group)

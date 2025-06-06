@@ -51,3 +51,4 @@ class ForecastAdminGroup(commands.Cog):
 
 async def setup(bot):
     await bot.add_cog(ForecastAdminGroup(bot))
+    bot.tree.add_command(ForecastAdminGroup.forecast_group)
