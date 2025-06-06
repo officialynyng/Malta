@@ -1,6 +1,14 @@
 from cogs.chat_modulations.modules.malta_time.malta_time import get_malta_datetime
 from cogs.chat_modulations.modules.kingdom_weather.kingdomweather_utils import get_time_of_day_label
 import random
+import json
+import os
+
+
+# Load allowed regions from JSON file
+REGION_JSON_PATH = os.path.join(os.path.dirname(__file__), "../regions/region.json")
+with open(REGION_JSON_PATH, "r", encoding="utf-8") as f:
+    VALID_REGIONS = json.load(f)["regions"]
 
 def infer_precip_chance(main_condition, cloud_density):
     if main_condition in ["storm", "rain"]:
@@ -32,6 +40,9 @@ CONFIDENCE_WEIGHTS_BY_CONDITION = {
 def generate_forecast_for_region(session, region):
     from cogs.database.kingdomweather.weather_log_table import weather_log_table
     from sqlalchemy import select
+
+    if region not in VALID_REGIONS:
+        raise ValueError(f"Region '{region}' is not a valid forecast region.")
 
     # Step 1: Get last known weather
     stmt = select(weather_log_table).where(
