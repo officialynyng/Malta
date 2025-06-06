@@ -7,6 +7,8 @@ from cogs.chat_modulations.modules.kingdom_weather.weather_controller import (
 )
 from cogs.chat_modulations.modules.kingdom_weather.kingdomweather_utils import condition_emojis
 
+
+
 def calculate_time_jump_stability(real_now, malta_now):
     real_days = (real_now - datetime(2020, 1, 1, tzinfo=real_now.tzinfo)).days
     malta_days = (malta_now - datetime(1048, 1, 1, tzinfo=malta_now.tzinfo)).days
@@ -24,7 +26,7 @@ def build_forecast_embed(region, forecast_data, malta_dt, forecast_accuracy=None
     temp = forecast_data["temperature"]
     precip = forecast_data["precipitation_chance"]
     cloud_density = forecast_data.get("cloud_density", "none")
-    trend = forecast_data["trend"]
+    trend = forecast_data.get("trend", "Unknown")
     change_chance = forecast_data["change_chance"]
     time_label = forecast_data["time_label"]
     region_time = forecast_data["region_time"]
