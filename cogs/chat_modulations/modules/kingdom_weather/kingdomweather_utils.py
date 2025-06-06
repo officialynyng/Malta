@@ -1,5 +1,5 @@
 import random
-from cogs.chat_modulations.modules.kingdom_weather.region_timezone import get_region_hour
+from cogs.chat_modulations.modules.malta_time.malta_time import get_malta_datetime
 
 import json
 import random
@@ -32,8 +32,8 @@ def pick_region() -> str:
         data = json.load(f)
     return random.choice(data["regions"])
 
-def get_time_of_day_label(region: str) -> str:
-    hour = get_region_hour(region)
+def get_time_of_day_label() -> str:
+    hour = get_malta_datetime().hour
 
     if 5 <= hour < 7:
         return "dawn"

@@ -15,7 +15,7 @@ from cogs.database.kingdomweather.weather_log_table import weather_log_table
 from cogs.database.session import get_session
 from cogs.chat_modulations.modules.kingdom_weather.kingdomweather_logger import get_last_weather_narrative
 from cogs.chat_modulations.modules.kingdom_weather.weather_generator import generate_weather_for_region
-from cogs.chat_modulations.modules.kingdom_weather.region_timezone import get_region_hour, get_region_time_str
+from cogs.chat_modulations.modules.malta_time.malta_time import get_malta_datetime, get_malta_datetime_string
 from cogs.chat_modulations.modules.kingdom_weather.kingdomweather_utils import get_time_of_day_label, pick_region
 from cogs.chat_modulations.modules.kingdom_weather.weather_state_region import get_region_weather_state
 
@@ -126,9 +126,13 @@ async def post_weather(bot, triggered_by: str = "auto"):
     except KeyError:
         narrative = f"The weather over {region} is currently {main}."
 
-    hour = get_region_hour(region)
+    malta_dt = get_malta_datetime()
+    malta_time_str = get_malta_datetime_string()
+    hour = malta_dt.hour
+
     time_label = get_time_of_day_label(region)
-    region_time = get_region_time_str(region)
+    region_time = malta_dt.strftime("%H:%M")
+
 
     embed = discord.Embed(
         title=f"🛰️ Weather Update – {region}",
@@ -158,10 +162,10 @@ async def post_weather(bot, triggered_by: str = "auto"):
     cloud_field = cloud_visuals.get(cloud_density, f"[?????] {cloud_density}")
     embed.add_field(name="Clouds", value=cloud_field, inline=True)
     embed.add_field(name="🌧️ Precipitation", value=f"{precip}%", inline=True)
-    embed.add_field(name="🕰️ Local Time", value=f"{time_label} — {region_time} MT", inline=False)
+    embed.add_field(name="📅 Malta Time", value=f"{time_label} — {region_time} MT", inline=False)
     if persistence_note:
         embed.description += f"\n\n{persistence_note}"
-    embed.set_footer(text="• Dynamic Weather System | Temperature + Clouds Generator")
+    embed.set_footer(text=f"• Dynamic Weather System | {malta_time_str}")
 
     # Send to EXP channel
     channel = bot.get_channel(EXP_CHANNEL_ID)

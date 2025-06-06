@@ -1,20 +1,23 @@
 import random
 from sqlalchemy.orm import Session
 import time
-from cogs.chat_modulations.modules.kingdom_weather.region_timezone import get_region_hour
+
+from cogs.chat_modulations.modules.malta_time.malta_time import get_malta_datetime 
 from cogs.chat_modulations.modules.kingdom_weather.weather_state_region import get_region_weather_state, upsert_region_weather_state
 from cogs.chat_modulations.modules.kingdom_weather.temperature.temperature_generator import generate_temperature_structured
 from cogs.chat_modulations.modules.kingdom_weather.clouds.cloud_generator import generate_cloud_condition
 from cogs.chat_modulations.modules.kingdom_weather.kingdomweather_logger import log_weather_event
-from cogs.chat_modulations.modules.kingdom_weather.region_timezone import get_region_timestamp
+
 
 
 
 
 # 🔮 Main condition generator
 def generate_weather_for_region(session: Session, region: str) -> dict:
-    hour = get_region_hour(region)
-    now = get_region_timestamp(region)
+    malta_dt = get_malta_datetime()
+    hour = malta_dt.hour
+    now = int(malta_dt.timestamp())
+
     # Step 1: Generate temperature data
     temperature_struct = generate_temperature_structured(region)
     temp_c = temperature_struct["temperature_c"]

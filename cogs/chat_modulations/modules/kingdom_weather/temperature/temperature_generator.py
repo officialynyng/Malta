@@ -1,5 +1,6 @@
 import random
-from cogs.chat_modulations.modules.kingdom_weather.region_timezone import get_region_hour, get_region_month
+from cogs.chat_modulations.modules.malta_time.malta_time import get_malta_datetime
+
 
 # Seasonal temperature ranges
 SEASONAL_TEMP_RANGES = {
@@ -49,11 +50,14 @@ def c_to_f(celsius: int) -> int:
 
 _shared_kingdom_base_temp = {}
 
-def generate_temperature_structured(region: str):
+def generate_temperature_structured():
+
     global _shared_kingdom_base_temp
 
-    month = get_region_month(region)
-    hour = get_region_hour(region)
+    malta_dt = get_malta_datetime()
+    month = malta_dt.month
+    hour = malta_dt.hour
+
     season = get_season(month)
     temp_range = SEASONAL_TEMP_RANGES[season]
 
@@ -64,10 +68,10 @@ def generate_temperature_structured(region: str):
     kingdom_base = _shared_kingdom_base_temp[season]
 
     # Add minor regional variance (±1–2°C)
-    region_offset = random.choice([-2, -1, 0, 1, 2])
-    region_temp = kingdom_base + region_offset
+    local_offset = random.choice([-2, -1, 0, 1, 2])
+    local_temp = kingdom_base + local_offset
 
-    adjusted_temp = apply_time_of_day_adjustment(region_temp, hour)
+    adjusted_temp = apply_time_of_day_adjustment(local_temp, hour)
     final_temp_c = max(5, min(adjusted_temp, 40))
     final_temp_f = c_to_f(final_temp_c)
     descriptor = get_temperature_descriptor(final_temp_c)

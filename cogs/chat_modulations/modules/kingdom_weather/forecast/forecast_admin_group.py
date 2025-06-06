@@ -2,9 +2,9 @@ import discord
 from discord.ext import commands
 from discord import app_commands, Interaction
 
-from cogs.chat_modulations.modules.kingdom_weather.forecast_scheduler import post_daily_forecast, post_weekly_forecast
+from cogs.chat_modulations.modules.kingdom_weather.forecast.forecast_scheduler import post_daily_forecast, post_weekly_forecast
 from cogs.chat_modulations.modules.kingdom_weather.weather_generator import generate_weather_for_region
-from cogs.chat_modulations.modules.kingdom_weather.utils.region_picker import get_random_region
+from cogs.chat_modulations.modules.kingdom_weather.forecast.region_picker import get_random_region
 from cogs.chat_modulations.modules.kingdom_weather.forecast.forecast_embed import build_forecast_embed  # ✅ uses your final embed
 from cogs.chat_modulations.modules.malta_time.malta_time import get_malta_datetime
 
