@@ -32,7 +32,7 @@ def generate_weather_for_region(session: Session, region: str) -> dict:
     eligible_conditions = cloud_data["eligible_conditions"]
 
     # Step 3: Retrieve past state
-    past_state = get_region_weather_state(session, region)
+    past_state = get_region_weather_state(session, region) or {}
     last_main = past_state.get("main_condition")
     last_sub = past_state.get("sub_condition")
     last_time = past_state.get("last_updated", 0)
