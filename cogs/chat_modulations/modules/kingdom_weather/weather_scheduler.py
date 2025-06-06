@@ -16,10 +16,6 @@ class WeatherScheduler(commands.Cog):
     async def weather_loop(self):
         now = time.time()
 
-        with get_session() as session:
-            await post_weather(self.bot)
-
-
         await post_weather(self.bot)  # ✅ Must log loop_last_run inside this
 
     @weather_loop.before_loop

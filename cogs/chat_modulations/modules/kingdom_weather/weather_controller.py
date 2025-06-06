@@ -98,7 +98,8 @@ async def post_weather(bot, triggered_by: str = "auto"):
             persistence_note = None
 
         update_weather_ts(session, key=region, now=now)  # per-region tracking
-
+        if triggered_by == "auto":
+            update_weather_ts(session, key="loop_last_run", now=now)
 
     # Format values
     main = weather["main_condition"]
@@ -160,10 +161,6 @@ async def post_weather(bot, triggered_by: str = "auto"):
         print(f"[✅] Weather update posted to #{channel.name}")
         log_weather_to_db(weather, region, narrative, triggered_by)
 
-
-        if triggered_by == "auto":
-            with get_session() as session:
-                update_weather_ts(session, key="loop_last_run", now=now)
 
 
         if triggered_by == "admin":
