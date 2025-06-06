@@ -1,15 +1,17 @@
 # malta_time_logger.py
 
-import datetime
+from datetime import date
 from zoneinfo import ZoneInfo
-from sqlalchemy import insert, select, delete, func
+from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import Session
+from sqlalchemy import select, delete, func
 
 from cogs.exp_config import engine
 from cogs.database.malta_time.malta_time_table import malta_time_table
+from cogs.chat_modulations.modules.malta_time.malta_time import get_malta_datetime
 
 def log_malta_time(
-    malta_time: datetime.date,
+    malta_time: date,
     malta_time_str: str,
     malta_hour: int,
     season: str,
@@ -17,10 +19,11 @@ def log_malta_time(
     notes: str = None,
     generated_by: str = "auto"
 ):
-    now = datetime.datetime.now(tz=ZoneInfo("America/Chicago"))
+    now = get_malta_datetime()  # ✅ Use Malta time, not Chicago time
+
     with Session(engine) as session:
         # ✅ Insert the new row
-        insert_stmt = insert(malta_time_table).values(
+        insert_stmt = pg_insert(malta_time_table).values(
             real_ts=now,
             malta_time=malta_time,
             malta_time_str=malta_time_str,
@@ -35,7 +38,7 @@ def log_malta_time(
         # ✅ Count total rows
         total_rows = session.scalar(select(func.count()).select_from(malta_time_table))
 
-        # ✅ If more than 100, delete the oldest entries
+        # ✅ If more than 100, delete oldest
         if total_rows > 100:
             excess = total_rows - 100
             oldest_ids = session.execute(
@@ -49,4 +52,3 @@ def log_malta_time(
             )
 
         session.commit()
-
