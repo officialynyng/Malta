@@ -9,16 +9,17 @@ from cogs.chat_modulations.modules.kingdom_weather.kingdomweather_utils import c
 
 
 
-def calculate_time_jump_stability(real_now, malta_now):
-    real_days = (real_now - datetime(2020, 1, 1, tzinfo=real_now.tzinfo)).days
-    malta_days = (malta_now - datetime(1048, 1, 1, tzinfo=malta_now.tzinfo)).days
-    delta = abs(malta_days - real_days)
-    if delta < 30:
+def calculate_time_jump_stability(last_weather_ts: float, forecast_dt: datetime):
+    forecast_epoch = forecast_dt.timestamp()
+    delta_seconds = forecast_epoch - last_weather_ts
+    delta_hours = delta_seconds / 3600
+
+    if delta_hours < 1:
         return "🟢 Stable"
-    elif delta < 365:
-        return "🟡 Diverged"
+    elif delta_hours < 3:
+        return "🟡 Slightly Ahead"
     else:
-        return "🔴 Time Rift! (Forecast time diverges too far from real-time anchor)"
+        return f"🔴 Time Rift! ({round(delta_hours, 1)} hours since last weather post)"
 
 def build_forecast_embed(region, forecast_data, malta_dt, forecast_accuracy=None):
     main = forecast_data["main_condition"]
@@ -36,7 +37,10 @@ def build_forecast_embed(region, forecast_data, malta_dt, forecast_accuracy=None
 
     # Time comparison
     real_now = datetime.now(tz=ZoneInfo("America/Chicago"))
-    time_stability = calculate_time_jump_stability(real_now, malta_dt)
+    time_stability = calculate_time_jump_stability(
+        forecast_data.get("last_weather_ts", malta_dt.timestamp()),
+        malta_dt
+    )
 
     embed = discord.Embed(
         title=f"⛈️🌄 Forecast for 🏦 {region}",

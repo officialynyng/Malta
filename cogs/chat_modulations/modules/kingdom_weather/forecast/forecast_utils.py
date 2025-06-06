@@ -64,7 +64,6 @@ def generate_forecast_for_region(session, region):
         weather_log_table.c.region == region
     ).order_by(weather_log_table.c.timestamp.desc()).limit(1)
     row = session.execute(stmt).mappings().first()
-
     if not row:
         return {
             "main_condition": "Unknown",
@@ -86,7 +85,7 @@ def generate_forecast_for_region(session, region):
 
     main_condition = row["main_condition"]
     cloud_density = row["cloud_condition"]
-
+    last_weather_ts = row["timestamp"] 
     precip = infer_precip_chance(main_condition, cloud_density)
     trend = random.choice(["Stable", "Warming", "Cooling"])
     change_chance = random.choice(["Low", "Moderate", "High"])
@@ -112,6 +111,8 @@ def generate_forecast_for_region(session, region):
         "confidence": confidence,
         "persistence_note": None,
         "descriptor": row.get("descriptor"),
-        "hour": row.get("hour")
+        "hour": row.get("hour"),
+        "last_weather_ts": last_weather_ts  # 🧩 key used for time drift
     }
+
 
