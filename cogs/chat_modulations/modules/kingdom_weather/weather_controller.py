@@ -132,7 +132,7 @@ async def post_weather(bot, triggered_by: str = "auto"):
     malta_time_str = get_malta_datetime_string()
     hour = malta_dt.hour
 
-    time_label = get_time_of_day_label(region)
+    time_label = get_time_of_day_label()
     region_time = malta_dt.strftime("%H:%M")
 
 
