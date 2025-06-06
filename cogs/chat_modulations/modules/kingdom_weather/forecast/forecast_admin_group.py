@@ -4,7 +4,7 @@ from discord import app_commands, Interaction
 
 from cogs.database.session import get_session
 from cogs.chat_modulations.modules.kingdom_weather.forecast.forecast_scheduler import post_daily_forecast, post_weekly_forecast
-from cogs.chat_modulations.modules.kingdom_weather.weather_generator import generate_weather_for_region
+from cogs.chat_modulations.modules.kingdom_weather.forecast.forecast_utils import generate_forecast_for_region
 from cogs.chat_modulations.modules.kingdom_weather.forecast.region_picker import get_random_region
 from cogs.chat_modulations.modules.kingdom_weather.forecast.forecast_embed import build_forecast_embed  # ✅ uses your final embed
 from cogs.chat_modulations.modules.malta_time.malta_time import get_malta_datetime
@@ -33,7 +33,7 @@ class ForecastAdminGroup(commands.GroupCog, name="forecast"):
         region = get_random_region()
         malta_dt = get_malta_datetime()
         with get_session() as session:
-            forecast = generate_weather_for_region(session, region)
+            forecast = generate_forecast_for_region(session, region)
         embed = build_forecast_embed(region, forecast, malta_dt)
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
@@ -43,7 +43,7 @@ class ForecastAdminGroup(commands.GroupCog, name="forecast"):
     async def preview_region(self, interaction: Interaction, region: str):
         malta_dt = get_malta_datetime()
         with get_session() as session:
-            forecast = generate_weather_for_region(session, region)
+            forecast = generate_forecast_for_region(session, region)
         embed = build_forecast_embed(region, forecast, malta_dt)
         await interaction.response.send_message(embed=embed, ephemeral=True)
 

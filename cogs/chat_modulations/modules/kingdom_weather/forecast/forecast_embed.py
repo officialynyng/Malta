@@ -18,7 +18,7 @@ def calculate_time_jump_stability(real_now, malta_now):
     elif delta < 365:
         return "🟡 Diverged"
     else:
-        return "🔴 Time Rift!"
+        return "🔴 Time Rift! (Forecast time diverges too far from real-time anchor)"
 
 def build_forecast_embed(region, forecast_data, malta_dt, forecast_accuracy=None):
     main = forecast_data["main_condition"]
