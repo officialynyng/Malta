@@ -55,3 +55,6 @@ def determine_season(month: int) -> str:
         return "Summer"
     else:
         return "Autumn"
+
+async def force_update_malta_time():
+    await log_malta_time_if_new(force=True)
