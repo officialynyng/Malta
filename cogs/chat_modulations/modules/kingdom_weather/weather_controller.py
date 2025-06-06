@@ -26,9 +26,11 @@ WEATHER_COOLDOWN = 1800  # 30 minutes
 cloud_visuals = {
     "none": "[     ] clear",
     "light": "[░░░  ] light",
+    "scattered": "[░░░░░] scattered",  # ✅ NEW ENTRY
     "moderate": "[▓▓▓░░] moderate",
     "dense": "[█████] heavy"
 }
+
 
 def temperature_descriptor(temp_f: int) -> str:
     if temp_f <= 32:
