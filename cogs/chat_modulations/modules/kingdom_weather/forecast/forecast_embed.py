@@ -25,7 +25,6 @@ def build_forecast_embed(region, forecast_data, malta_dt, forecast_accuracy=None
     sub = forecast_data["sub_condition"]
     temp = forecast_data["temperature"]
     precip = forecast_data["precipitation_chance"]
-    cloud_density = forecast_data.get("cloud_density", "none")
     trend = forecast_data.get("trend", "Unknown")
     change_chance = forecast_data.get("change_chance", "Unknown")
     time_label = forecast_data.get("time_label", "Unknown time")
@@ -34,7 +33,6 @@ def build_forecast_embed(region, forecast_data, malta_dt, forecast_accuracy=None
     forecast_confidence = forecast_data.get("confidence", "Moderate")
 
     emoji = condition_emojis.get(main.lower(), "❓")
-    cloud_field = cloud_visuals.get(cloud_density, f"[?????] {cloud_density}")
 
     # Time comparison
     real_now = datetime.now(tz=ZoneInfo("America/Chicago"))
@@ -46,10 +44,14 @@ def build_forecast_embed(region, forecast_data, malta_dt, forecast_accuracy=None
         color=discord.Color.greyple()
     )
 
+
     embed.add_field(name="🌀 Condition", value=f"{emoji} {main}", inline=True)
     embed.add_field(name="🌡️ Temp", value=f"{temp}°F — {temperature_descriptor(temp)}", inline=True)
-    embed.add_field(name="☁️ Clouds", value=cloud_field, inline=True)
     embed.add_field(name="🌧️ Precipitation", value=f"{precip}%", inline=True)
+    cloud_display = forecast_data.get("cloud_visual")
+    if not cloud_display or "?" in cloud_display:
+        cloud_display = f"[?????] {forecast_data.get('cloud_density', 'unknown')}"
+    embed.add_field(name="☁️ Clouds", value=cloud_display, inline=True)
     embed.add_field(name="📅 Forecast Time", value=f"{time_label} — {region_time} MT", inline=False)
     embed.add_field(name="📊 Forecast Confidence", value=f"🔍 {forecast_confidence}", inline=True)
     embed.add_field(name="🕗 Time Stability", value=f"{time_stability}", inline=True)
