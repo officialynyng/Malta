@@ -25,6 +25,7 @@ WEATHER_COOLDOWN = 1800  # 30 minutes
 
 cloud_visuals = {
     "none": "[     ] clear",
+    "clear": "[     ] clear",
     "light": "[░░░  ] light",
     "scattered": "[░░░░░] scattered",  # ✅ NEW ENTRY
     "moderate": "[▓▓▓░░] moderate",

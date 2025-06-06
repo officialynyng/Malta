@@ -12,11 +12,13 @@ REGION_JSON_PATH = os.path.abspath(
 
 cloud_visuals = {
     "none": "[     ] clear",
+    "clear": "[     ] clear",
     "light": "[░░░  ] light",
     "scattered": "[░░░░░] scattered",  # ✅ NEW ENTRY
     "moderate": "[▓▓▓░░] moderate",
     "dense": "[█████] heavy"
 }
+
 
 
 def get_allowed_regions():
