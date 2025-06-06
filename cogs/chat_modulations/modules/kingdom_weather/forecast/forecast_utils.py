@@ -6,9 +6,14 @@ import os
 
 
 # Load allowed regions from JSON file
-REGION_JSON_PATH = os.path.join(os.path.dirname(__file__), "../regions/region.json")
-with open(REGION_JSON_PATH, "r", encoding="utf-8") as f:
-    VALID_REGIONS = json.load(f)["regions"]
+REGION_JSON_PATH = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "region", "region.json")
+)
+
+
+def get_allowed_regions():
+    with open(REGION_JSON_PATH, "r", encoding="utf-8") as f:
+        return json.load(f)["regions"]  # assuming your JSON is { "regions": [ ... ] }
 
 def infer_precip_chance(main_condition, cloud_density):
     if main_condition in ["storm", "rain"]:
@@ -37,13 +42,13 @@ CONFIDENCE_WEIGHTS_BY_CONDITION = {
     "Unknown":       [("High", 0.0), ("Moderate", 0.2), ("Low", 0.8)]
 }
 
+
 def generate_forecast_for_region(session, region):
     from cogs.database.kingdomweather.weather_log_table import weather_log_table
     from sqlalchemy import select
 
-    if region not in VALID_REGIONS:
-        raise ValueError(f"Region '{region}' is not a valid forecast region.")
-
+    if region not in get_allowed_regions():
+        raise ValueError(f"Region '{region}' is not recognized.")
     # Step 1: Get last known weather
     stmt = select(weather_log_table).where(
         weather_log_table.c.region == region
