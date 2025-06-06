@@ -84,10 +84,16 @@ async def post_weather(bot, triggered_by: str = "auto"):
             return
 
         weather = generate_weather_for_region(session, region)
-        state = get_region_weather_state(session, region)
+        state = get_region_weather_state(session, region) or {}
         last_main = state.get("main_condition")
-        last_updated = state.get("last_updated", 0)
-        elapsed = time.time() - last_updated
+        last_updated = state.get("last_updated")
+
+        if isinstance(last_updated, (int, float)) and last_updated > 1000000000:
+            elapsed = time.time() - last_updated
+        else:
+            elapsed = 0  # fallback if last_updated is missing or bad
+
+
 
         if elapsed > 600 and weather["main_condition"] == last_main:
             hours = round(elapsed / 3600, 1)
