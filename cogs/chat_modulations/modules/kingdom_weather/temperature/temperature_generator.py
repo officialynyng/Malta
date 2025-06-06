@@ -50,7 +50,7 @@ def c_to_f(celsius: int) -> int:
 
 _shared_kingdom_base_temp = {}
 
-def generate_temperature_structured():
+def generate_temperature_structured(region: str):
 
     global _shared_kingdom_base_temp
 
