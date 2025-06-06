@@ -1,26 +1,23 @@
 import discord
 from discord.ext import commands
 from discord import app_commands, Interaction
-from datetime import time
-from datetime import datetime
+from datetime import time, datetime
 from zoneinfo import ZoneInfo
 import sqlalchemy as db
 
 from cogs.chat_modulations.modules.malta_time.malta_time import get_malta_datetime
 from cogs.database.malta_time.malta_time_table import malta_time_table
-
 from cogs.exp_config import engine
 
-class TimeAdminGroup(commands.Cog):
+
+class TimeAdminGroup(commands.GroupCog, name="time"):
+    """🔒📅 Debug Malta time system"""
+
     def __init__(self, bot):
         self.bot = bot
+        super().__init__()
 
-    time_group = app_commands.Group(
-        name="time",
-        description="🔒📅 Debug Malta time system"
-    )
-
-    @time_group.command(name="now", description="Show current Malta time (admin only)")
+    @app_commands.command(name="now", description="Show current Malta time (admin only)")
     @app_commands.checks.has_permissions(administrator=True)
     async def time_now(self, interaction: Interaction):
         real_now = datetime.now(tz=ZoneInfo("America/Chicago")).strftime("%A, %B %d, %Y %I:%M %p")
@@ -38,7 +35,7 @@ class TimeAdminGroup(commands.Cog):
 
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
-    @time_group.command(name="stats", description="📊 View Malta time tracking stats (admin only)")
+    @app_commands.command(name="stats", description="📊 View Malta time tracking stats (admin only)")
     @app_commands.checks.has_permissions(administrator=True)
     async def time_stats(self, interaction: Interaction):
         with engine.connect() as conn:
@@ -55,9 +52,8 @@ class TimeAdminGroup(commands.Cog):
                 color=discord.Color.dark_teal()
             )
             embed.add_field(name="🗓️ Total Logged Hours", value=str(total_rows), inline=True)
-            embed.add_field(name="🕰️ Last Entry Date", value=last_entry["malta_time_str"], inline=True)
+            embed.add_field(name="🗓️ Last Entry Date", value=last_entry["malta_time_str"], inline=True)
 
-            # Convert int hour into 12-hour format string
             hour_24 = last_entry["malta_hour"]
             hour_formatted = time(hour_24).strftime("%I:%M %p")
             embed.add_field(name="🕗 Last Hour", value=hour_formatted, inline=True)
@@ -75,6 +71,6 @@ class TimeAdminGroup(commands.Cog):
 
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
+
 async def setup(bot):
     await bot.add_cog(TimeAdminGroup(bot))
-    bot.tree.add_command(TimeAdminGroup.time_group)
