@@ -10,10 +10,11 @@ from cogs.exp_config import engine, EXP_CHANNEL_ID
 from cogs.database.malta_time.malta_time_table import malta_time_table
 from cogs.chat_modulations.modules.malta_time.malta_time import get_malta_datetime, get_malta_datetime_string
 
-async def post_daily_malta_time(bot, time_of_day: str):
-    """Posts a public Malta time announcement for 'midnight' or 'noon'."""
-    now = get_malta_datetime()
+async def post_daily_malta_time(bot):
+    """Posts a public Malta time announcement reflecting current Malta time."""
+    now = get_malta_datetime()  # current Malta datetime
     malta_day_str = now.strftime("%Y-%m-%d")
+    hour = now.hour
 
     with engine.connect() as conn:
         result = conn.execute(
@@ -22,34 +23,48 @@ async def post_daily_malta_time(bot, time_of_day: str):
             .limit(1)
         ).fetchone()
 
-        if result and result["malta_time"].strftime("%Y-%m-%d") == malta_day_str and time_of_day == "midnight":
-            print(f"🛑 No new Malta day to announce ({malta_day_str})")
+        # Only skip if it's midnight post and already posted today
+        if result and result["malta_time"].strftime("%Y-%m-%d") == malta_day_str and hour < 5:
+            print(f"🛑 Malta day already announced: {malta_day_str}")
             return
 
-    # Embed presentation
-    if time_of_day == "midnight":
-        title = "📜 A New Day Dawns in the Kingdom of Malta"
-        description = None
-    else:  # noon
-        title = "🌞 Midday Sun Shines Over Malta"
-        description = "The kingdom stirs under the weight of its duties. High noon reigns."
+    # 📆 Dynamic message logic based on hour in Malta
+    if 5 <= hour < 8:
+        title = "🌅 Dawn Breaks Over Malta"
+        description = "The horizon blushes with light. A new day begins in the realm."
+    elif 8 <= hour < 12:
+        title = "🌤️ Morning Light in Malta"
+        description = "The kingdom stirs with life as morning settles over its hills."
+    elif 12 <= hour < 14:
+        title = "🌞 Midday in Malta"
+        description = "High noon reigns. The sun casts its full gaze upon the land."
+    elif 14 <= hour < 18:
+        title = "🌇 Afternoon in the Realm"
+        description = "Shadows stretch as Malta leans toward evening."
+    elif 18 <= hour < 21:
+        title = "🌆 Dusk in the Kingdom"
+        description = "Twilight wraps the realm in golden hues."
+    elif 21 <= hour or hour < 1:
+        title = "🌙 Night Falls in Malta"
+        description = "Lanterns glow. The stars oversee a sleeping kingdom."
+    else:
+        title = "🕯️ The Witching Hours"
+        description = "Silence drapes the land. Few dare wander now."
 
-    embed = discord.Embed(title=title, color=discord.Color.light_grey())
-    if description:
-        embed.description = description
-
+    embed = discord.Embed(title=title, description=description, color=discord.Color.light_grey())
     embed.add_field(name="📅 Date", value=get_malta_datetime_string(), inline=False)
-    embed.add_field(name="🕗 Hour", value=now.strftime("%I:%M %p"), inline=True)
+    embed.add_field(name="🕗 Malta Time", value=now.strftime("%I:%M %p"), inline=True)
     embed.add_field(name="🌤️ Season", value=_get_season(now.month), inline=True)
     embed.set_footer(text="Glory to the realm. Time marches ever onward.")
 
     channel = bot.get_channel(EXP_CHANNEL_ID)
     if channel:
         await channel.send(embed=embed)
-        print(f"✅ Malta time post ({time_of_day}): {malta_day_str}")
+        print(f"✅ Malta time post sent at Malta hour {hour}: {malta_day_str}")
     else:
         print("❌ EXP_CHANNEL_ID not found.")
-        
+
+
 def _get_season(month: int) -> str:
     return (
         "❄️ Winter" if month in [12, 1, 2] else
