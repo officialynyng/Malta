@@ -21,7 +21,7 @@ class WeatherScheduler(commands.Cog):
     @weather_loop.before_loop
     async def before_loop(self):
         await self.bot.wait_until_ready()
-        await asyncio.sleep(30)  # ⏳ Extra delay to avoid race condition on restart
+        await asyncio.sleep(180)  # ⏳ Extra delay to avoid race condition on restart
 
 async def setup(bot):
     await bot.add_cog(WeatherScheduler(bot))
