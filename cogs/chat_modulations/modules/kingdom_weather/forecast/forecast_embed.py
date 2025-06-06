@@ -9,7 +9,10 @@ from cogs.chat_modulations.modules.kingdom_weather.kingdomweather_utils import c
 
 
 
-def calculate_time_jump_stability(last_weather_ts: float, forecast_dt: datetime):
+def calculate_time_jump_stability(last_weather_ts, forecast_dt: datetime):
+    if isinstance(last_weather_ts, datetime):
+        last_weather_ts = last_weather_ts.timestamp()
+
     forecast_epoch = forecast_dt.timestamp()
     delta_seconds = forecast_epoch - last_weather_ts
     delta_hours = delta_seconds / 3600
