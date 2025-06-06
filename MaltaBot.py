@@ -62,6 +62,11 @@ class MaltaBot(commands.Bot):
         print("Loading 🌧️ Kingdom Weather cogs...")
         await self.load_extension("cogs.chat_modulations.modules.kingdom_weather.weather_scheduler")
         await self.load_extension("cogs.chat_modulations.modules.kingdom_weather.weather_admin_group")
+        print("Loading ⏲️ Malta Time cogs...")
+        await self.load_extension("cogs.chat_modulations.modules.malta_time.scheduler")
+        await self.load_extension("cogs.chat_modulations.modules.malta_time.admin_group")
+        await self.load_extension("cogs.chat_modulations.modules.malta_time.time_controls")
+
 
 
 

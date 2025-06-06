@@ -34,10 +34,10 @@ class VoiceExpCog(commands.Cog):
                 for guild in self.bot.guilds:
                     print(f"[DEBUG]📢 Checking guild: {guild.name} (ID: {guild.id})")
                     for vc in guild.voice_channels:
-                        print(f"[DEBUG]📢 Checking voice channel: {vc.name} (ID: {vc.id}) with {len(vc.members)} members.")
+                        print(f"[DEBUG]📢 Checking voice channel: {vc.name} - {len(vc.members)} members.") # (ID: {vc.id}) with {len(vc.members)} members.")
                         for member in vc.members:
                             if not member.bot:
-                                print(f"[DEBUG]📢👁️‍🗨️ Processing member: {member.display_name} (ID: {member.id}) in voice channel: {vc.name} (ID: {vc.id})")
+                                print(f"[DEBUG]📢👁️‍🗨️ Processing member: {member.display_name}  in voice channel: {vc.name} - (DISCORD ID: {member.id})")  #(ID: {vc.id})
                                 await self.process_user_activity(self.bot, member.id)
 
             except Exception as e:

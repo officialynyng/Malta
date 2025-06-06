@@ -1,0 +1,74 @@
+✅ PHASE 1 – Foundation
+
+File: forecast_admin_group.py (new cog)
+
+Set up admin-only command group: /forecast
+
+    Subcommands:
+
+        /forecast now
+
+        /forecast region <region>
+
+        /forecast week
+
+        /forecast debug (optional)
+
+Command behavior: only callable by admins, used for testing.
+✅ PHASE 2 – Daily Auto Forecast System
+
+File: weather_scheduler.py
+
+Add daily loop to run once per day at ~7AM CST.
+
+Picks one random region each day.
+
+Uses Malta time in narrative.
+
+    Posts in EXP_CHANNEL_ID.
+
+✅ PHASE 3 – Forecast Engine
+
+File: forecast_engine.py
+
+Pulls most recent weather state for region from weather_state_region.
+
+Analyzes main_condition, persistence_hours, cloud_condition.
+
+Simulates next 12–24 hours using regional climate bias.
+
+    Returns:
+
+        Current observed
+
+        Trend (e.g., “Clearing,” “Holding steady”)
+
+        Chance of change
+
+        Time last updated
+
+        Lore-rich descriptor
+
+✅ PHASE 4 – Weekly Forecast
+
+Run every Sunday.
+
+Forecasts all five regions.
+
+Each region gets 12–24 hour prediction.
+
+    Posts as a unified embed list.
+
+✅ PHASE 5 – Stats Integration
+
+Pull historical data from weather_log_table
+
+Compute:
+
+    Most persistent condition in last week
+
+    Average temperature
+
+    Recent anomalies
+
+Embed into daily forecast for narrative context (e.g., “Mdina has seen 3 days of fog this week…”)
