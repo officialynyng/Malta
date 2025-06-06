@@ -70,7 +70,7 @@ async def post_weather(bot, triggered_by: str = "auto"):
         stmt = select(weather_ts_table.c.value).where(weather_ts_table.c.key == "loop_last_run")
         last_loop = session.execute(stmt).scalar() or 0.0
 
-    if time.time() - last_loop < COOLDOWN_SECONDS:
+    if triggered_by != "admin" and time.time() - last_loop < COOLDOWN_SECONDS:
         print(f"[⏳] Skipping weather due to global cooldown.")
         return
 
@@ -79,7 +79,7 @@ async def post_weather(bot, triggered_by: str = "auto"):
 
     with get_session() as session:
         last_ts = get_last_weather_ts(session, region)
-        if now - last_ts < WEATHER_COOLDOWN:
+        if triggered_by != "admin" and now - last_ts < WEATHER_COOLDOWN:
             print(f"[⏳] Skipping weather for {region} due to cooldown.")
             return
 
