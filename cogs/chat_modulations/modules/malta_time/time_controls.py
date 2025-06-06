@@ -4,7 +4,7 @@ from discord import app_commands, Interaction
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
-from cogs.exp_config import ADMIN_ROLE_ID
+
 from cogs.chat_modulations.modules.malta_time.malta_time import get_malta_datetime, MALTA_START_DATE, MALTA_DAY_DURATION, REAL_START_DATE
 from cogs.chat_modulations.modules.malta_time.controller import force_update_malta_time
 
