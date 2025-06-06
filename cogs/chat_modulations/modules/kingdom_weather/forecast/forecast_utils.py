@@ -1,7 +1,8 @@
 from cogs.chat_modulations.modules.kingdom_weather.weather_generator import generate_weather_for_region
 from cogs.chat_modulations.modules.malta_time.malta_time import get_malta_datetime
-from cogs.chat_modulations.modules.kingdom_weather.kingdomweather_utils import get_time_of_day_label,
+from cogs.chat_modulations.modules.kingdom_weather.kingdomweather_utils import get_time_of_day_label
 import random
+
 def generate_forecast_for_region(session, region):
     from cogs.database.kingdomweather.weather_log_table import weather_log_table
     from sqlalchemy import select
