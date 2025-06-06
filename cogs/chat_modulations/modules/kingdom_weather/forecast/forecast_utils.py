@@ -10,6 +10,12 @@ REGION_JSON_PATH = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..", "regions", "regions.json")
 )
 
+cloud_visuals = {
+    "none": "[     ] clear",
+    "light": "[░░░  ] light",
+    "moderate": "[▓▓▓░░] moderate",
+    "dense": "[█████] heavy"
+}
 
 def get_allowed_regions():
     with open(REGION_JSON_PATH, "r", encoding="utf-8") as f:
@@ -93,11 +99,15 @@ def generate_forecast_for_region(session, region):
         "temperature": forecast_temp,
         "cloud_density": cloud_density,
         "cloud_condition": cloud_density,
+        "cloud_visual": cloud_visuals.get(cloud_density, f"[?????] {cloud_density}"),
         "precipitation_chance": precip,
         "trend": trend,
         "change_chance": change_chance,
         "time_label": get_time_of_day_label(),
         "region_time": malta_dt.strftime("%H:%M"),
         "confidence": confidence,
-        "persistence_note": None
+        "persistence_note": None,
+        "descriptor": row.get("descriptor"),
+        "hour": row.get("hour")
     }
+
