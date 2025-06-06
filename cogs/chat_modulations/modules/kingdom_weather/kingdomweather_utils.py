@@ -49,3 +49,19 @@ def get_time_of_day_label() -> str:
         return "nightfall"
     else:
         return "deep night"
+    
+condition_emojis = {
+    "clear": "☀️",
+    "scattered": "⛅",
+    "overcast": "☁️",
+    "partly cloudy": "⛅",
+    "fog": "🌫️",
+    "rain": "🌧️",
+    "storm": "⛈️",
+    "light rain": "🌦️",
+    "drizzle": "💧",
+    "snow": "❄️",
+    "wind": "💨",
+    "heavy rain": "🌧️",
+    "lightning": "🌩️",
+}

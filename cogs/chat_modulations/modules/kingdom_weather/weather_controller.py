@@ -18,24 +18,11 @@ from cogs.chat_modulations.modules.kingdom_weather.weather_generator import gene
 from cogs.chat_modulations.modules.malta_time.malta_time import get_malta_datetime, get_malta_datetime_string
 from cogs.chat_modulations.modules.kingdom_weather.kingdomweather_utils import get_time_of_day_label, pick_region
 from cogs.chat_modulations.modules.kingdom_weather.weather_state_region import get_region_weather_state
+from cogs.chat_modulations.modules.kingdom_weather.kingdomweather_utils import condition_emojis
 
 # Configurable cooldown per region
 WEATHER_COOLDOWN = 1800  # 30 minutes
-condition_emojis = {
-    "clear": "☀️",
-    "scattered": "⛅",
-    "overcast": "☁️",
-    "partly cloudy": "⛅",
-    "fog": "🌫️",
-    "rain": "🌧️",
-    "storm": "⛈️",
-    "light rain": "🌦️",
-    "drizzle": "💧",
-    "snow": "❄️",
-    "wind": "💨",
-    "heavy rain": "🌧️",
-    "lightning": "🌩️",
-}
+
 cloud_visuals = {
     "none": "[     ] clear",
     "light": "[░░░  ] light",

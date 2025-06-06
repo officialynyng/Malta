@@ -2,10 +2,10 @@ import discord
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from cogs.chat_modulations.modules.kingdom_weather.weather_controller import (
-    condition_emojis,
     cloud_visuals,
     temperature_descriptor
 )
+from cogs.chat_modulations.modules.kingdom_weather.kingdomweather_utils import condition_emojis
 
 def calculate_time_jump_stability(real_now, malta_now):
     real_days = (real_now - datetime(2020, 1, 1, tzinfo=real_now.tzinfo)).days
