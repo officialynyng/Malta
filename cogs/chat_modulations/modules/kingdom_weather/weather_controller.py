@@ -21,7 +21,21 @@ from cogs.chat_modulations.modules.kingdom_weather.weather_state_region import g
 
 # Configurable cooldown per region
 WEATHER_COOLDOWN = 1800  # 30 minutes
-
+condition_emojis = {
+    "clear": "☀️",
+    "scattered": "⛅",
+    "overcast": "☁️",
+    "partly cloudy": "⛅",
+    "fog": "🌫️",
+    "rain": "🌧️",
+    "storm": "⛈️",
+    "light rain": "🌦️",
+    "drizzle": "💧",
+    "snow": "❄️",
+    "wind": "💨",
+    "heavy rain": "🌧️",
+    "lightning": "🌩️",
+}
 cloud_visuals = {
     "none": "[     ] clear",
     "light": "[░░░  ] light",
@@ -139,21 +153,6 @@ async def post_weather(bot, triggered_by: str = "auto"):
         description=narrative,
         color=discord.Color.from_rgb(0, 32, 96)
     )
-    condition_emojis = {
-        "clear": "☀️",
-        "scattered": "⛅",
-        "overcast": "☁️",
-        "partly cloudy": "⛅",
-        "fog": "🌫️",
-        "rain": "🌧️",
-        "storm": "⛈️",
-        "light rain": "🌦️",
-        "drizzle": "💧",
-        "snow": "❄️",
-        "wind": "💨",
-        "heavy rain": "🌧️",
-        "lightning": "🌩️",
-    }
 
     emoji = condition_emojis.get(main.lower(), "❓")
     embed.add_field(name="Condition", value=f"{emoji} {main}", inline=True)
