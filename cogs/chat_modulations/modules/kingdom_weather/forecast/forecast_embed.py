@@ -29,7 +29,7 @@ def build_forecast_embed(region, forecast_data, malta_dt, forecast_accuracy=None
     trend = forecast_data.get("trend", "Unknown")
     change_chance = forecast_data.get("change_chance", "Unknown")
     time_label = forecast_data.get("time_label", "Unknown time")
-    region_time = forecast_data["region_time"]
+    region_time = forecast_data.get("region_time", "Unknown")
     persistence_note = forecast_data.get("persistence_note")
     forecast_confidence = forecast_data.get("confidence", "Moderate")
 
