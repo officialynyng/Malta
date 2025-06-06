@@ -1,5 +1,7 @@
 import time
-from sqlalchemy import select, insert
+from sqlalchemy.dialects.postgresql import insert as pg_insert
+from sqlalchemy import select  # ✅ needed for get_region_weather_state
+
 from cogs.database.kingdomweather.weather_state_region import weather_state_region_table
 from cogs.database.session import get_session
 from cogs.chat_modulations.modules.malta_time.malta_time import get_malta_datetime
@@ -13,7 +15,7 @@ def upsert_region_weather_state(session, region: str, main_condition: str, sub_c
                                  intensity: str = None, duration: int = 1, timestamp: float = None):
     malta_ts = timestamp or get_malta_datetime().timestamp()
 
-    stmt = insert(weather_state_region_table).values(
+    stmt = pg_insert(weather_state_region_table).values(
         region=region,
         main_condition=main_condition,
         sub_condition=sub_condition,
@@ -32,4 +34,5 @@ def upsert_region_weather_state(session, region: str, main_condition: str, sub_c
     )
     session.execute(stmt)
     session.commit()
+
 
