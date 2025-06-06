@@ -3,11 +3,10 @@ from sqlalchemy import select, insert, update
 from cogs.database.kingdomweather.weather_state_region import weather_state_region_table
 from cogs.database.session import get_session
 
-def get_region_weather_state(region: str):
-    with get_session() as session:
-        stmt = select(weather_state_region_table).where(weather_state_region_table.c.region == region)
-        row = session.execute(stmt).mappings().first()
-        return dict(row) if row else None
+def get_region_weather_state(session, region: str):
+    stmt = select(weather_state_region_table).where(weather_state_region_table.c.region == region)
+    row = session.execute(stmt).mappings().first()
+    return dict(row) if row else None
 
 def upsert_region_weather_state(region: str, main_condition: str, sub_condition: str = None,
                                  intensity: str = None, duration: int = 1):
