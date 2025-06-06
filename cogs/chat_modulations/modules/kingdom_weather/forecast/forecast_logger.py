@@ -7,6 +7,7 @@ from cogs.exp_config import engine
 
 def log_forecast_to_db(region, forecast, forecast_for_date, triggered_by="auto"):
     with Session(engine) as session:
+        malta_now = get_malta_datetime()
         stmt = pg_insert(forecast_log_table).values(
             region=region,
             malta_now = get_malta_datetime(),
