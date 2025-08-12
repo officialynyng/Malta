@@ -5,11 +5,11 @@ import asyncio
 import sys
 from typing import (Optional,)
 from discord import (app_commands,)
-from cogs.exp_engine import (on_user_comment,)
-from cogs.exp_utils import (get_all_user_ids, get_user_data, update_user_data,)
+#from cogs.exp_engine import (on_user_comment,)
+#from cogs.exp_utils import (get_all_user_ids, get_user_data, update_user_data,)
 from cogs.admin_config import (APPROVED_ROLE_NAME, OWNER_ID, GUILD_ID)
-from cogs.exp_config import engine, metadata
-import sqlalchemy as db
+#from cogs.exp_config import engine, metadata
+#import sqlalchemy as db
 
 
 class AdminGroup(app_commands.Group):
