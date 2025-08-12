@@ -2,8 +2,6 @@ import discord
 import os
 from discord.ext import commands
 
-
-from cogs.database.init_db import init_database
 from cogs.admin_config import (
     GUILD_ID, WELCOME_CHANNEL_ID
 )
@@ -14,8 +12,6 @@ INTENTS.messages = True
 INTENTS.guilds = True
 INTENTS.message_content = True
 INTENTS.members = True
-
-init_database()
 
 class MaltaBot(commands.Bot):
     def __init__(self):
